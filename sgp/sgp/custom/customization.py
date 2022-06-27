@@ -393,7 +393,3 @@ def execute():
     Purchase_Invoice.save()
     
     create_custom_fields(custom_fields)
-   
-
-
-
