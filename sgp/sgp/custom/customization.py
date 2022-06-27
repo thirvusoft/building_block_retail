@@ -391,5 +391,4 @@ def execute():
         "value":1
     })
     Purchase_Invoice.save()
-    
     create_custom_fields(custom_fields)
