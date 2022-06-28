@@ -5,6 +5,13 @@ import frappe
 
 
 def purchase_receipt():
+    custom_fields = {
+        "Purchase Receipt": [
+            dict(fieldname='company_name', label='Company',
+                fieldtype='Link', options='Company',insert_after='column_break1', read_only=0,reqd=1),
+            
+        ],
+    }
     Purchase_Receipt=frappe.get_doc({
         'doctype':'Property Setter',
         'doctype_or_field': "DocField",
@@ -79,7 +86,17 @@ def purchase_receipt():
         'property':"hidden",
         'property_type':"Check",
         'field_name':"raw_material_details",
-        "value":0
+        "value":1
+    })
+    Purchase_Receipt.save()
+    Purchase_Receipt=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Receipt",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"taxes_and_charges",
+        "value":1
     })
     Purchase_Receipt.save()
     Purchase_Receipt=frappe.get_doc({
@@ -101,3 +118,5 @@ def purchase_receipt():
         "value":"Driver Name"
     })
     Purchase_Receipt.save()
+    
+    create_custom_fields(custom_fields)

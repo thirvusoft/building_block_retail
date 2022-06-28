@@ -6,7 +6,8 @@ import frappe
 
 def purchase_invoice():
     custom_fields = {
-          "Purchase Invoice": [
+        
+        "Purchase Invoice": [
             dict(fieldname='company_name', label='Company',
                 fieldtype='Link', options='Company',insert_after='column_break1', read_only=0,reqd=1),
             
@@ -16,11 +17,12 @@ def purchase_invoice():
                 fieldtype='Link', options='Branch',insert_after='company_name', read_only=0),
             
         ],
-         "Purchase Invoice": [
+        "Purchase Invoice": [
             dict(fieldname='cost_center1', label='Cost Center',
-                fieldtype='Link', options='Cost Center',insert_after='branch', read_only=0),
+                fieldtype='Link', options='Cost Center',insert_after='company_name', read_only=0),
             
         ],
+
     }
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
@@ -34,15 +36,14 @@ def purchase_invoice():
     Purchase_Invoice.save()
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
-        'doctype_or_field': "DocField",
-        'doc_type': "Purchase Invoice",
-        'property':"hidden",
-        'property_type':"Check",
-        'field_name':"accounting_dimensions_section",
-        "value":1
-    })
+         'doctype_or_field': "DocField",
+         'doc_type': "Purchase Invoice",
+         'property':"hidden",
+         'property_type':"Check",
+         'field_name':"accounting_dimensions_section",
+         "value":1
+     })
     Purchase_Invoice.save()
-    
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
         'doctype_or_field': "DocField",
@@ -59,7 +60,57 @@ def purchase_invoice():
         'doc_type': "Purchase Invoice",
         'property':"hidden",
         'property_type':"Check",
+        'field_name':"apply_discount_on",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"base_discount_amount",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"is_subcontracted",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
         'field_name':"currency_and_price_list",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"set_warehouse",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"rejected_warehouse",
         "value":1
     })
     Purchase_Invoice.save()
@@ -83,7 +134,6 @@ def purchase_invoice():
         "value":1
     })
     Purchase_Invoice.save()
-   
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
         'doctype_or_field': "DocField",
@@ -130,26 +180,6 @@ def purchase_invoice():
         'doc_type': "Purchase Invoice",
         'property':"hidden",
         'property_type':"Check",
-        'field_name':"printing_settings",
-        "value":1
-    })
-    Purchase_Invoice.save()
-    Purchase_Invoice=frappe.get_doc({
-        'doctype':'Property Setter',
-        'doctype_or_field': "DocField",
-        'doc_type': "Purchase Invoice",
-        'property':"hidden",
-        'property_type':"Check",
-        'field_name':"accounting_details_section",
-        "value":1
-    })
-    Purchase_Invoice.save()
-    Purchase_Invoice=frappe.get_doc({
-        'doctype':'Property Setter',
-        'doctype_or_field': "DocField",
-        'doc_type': "Purchase Invoice",
-        'property':"hidden",
-        'property_type':"Check",
         'field_name':"terms_section_break",
         "value":1
     })
@@ -160,17 +190,18 @@ def purchase_invoice():
         'doc_type': "Purchase Invoice",
         'property':"hidden",
         'property_type':"Check",
-        'field_name':"accounting_dimensions_section",
+        'field_name':"printing_settings",
         "value":1
     })
     Purchase_Invoice.save()
+  
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
         'doctype_or_field': "DocField",
         'doc_type': "Purchase Invoice",
         'property':"hidden",
         'property_type':"Check",
-        'field_name':"",
+        'field_name':"accounting_details_section",
         "value":1
     })
     Purchase_Invoice.save()
