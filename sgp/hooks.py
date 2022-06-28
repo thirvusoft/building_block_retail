@@ -57,8 +57,7 @@ app_license = "MIT"
 # ------------
 
 # before_install = "sgp.install.before_install"
-after_install = ["sgp.sgp.custom.customization.execute",
-		"sgp.utils.after_install.after_install"]
+after_install = "sgp.sgp.function_calling.function_calling"
 
 # Uninstallation
 # ------------
