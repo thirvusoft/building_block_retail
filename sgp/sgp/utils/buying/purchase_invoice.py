@@ -16,6 +16,11 @@ def purchase_invoice():
                 fieldtype='Link', options='Branch',insert_after='company_name', read_only=0),
             
         ],
+         "Purchase Invoice": [
+            dict(fieldname='cost_center1', label='Cost Center',
+                fieldtype='Link', options='Cost Center',insert_after='branch', read_only=0),
+            
+        ],
     }
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
@@ -27,6 +32,17 @@ def purchase_invoice():
         "value":1
     })
     Purchase_Invoice.save()
+    Purchase_Invoice=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Invoice",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"accounting_dimensions_section",
+        "value":1
+    })
+    Purchase_Invoice.save()
+    
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',
         'doctype_or_field': "DocField",

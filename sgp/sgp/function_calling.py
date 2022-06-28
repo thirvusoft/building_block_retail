@@ -13,7 +13,7 @@ def function_calling():
     request_for_quotation()
     supplier_quotation()
     item_customization()
-    print("gggggggggggggggg")
+  
 
 
     
