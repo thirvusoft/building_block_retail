@@ -6,6 +6,7 @@ from sgp.sgp.utils.buying.purchase_receipt import purchase_receipt
 from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
 from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sales_invoice_customization
+from sgp.sgp.utils.selling.delivery_note.delivery_note import delivery_note_customization
 
 def function_calling():
     purchase_invoice()
@@ -15,5 +16,5 @@ def function_calling():
     supplier_quotation()
     item_customization()
     sales_invoice_customization()
-  
+    delivery_note_customization()
 
