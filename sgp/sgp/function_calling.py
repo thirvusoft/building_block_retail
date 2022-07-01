@@ -9,7 +9,6 @@ from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sale
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
 from sgp.sgp.utils.projects.site_work.site_work import site_doc_name 
 def function_calling():
-    purchase_invoice()
     purchase_order()
     purchase_receipt()
     request_for_quotation()
