@@ -6,23 +6,11 @@ import frappe
 
 def purchase_invoice():
     custom_fields = {
-        
-        "Purchase Invoice": [
-            dict(fieldname='company_name', label='Company',
-                fieldtype='Link', options='Company',insert_after='column_break1', read_only=0,reqd=1),
-            
-        ],
         "Purchase Invoice": [
             dict(fieldname='branch', label='Branch',
-                fieldtype='Link', options='Branch',insert_after='company_name', read_only=0),
+                fieldtype='Link', options='Branch',insert_after='company', read_only=0),
             
-        ],
-        "Purchase Invoice": [
-            dict(fieldname='cost_center1', label='Cost Center',
-                fieldtype='Link', options='Cost Center',insert_after='company_name', read_only=0),
-            
-        ],
-
+        ]
     }
     Purchase_Invoice=frappe.get_doc({
         'doctype':'Property Setter',

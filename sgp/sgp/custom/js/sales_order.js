@@ -190,6 +190,7 @@ frappe.ui.form.on('Sales Order',{
         cur_frm.set_value('site_work','')
         if(cur_frm.doc.is_multi_customer){
             cur_frm.set_df_property('customer','reqd',0);
+            cur_frm.set_df_property('customer','hidden',1);
             frm.set_query('site_work',function(frm){
                 return {
                     filters:{
@@ -201,6 +202,7 @@ frappe.ui.form.on('Sales Order',{
         }
         else{
             cur_frm.set_df_property('customer','reqd',1);
+            cur_frm.set_df_property('customer','hidden',0);
             frm.set_query('site_work',function(frm){
                 return {
                     filters:{

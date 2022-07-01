@@ -153,22 +153,22 @@ doc_events = {
 }
 after_migrate=["sgp.sgp.custom.py.site_work.create_status"]
 doctype_js = {
-				"Item" : "/custom/js/item.js",
-				"Payment Entry" : "/custom/js/payment_entry.js",
-				"Project": "/custom/js/site_work.js",
+				"Item" : "/sgp/custom/js/item.js",
+				"Payment Entry" : "/sgp/custom/js/payment_entry.js",
+				"Project": "/sgp/custom/js/site_work.js",
 				"Sales Order": [
-								"/custom/js/site_work.js",
-								"/custom/js/sales_order.js",
+								"/sgp/custom/js/site_work.js",
+								"/sgp/custom/js/sales_order.js",
 								],
-				"Vehicle":"/custom/js/vehicle.js",
-				"Purchase Receipt":"/custom/js/purchase_receipt.js",
-				"Workstation":"/custom/js/workstation.js",
-				"Work Order": "/custom/js/work_order.js",
-				"Delivery Note": "/custom/js/delivery_note.js",
-				"Sales Invoice": "/custom/js/sales_invoice.js",
-				"Vehicle Log":"/custom/js/vehicle_log.js",
-				"BOM": "/custom/js/bom.js",
-				"Job Card": "/custom/js/job_card.js"
+				"Vehicle":"/sgp/custom/js/vehicle.js",
+				"Purchase Receipt":"/sgp/custom/js/purchase_receipt.js",
+				"Workstation":"/sgp/custom/js/workstation.js",
+				"Work Order": "/sgp/custom/js/work_order.js",
+				"Delivery Note": "/sgp/custom/js/delivery_note.js",
+				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
+				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
+				"BOM": "/sgp/custom/js/bom.js",
+				"Job Card": "/sgp/custom/js/job_card.js"
 			 }
 # Scheduled Tasks
 # ---------------
