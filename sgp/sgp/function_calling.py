@@ -20,4 +20,3 @@ def function_calling():
     customize_field()
     site_doc_name()
     delivery_note_customization()
-
