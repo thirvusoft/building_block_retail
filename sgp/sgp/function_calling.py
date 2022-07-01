@@ -11,8 +11,8 @@ from sgp.sgp.utils.projects.site_work.site_work import site_doc_name
 from sgp.sgp.utils.selling.delivery_note.delivery_note import delivery_note_customization
 from sgp.sgp.utils.selling.sales_order.sales_order import sales_order_customization
 def function_calling():
-    purchase_invoice()
     purchase_order()
+    purchase_invoice()
     purchase_receipt()
     request_for_quotation()
     supplier_quotation()
