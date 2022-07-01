@@ -1,5 +1,6 @@
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
+from sgp.sgp.custom.sales_order import sales_order_customization
 import frappe
 
 
@@ -392,3 +393,4 @@ def execute():
     })
     Purchase_Invoice.save()
     create_custom_fields(custom_fields)
+    sales_order_customization()

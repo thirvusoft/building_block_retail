@@ -58,6 +58,7 @@ app_license = "MIT"
 
 # before_install = "sgp.install.before_install"
 after_install = "sgp.sgp.function_calling.function_calling"
+before_install = "sgp.sgp.custom.py.warehouse.create_scrap_warehouse"
 
 # Uninstallation
 # ------------
@@ -86,6 +87,11 @@ after_install = "sgp.sgp.function_calling.function_calling"
 # DocType Class
 # ---------------
 # Override standard doctype classes
+override_doctype_class = {
+	# "Salary Slip":"ganapathy_pavers.utils.py.salary_slip.CustomSalary",
+	# "Payroll Entry":"ganapathy_pavers.utils.py.payroll_entry.MessExpense",
+	"Opening Invoice Creation Tool":"sgp.sgp.custom.py.opening_invoice.OpeningInvoice"
+}
 
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
@@ -102,7 +108,68 @@ after_install = "sgp.sgp.function_calling.function_calling"
 # 		"on_trash": "method"
 #	}
 # }
+doc_events = {
+	"Driver":{
+		"validate":"sgp.sgp.custom.py.driver.validate_phone"
+	},
+	"Project":{
+		"autoname":"sgp.sgp.custom.py.site_work.autoname",
+		"before_save":"sgp.sgp.custom.py.site_work.before_save"
+	},
+	"Sales Order":{
+		"on_cancel":"sgp.sgp.custom.py.sales_order.remove_project_fields"
+	},
+	"Delivery Note":{
+		"before_validate":"sgp.sgp.custom.py.delivery_note.update_customer",
+		"on_submit":[
+					"sgp.sgp.custom.py.delivery_note.update_qty_sitework.",
+					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework"
+					],
+		"on_cancel":[
+					"sgp.sgp.custom.py.delivery_note.reduce_qty_sitework",
+					"sgp.sgp.custom.py.delivery_note.reduce_return_qty_sitework"
+					 ],
+		"validate":["sgp.sgp.custom.py.delivery_note.validate",
+					],
+		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate",]
 
+	},
+	"Job Card":{
+		"on_submit": "sgp.sgp.custom.py.job_card.create_timesheet"
+	},
+	"Sales Invoice":{
+    	"before_validate":"sgp.sgp.custom.py.sales_invoice.update_customer"
+  	},
+	"Vehicle":{
+        "validate":"sgp.sgp.custom.py.vehicle.reference_date",
+    },
+	"Work Order":{
+		'before_submit': "sgp.sgp.custom.py.work_order.before_submit"
+	},
+	"Workstation":{
+		"validate": "sgp.sgp.custom.py.workstation.validate"
+	}
+
+}
+after_migrate=["sgp.sgp.custom.py.site_work.create_status"]
+doctype_js = {
+				"Item" : "/sgp/custom/js/item.js",
+				"Payment Entry" : "/sgp/custom/js/payment_entry.js",
+				"Project": "/sgp/custom/js/site_work.js",
+				"Sales Order": [
+								"/sgp/custom/js/site_work.js",
+								"/sgp/custom/js/sales_order.js",
+								],
+				"Vehicle":"/sgp/custom/js/vehicle.js",
+				"Purchase Receipt":"/sgp/custom/js/purchase_receipt.js",
+				"Workstation":"/sgp/custom/js/workstation.js",
+				"Work Order": "/sgp/custom/js/work_order.js",
+				"Delivery Note": "/sgp/custom/js/delivery_note.js",
+				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
+				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
+				"BOM": "/sgp/custom/js/bom.js",
+				"Job Card": "/sgp/custom/js/job_card.js"
+			 }
 # Scheduled Tasks
 # ---------------
 
