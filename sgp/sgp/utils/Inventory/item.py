@@ -146,15 +146,11 @@ def item_customization():
                 insert_after='short_blast',
                 hidden=1),
 
-            dict(fieldname='column_break_41',
-                label="",
-                fieldtype='Column Break',
-                insert_after='item_size'),
 
             dict(fieldname='block_weight',
                 label='Block Weight',
                 fieldtype='Float',
-                insert_after='column_break_41',
+                insert_after='item_size',
                 hidden=1),
                 
             dict(fieldname="bundle_weight",
