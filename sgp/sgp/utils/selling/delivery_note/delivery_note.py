@@ -34,14 +34,14 @@ def delivery_note_custom_field():
                 fieldtype= "Link",
                 insert_after= "supervisor_phone_no",
                 label= "Site Name",
-                options= "Employee"
+                options= "Project"
             ),
             dict(
                 fieldname= "type",
                 fieldtype= "Select",
                 insert_after= "site_work",
                 label= "Sales Type",
-                options= "\nPavers \nCompound Wall"
+                options= "\nPavers\nCompound Wall"
             ),
             dict(
                 fieldname= "value_pieces",
@@ -90,9 +90,116 @@ def delivery_note_custom_field():
 				fieldtype= "Int",
 				insert_after= "return_odometer_value",
 				label= "Total Distance"
+            ),
+            dict(
+                fieldname= "own_vehicle_no",
+				fieldtype= "Link",
+				insert_after= "transporter",
+				label= "Vehicle No",
+                options= "Vehicle",
+                depends_on= "eval:doc.transporter=='Own Transporter'"
+            ),
+            dict(
+                fieldname= "driver_name_2",
+				fieldtype= "Data",
+				insert_after= "own_vehicle_no",
+				label= "Driver Name",
+                depends_on= "eval:doc.transporter=='Own Transporter'"
+            ),
+            dict(
+                fieldname= "operator_",
+				fieldtype= "Data",
+				insert_after= "own_vehicle_no",
+				label= "Operator",
+                depends_on= "eval:doc.transporter=='Own Transporter'"
+            ),
+            dict(
+                fieldname= "driver_name_1",
+				fieldtype= "Data",
+				insert_after= "vehicle_no",
+				label= "Driver Name ",
+                depends_on= "eval:doc.transporter=='Own Transporter'"
+            ),
+            dict(
+                fieldname= "branch",
+				fieldtype= "Link",
+				insert_after= "sales_team",
+				label= "Branch",
+                options= "Branch"
             )
 
         ],
+
+        "Delivery Note Item":[
+            dict(
+                fieldname= "work",
+                fieldtype= "Select",
+                insert_after= "item_code",
+                label= "Work",
+                options= "Supply Only\nLaying Only\nSupply and Laying"
+            ),
+            dict(
+                fieldname= "ts_required_area_qty",
+				fieldtype= "Int",
+				insert_after= "item_name",
+				label= "TS Required Area Qty"
+            ),
+            dict(
+                fieldname= "ts_qty",
+				fieldtype= "Float",
+				insert_after= "qty",
+				label= "Bundle"
+            ),
+            dict(
+                fieldname= "pieces",
+				fieldtype= "Int",
+				insert_after= "ts_qty",
+				label= "Pieces"
+            ),
+            dict(
+                fieldname= "branch",
+				fieldtype= "Link",
+				insert_after= "accounting_dimensions_section",
+				label= "Branch",
+                options= "Branch"
+            ),
+            dict(
+                fieldname= "branch_",
+				fieldtype= "Link",
+				insert_after= "branch",
+				label= "Branch",
+                options= "Branch"
+            ),
+            dict(
+                fieldname= "delivery_detail",
+				fieldtype= "Section Break",
+				insert_after= "project",
+				label= "Delivery Detail"
+            ),
+            dict(
+                fieldname= "pending_qty",
+				fieldtype= "Float",
+				insert_after= "delivery_detail",
+				label= "Pending qty"
+            ),
+            dict(
+                fieldname= "column_break_92",
+				fieldtype= "Section Break",
+				insert_after= "pending_qty",
+            ),
+            dict(
+                fieldname= "column_break_93",
+				fieldtype= "Section Break",
+				insert_after= "column_break_92",
+            ),
+            dict(
+                fieldname= "delivery_qty_till_date",
+				fieldtype= "Float",
+				insert_after= "column_break_92",
+				label= "Delivery qty till date"
+            )
+
+        ]
     }
     create_custom_fields(custom_fields)
 
@@ -117,3 +224,13 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note", "section_break1", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "shipping_rule", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "driver_name", "insert_after", "vehicle_no", "Data")
+    make_property_setter("Delivery Note", "in_words", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "per_installed", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "per_returned", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "brand_field", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "opening_stock", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "valuation_rate", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "standard_rate", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "is_fixed_asset", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "purchase_details", "hidden", "1", "Check")
+    make_property_setter("Delivery Note Item", "supplier_details", "hidden", "1", "Check")
