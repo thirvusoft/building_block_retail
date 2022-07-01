@@ -51,7 +51,6 @@ function vehicle(frm,cdt,cdn){
                     })
                 }
             if(row.week_before===1){
-                    console.log('test');
                     let day=7
                       frappe.call({
                           method:"sgp.sgp.custom.py.vehicle.todate",
@@ -68,7 +67,6 @@ function vehicle(frm,cdt,cdn){
                       })
                   }
                   if(row.month_before===1){
-                    console.log('test1');
                     let day=30
                       frappe.call({
                           method:"sgp.sgp.custom.py.vehicle.todate",
