@@ -9,6 +9,11 @@ from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sale
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
 from sgp.sgp.utils.projects.site_work.site_work import site_doc_name 
 from sgp.sgp.utils.selling.delivery_note.delivery_note import delivery_note_customization
+<<<<<<< Updated upstream
+=======
+from sgp.sgp.create_docs import create_docs
+
+>>>>>>> Stashed changes
 def function_calling():
     purchase_invoice()
     purchase_order()
@@ -20,4 +25,4 @@ def function_calling():
     customize_field()
     site_doc_name()
     delivery_note_customization()
-
+    create_docs()
