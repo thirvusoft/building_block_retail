@@ -10,6 +10,8 @@ from sgp.sgp.utils.projects.site_work.site_work import customize_field
 from sgp.sgp.utils.projects.site_work.site_work import site_doc_name 
 from sgp.sgp.utils.selling.delivery_note.delivery_note import delivery_note_customization
 from sgp.sgp.utils.selling.sales_order.sales_order import sales_order_customization
+from sgp.sgp.utils.hr.vehicle.vehicle import vehicle_customization
+
 def function_calling():
     purchase_order()
     purchase_invoice()
@@ -22,4 +24,4 @@ def function_calling():
     site_doc_name()
     delivery_note_customization()
     sales_order_customization()
-
+    vehicle_customization()
