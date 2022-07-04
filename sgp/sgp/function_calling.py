@@ -22,4 +22,3 @@ def function_calling():
     site_doc_name()
     delivery_note_customization()
     sales_order_customization()
-
