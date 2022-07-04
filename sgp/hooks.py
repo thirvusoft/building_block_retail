@@ -122,7 +122,7 @@ doc_events = {
 	"Delivery Note":{
 		"before_validate":"sgp.sgp.custom.py.delivery_note.update_customer",
 		"on_submit":[
-					"sgp.sgp.custom.py.delivery_note.update_qty_sitework.",
+					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
 					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework"
 					],
 		"on_cancel":[
