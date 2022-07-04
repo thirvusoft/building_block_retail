@@ -6,16 +6,9 @@ def sales_invoice_item_custom_fields():
     custom_fields={
         "Sales Invoice Item" :[
             dict(
-                fieldname= "area_per_bundle",
-                fieldtype= "Float",
-                insert_after= "qty",
-                label= "Area Per Bundle",
-   
-            ),
-            dict(
                  fieldname  = "ts_qty",
                  fieldtype  = "Float",
-                 insert_after  = "area_per_bundle",
+                 insert_after  = "qty",
                 label = "No of Bundle",
    
             ),
