@@ -19,7 +19,7 @@ def customize_field():
                  fieldtype='Percent', insert_after='status',
                  ),
             dict(fieldname='total_expense_amount', label='Total Costing',
-                 fieldtype='Currency', insert_after='completed', read_only=1
+                 fieldtype='Currency', insert_after='completed',
                  ),
             dict(fieldname='job__work', label='Job worker',
                  fieldtype='Link', insert_after='completed', options="Employee", hidden=1
@@ -31,16 +31,16 @@ def customize_field():
                  fieldtype='Link', insert_after='supervisor_name', options="Employee"
                  ),
             dict(fieldname='total_required_area', label='Total Required Area',
-                 fieldtype='Data', insert_after='supervisor_name', default=0
+                 fieldtype='Data', insert_after='supervisor_name', default=0,read_only=1
                  ),
             dict(fieldname='total_completed_area', label='Total Completed Area',
-                 fieldtype='Data', insert_after='total_required_area', default=0
+                 fieldtype='Data', insert_after='total_required_area', default=0,read_only=1
                  ),
             dict(fieldname='total_required_bundle', label='Total Required Bundle',
-                 fieldtype='Data', insert_after='total_completed_area', default=0
+                 fieldtype='Data', insert_after='total_completed_area', default=0,read_only=1
                  ),
             dict(fieldname='total_completed_bundle', label='Total Completed Bundle',
-                 fieldtype='Data', insert_after='total_required_bundle', default=0
+                 fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
                  ),
             dict(fieldname='is_multi_customer', label='is_multi_customer',
                  fieldtype='Check', insert_after='customer_details',

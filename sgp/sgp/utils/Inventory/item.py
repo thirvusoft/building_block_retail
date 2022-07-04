@@ -56,7 +56,7 @@ def item_customization():
                 insert_after='weight_per_piece',
                 hidden=1),
 
-            dict(fieldname='pavers_per_sqft',
+            dict(fieldname='bundle_per_sqr_ft',
                 label='Pavers Per Sqft',
                 fieldtype='Float',
                 insert_after='per_sqr_ft',
@@ -65,7 +65,7 @@ def item_customization():
             dict(fieldname='weight_per_paver',
                 label='Weight Per Paver',
                 fieldtype="Float",
-                insert_after='pavers_per_sqft',
+                insert_after='bundle_per_sqr_ft',
                 depends_on='eval:doc.item_group == "Pavers"'),
             
             dict(fieldname='sqft_per_slab',
