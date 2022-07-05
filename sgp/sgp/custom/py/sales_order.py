@@ -30,59 +30,63 @@ def get_item_value(doctype):
 @frappe.whitelist()
 def create_site(doc):
     doc=json.loads(doc)
-    supervisor=doc.get('supervisor_name') if('supervisor_name' in doc) else ''
-    pavers=[{
-            'item':row['item'],
-            'required_area':row['required_area'],
-            'area_per_bundle':row['area_per_bundle'],
-            'number_of_bundle':row['number_of_bundle'],
-            'allocated_paver_area':row['allocated_paver_area'],
-            'rate':row['rate'],
-            'amount':row['amount'],
-            'work': row['work'],
-            'sales_order':doc['name']
-            } for row in doc['pavers']
-            if row['work'] != "Supply Only"]
-    raw_material=[{
-            'item':row['item'],
-            'qty':row['qty'],
-            'uom':row['uom'],
-            'rate':row['rate'],
-            'amount':row['amount'],
-            'sales_order':doc['name']
-            } for row in doc['raw_materials']]
-    site_work=frappe.get_doc('Project',doc['site_work'])
-    total_area=0
-    completed_area=0
-    for item in (site_work.get('item_details') or []):
-        total_area+=item.required_area
-    for item in pavers:
-        total_area+=item['required_area']
-    for item in (site_work.get('job_worker') or []):
-        completed_area+=item.sqft_allocated
-    
-    site_work.update({
-        'customer': doc['customer'] or '',
-        'supervisor_name': supervisor,
-        'item_details': (site_work.get('item_details') or []) +pavers,
-        'raw_material': (site_work.get('raw_material') or []) + raw_material,
-        'total_required_area': total_area,
-        'total_completed_area': completed_area,
-        'completed': (completed_area/total_area)*100,
-        'distance':doc.get('distance') or 0
-    })
-    if(doc['is_multi_customer']):
-        sw_cust=[cus.customer for cus in (site_work.get('customer_name') or [] )]
-        customer=[]
-        for cust in doc['customers_name']:
-            if(cust['customer'] not in sw_cust):
-                customer.append({'customer':cust['customer']})
+    create=False
+    for row in doc['pavers']:
+        if(row["work"]!="Supply Only"):
+            create=True
+    if(doc['work']!="Supply Only" and create):
+        supervisor=doc.get('supervisor_name') if('supervisor_name' in doc) else ''
+        pavers=[{
+                'item':row['item'],
+                'required_area':row['required_area'],
+                'area_per_bundle':row['area_per_bundle'],
+                'number_of_bundle':row['number_of_bundle'],
+                'allocated_paver_area':row['allocated_paver_area'],
+                'rate':row['rate'],
+                'amount':row['amount'],
+                'work': row['work'],
+                'sales_order':doc['name']
+                } for row in doc['pavers']]
+        raw_material=[{
+                'item':row['item'],
+                'qty':row['qty'],
+                'uom':row['uom'],
+                'rate':row['rate'],
+                'amount':row['amount'],
+                'sales_order':doc['name']
+                } for row in doc['raw_materials']]
+        site_work=frappe.get_doc('Project',doc['site_work'])
+        total_area=0
+        completed_area=0
+        for item in (site_work.get('item_details') or []):
+            total_area+=item.required_area
+        for item in pavers:
+            total_area+=item['required_area']
+        for item in (site_work.get('job_worker') or []):
+            completed_area+=item.sqft_allocated
+        
         site_work.update({
-            'customer_name': (site_work.get('customer_name') or [] ) + customer
+            'customer': doc['customer'] or '',
+            'supervisor_name': supervisor,
+            'item_details': (site_work.get('item_details') or []) +pavers,
+            'raw_material': (site_work.get('raw_material') or []) + raw_material,
+            'total_required_area': total_area,
+            'total_completed_area': completed_area,
+            'completed': (completed_area/total_area)*100,
+            'distance':doc.get('distance') or 0
         })
-    site_work.save()
-    frappe.db.commit()
-    return 1
+        if(doc['is_multi_customer']):
+            sw_cust=[cus.customer for cus in (site_work.get('customer_name') or [] )]
+            customer=[]
+            for cust in doc['customers_name']:
+                if(cust['customer'] not in sw_cust):
+                    customer.append({'customer':cust['customer']})
+            site_work.update({
+                'customer_name': (site_work.get('customer_name') or [] ) + customer
+            })
+        site_work.save()
+        frappe.db.commit()
+        return 1
 
 
 @frappe.whitelist()

@@ -54,7 +54,7 @@ def customize_field():
                  ),
             dict(fieldname='job_worker', label='Job Worker',
                  fieldtype='Table', insert_after='job_worker_details',
-                 options="TS Job Worker"
+                 options="TS Job Worker Details"
                  ),
             dict(fieldname='additional_costs_1', label='Additional Costs',
                  fieldtype='Section Break', insert_after='notes', collapsible=1
@@ -120,7 +120,7 @@ def site_doc_name():
         'field_name': "project_name",
         "value": "Site Name"
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -129,7 +129,7 @@ def site_doc_name():
         'field_name': "project_template",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -138,7 +138,7 @@ def site_doc_name():
         'field_name': "expected_start_date",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -147,7 +147,7 @@ def site_doc_name():
         'field_name': "expected_end_date",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -156,7 +156,7 @@ def site_doc_name():
         'field_name': "department",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -165,7 +165,7 @@ def site_doc_name():
         'field_name': "project_type",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -174,7 +174,7 @@ def site_doc_name():
         'field_name': "is_active",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -183,7 +183,7 @@ def site_doc_name():
         'field_name': "percent_complete_method",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -192,7 +192,7 @@ def site_doc_name():
         'field_name': "sales_order",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -202,7 +202,7 @@ def site_doc_name():
         "property_type": "Check",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -212,7 +212,7 @@ def site_doc_name():
         "property_type": "Check",
         "value": 1
     })
-    Project.save(ignore_permissions=True),
+    Project.save(ignore_permissions=True)
     Project = frappe.get_doc({
         'doctype': 'Property Setter',
         'doctype_or_field': "DocField",
@@ -223,3 +223,28 @@ def site_doc_name():
         "value": 1
     })
     Project.save(ignore_permissions=True)
+    Project = frappe.get_doc({
+        'doctype': 'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Project",
+        'property': "hidden",
+        'field_name': "percent_complete",
+        "value": 1
+    })
+    Project.save(ignore_permissions=True)
+    frappe.get_doc(
+          {
+               "doctype": "Translation",
+               "source_text": "Project",
+               "translated_text": "Site Work",
+               "language_code": frappe.local.lang or "en",
+          }
+     ).insert()
+     frappe.get_doc(
+          {
+               "doctype": "Translation",
+               "source_text": "Projects",
+               "translated_text": "Site Work",
+               "language_code": frappe.local.lang or "en",
+          }
+     ).insert()
