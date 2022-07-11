@@ -103,6 +103,9 @@ def customize_field():
                 ),
             dict(fieldname='total', label=" Total Amount",
                  fieldtype='Currency', insert_after='additional_cost', read_only=1
+                ),
+           dict(fieldname='total_advance_amount', label=" Total Advance Amount",
+                 fieldtype='Float', insert_after='additional_cost', read_only=1
                 )
         ]
     }
