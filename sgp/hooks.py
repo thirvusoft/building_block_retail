@@ -114,8 +114,7 @@ doc_events = {
 	},
 	"Project":{
 		"autoname":"sgp.sgp.custom.py.site_work.autoname",
-		"before_save":"sgp.sgp.custom.py.site_work.before_save",
-		"validate":"sgp.sgp.custom.py.site_work.validate"
+		"before_save":"sgp.sgp.custom.py.site_work.before_save"
 	},
 	"Sales Order":{
 		"on_cancel":"sgp.sgp.custom.py.sales_order.remove_project_fields"
