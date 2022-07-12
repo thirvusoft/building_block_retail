@@ -12,6 +12,9 @@ from frappe.custom.doctype.property_setter.property_setter import make_property_
 def customize_field():
     custom_fields = {
         "Project": [
+           dict(fieldname='total_advance_amount', label=" Total Advance Amount",
+                 fieldtype='Float', insert_after='additional_cost', read_only=1
+                )
           dict(fieldname='work', label='Work',
                fieldtype='Data', insert_after='status',
                ),
