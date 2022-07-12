@@ -18,8 +18,11 @@ def customize_field():
             dict(fieldname='completed', label='% Completed',
                  fieldtype='Percent', insert_after='status',
                  ),
-            dict(fieldname='total_expense_amount', label='Total Costing',
+            dict(fieldname='total_expense_amount', label='Total costing as per bill',
                  fieldtype='Currency', insert_after='completed',
+                 ),
+           dict(fieldname='actual_site_cost_calculation', label='Actual site cost calculation',
+                 fieldtype='Currency', insert_after='total_expense_amount',
                  ),
             dict(fieldname='job__work', label='Job worker',
                  fieldtype='Link', insert_after='completed', options="Employee", hidden=1
