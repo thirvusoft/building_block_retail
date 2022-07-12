@@ -12,6 +12,8 @@ from sgp.sgp.utils.selling.delivery_note.delivery_note import delivery_note_cust
 from sgp.sgp.create_docs import create_docs
 from sgp.sgp.utils.selling.sales_order.sales_order import sales_order_customization
 from sgp.sgp.utils.hr.vehicle.vehicle import vehicle_customization
+from sgp.sgp.utils.crm.quotation.quotation import quotation_customization
+from sgp.sgp.custom.py.workflow import workflow_document_creation
 
 def function_calling():
     purchase_order()
@@ -26,3 +28,5 @@ def function_calling():
     delivery_note_customization()
     sales_order_customization()
     vehicle_customization()
+    quotation_customization()
+    workflow_document_creation()
