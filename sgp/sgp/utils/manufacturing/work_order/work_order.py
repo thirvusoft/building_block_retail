@@ -13,7 +13,8 @@ def work_order_custom_fields():
                  insert_after  = "bom_no",
                  label = "Priority",
                  options = "Urgent Priority\nHigh Priority\nLow Priority",
-                 in_standard_filter = 1 
+                 in_standard_filter = 1,
+                 in_list_view = 1
             ),
         ],
     }

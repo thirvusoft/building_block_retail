@@ -144,9 +144,6 @@ doc_events = {
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",
     },
-	"Workstation":{
-		"validate": "sgp.sgp.custom.py.workstation.validate"
-	}
 
 }
 after_migrate=["sgp.sgp.custom.py.site_work.create_status"]
@@ -160,7 +157,6 @@ doctype_js = {
 								],
 				"Vehicle":"/sgp/custom/js/vehicle.js",
 				"Purchase Receipt":"/sgp/custom/js/purchase_receipt.js",
-				"Workstation":"/sgp/custom/js/workstation.js",
 				"Delivery Note": "/sgp/custom/js/delivery_note.js",
 				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
