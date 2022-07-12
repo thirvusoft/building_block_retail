@@ -169,7 +169,8 @@ doctype_js = {
 				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"BOM": "/sgp/custom/js/bom.js",
-				"Job Card": "/sgp/custom/js/job_card.js"
+				"Job Card": "/sgp/custom/js/job_card.js",
+				"Quotation":"/sgp/custom/js/quotation.js",
 			 }
 # Scheduled Tasks
 # ---------------
