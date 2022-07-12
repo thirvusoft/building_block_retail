@@ -123,7 +123,8 @@ doc_events = {
 		"before_validate":"sgp.sgp.custom.py.delivery_note.update_customer",
 		"on_submit":[
 					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
-					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework"
+					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework",
+					"sgp.sgp.custom.py.delivery_note.create_work_order"
 					],
 		"on_cancel":[
 					"sgp.sgp.custom.py.delivery_note.reduce_qty_sitework",
@@ -143,9 +144,6 @@ doc_events = {
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",
     },
-	"Work Order":{
-		'before_submit': "sgp.sgp.custom.py.work_order.before_submit"
-	},
 	"Workstation":{
 		"validate": "sgp.sgp.custom.py.workstation.validate"
 	}
@@ -163,14 +161,13 @@ doctype_js = {
 				"Vehicle":"/sgp/custom/js/vehicle.js",
 				"Purchase Receipt":"/sgp/custom/js/purchase_receipt.js",
 				"Workstation":"/sgp/custom/js/workstation.js",
-				"Work Order": "/sgp/custom/js/work_order.js",
 				"Delivery Note": "/sgp/custom/js/delivery_note.js",
 				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
-				"BOM": "/sgp/custom/js/bom.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
 			 }
+# doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
 # ---------------
 

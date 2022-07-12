@@ -168,5 +168,18 @@ def odometer_validate(doc,action):
         doc.total_distance=doc.return_odometer_value-doc.current_odometer_value
         frappe.db.set_value("Delivery Note" , doc.name, "total_distance",doc.return_odometer_value-doc.current_odometer_value)
         
-
-
+def create_work_order(doc,action):
+    company = doc.company
+    for i in doc.items:
+        bom = frappe.get_all("BOM",fields=["name"],filters={'item':i.item_code,'is_default':1})
+        print(bom[0].name)
+        new_work_order = frappe.new_doc('Work Order')
+        new_work_order.production_item = i.item_code
+        new_work_order.company = company
+        new_work_order.bom_no = bom[0].name
+        new_work_order.qty = i.qty
+        new_work_order.fg_warehouse = i.warehouse
+        new_work_order.wip_warehouse = i.warehouse
+        new_work_order.priority = "Low Priority"
+        new_work_order.insert(ignore_permissions=True)
+       

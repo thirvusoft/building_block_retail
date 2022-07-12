@@ -12,7 +12,8 @@ def work_order_custom_fields():
                  fieldtype  = "Select",
                  insert_after  = "bom_no",
                  label = "Priority",
-                 options = "Urgent Priority\nHigh Priority\nLow Priority"
+                 options = "Urgent Priority\nHigh Priority\nLow Priority",
+                 in_standard_filter = 1 
             ),
         ],
     }
@@ -20,4 +21,4 @@ def work_order_custom_fields():
 
 
 def work_order_property_setter():
-    pass
+    make_property_setter("Work Order", "status", "options", "Urgent Priority\nHigh Priority\nLow Priority", "Data")
