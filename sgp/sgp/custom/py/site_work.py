@@ -1,5 +1,7 @@
+from frappe.utils import nowdate
 import frappe
 import json
+from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
 
 @frappe.whitelist()
 def item_details_fetching_pavers(item_code):
@@ -72,3 +74,49 @@ def create_status():
     doc.save()
     frappe.db.commit()
     
+
+def validate(self,event):
+    amount=0
+    add_cost=[]
+    for row in self.additional_cost:
+        if(row.description=="Site Advance"):
+            amount=row.amount
+            row.amount=0
+            add_cost.append(row)
+        else:
+            add_cost.append(row)
+    if(amount!=0 and self.is_multi_customer==0):
+        mode_of_payment = frappe.get_doc("Mode of Payment",'Cash').accounts
+        for i in mode_of_payment:
+            if(i.company==self.company):
+                acc_paid_to=i.default_account
+                break
+        try:
+            if(acc_paid_to):pass
+        except:
+            frappe.throw(("Please set Company and Default account for ({0}) mode of payment").format('Cash'))
+        
+        
+        doc=frappe.new_doc('Payment Entry')
+        doc.update({
+            'company': self.company,
+            'source_exchange_rate': 1,
+            'payment_type': 'Receive',
+            'posting_date': nowdate(),
+            'mode_of_payment': 'Cash',
+            'party_type': 'Customer',
+            'party': self.customer,
+            'paid_amount': amount,
+            'paid_to': get_bank_cash_account('Cash', self.company).get('account'),
+            'project': self.name,
+            'received_amount': amount,
+            'target_exchange_rate': 1,
+            'paid_to_account_currency': frappe.db.get_value('Account',acc_paid_to,'account_currency')
+        })
+        doc.insert()
+        doc.submit()
+        self.update({
+            'additional_cost': add_cost,
+            'total_advance_amount': (self.total_advance_amount or 0)+amount
+        })
+            
