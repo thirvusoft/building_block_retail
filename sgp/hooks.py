@@ -114,7 +114,8 @@ doc_events = {
 	},
 	"Project":{
 		"autoname":"sgp.sgp.custom.py.site_work.autoname",
-		"before_save":"sgp.sgp.custom.py.site_work.before_save"
+		"before_save":"sgp.sgp.custom.py.site_work.before_save",
+		"validate":"sgp.sgp.custom.py.site_work.validate"
 	},
 	"Sales Order":{
 		"on_cancel":"sgp.sgp.custom.py.sales_order.remove_project_fields"
@@ -168,7 +169,8 @@ doctype_js = {
 				"Sales Invoice": "/sgp/custom/js/sales_invoice.js",
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"BOM": "/sgp/custom/js/bom.js",
-				"Job Card": "/sgp/custom/js/job_card.js"
+				"Job Card": "/sgp/custom/js/job_card.js",
+				"Quotation":"/sgp/custom/js/quotation.js",
 			 }
 # Scheduled Tasks
 # ---------------

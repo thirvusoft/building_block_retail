@@ -45,7 +45,8 @@ def create_site(doc):
                 'rate':row['rate'],
                 'amount':row['amount'],
                 'work': row['work'],
-                'sales_order':doc['name']
+                'sales_order':doc['name'],
+                'warehouse':doc['set_warehouse']
                 } for row in doc['pavers']]
         raw_material=[{
                 'item':row['item'],
