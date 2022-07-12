@@ -43,19 +43,21 @@ def before_save(doc, action):
     item_cost=0
     rm_cost=0
     for item in doc.item_details:
-        if(item.warehouse):
+        if(item.get('warehouse')):
             bin_=frappe.get_value('Bin', {'warehouse': item.warehouse, 'item_code': item.item}, 'valuation_rate')
             item_cost+=(bin_ or 0)* item.allocated_paver_area
 
     for item in doc.item_details_compound_wall:
-        if(item.warehouse):
+        if(item.get('warehouse')):
             bin_=frappe.get_value('Bin', {'warehouse': item.warehouse, 'item_code': item.item}, 'valuation_rate')
             item_cost+=(bin_ or 0)* item.allocated_ft
     
     for item in doc.raw_material:
-        doc=frappe.get_last_doc('Item Price', {'buying':1, 'item_code': item.item})
-        rm_cost+=(doc.price_list_rate or 0)
-    
+        doc=frappe.get_all('Item Price', {'buying':1, 'item_code': item.item}, pluck="price_list_rate")
+        if(doc):
+            rm_cost+=(doc[0] or 0)
+
+        
     doc.actual_site_cost_calculation=(item_cost or 0)+(doc.total or 0)+(doc.total_job_worker_cost or 0)+ (rm_cost or 0)
 
 
@@ -104,7 +106,7 @@ def validate(self,event):
             mode=row.mode_of_payment
             row.amount=0
             add_cost.append(row)
-            if(amount!=0 and self.is_multi_customer==0):
+            if(amount!=0 and self.is_multi_customer==0 and self.customer):
                 mode_of_payment = frappe.get_doc("Mode of Payment",mode).accounts
                 for i in mode_of_payment:
                     if(i.company==self.company):
@@ -134,11 +136,10 @@ def validate(self,event):
                 })
                 doc.insert()
                 doc.submit()
-                self.update({
+        else:
+            add_cost.append(row)
+    self.update({
                     'additional_cost': add_cost,
                     'total_advance_amount': (self.total_advance_amount or 0)+amount
                 })
-        else:
-            add_cost.append(row)
-    
             

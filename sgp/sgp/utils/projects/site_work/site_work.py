@@ -102,10 +102,11 @@ def customize_field():
                  fieldtype='Section Break', insert_after='message'
                 ),
             dict(fieldname='total', label=" Total Amount",
-                 fieldtype='Currency', insert_after='additional_cost', read_only=1
+                 fieldtype='Currency', insert_after='additional_cost', read_only=1),
+
            dict(fieldname='total_advance_amount', label=" Total Advance Amount",
                  fieldtype='Float', insert_after='additional_cost', read_only=1
-                )
+                ),
           dict(fieldname='work', label='Work',
                fieldtype='Data', insert_after='status',
                ),
@@ -352,7 +353,7 @@ def site_doc_name():
                "language_code": frappe.local.lang or "en",
           }
      ).insert()
-     frappe.get_doc(
+    frappe.get_doc(
           {
                "doctype": "Translation",
                "source_text": "Projects",
