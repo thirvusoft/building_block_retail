@@ -172,7 +172,6 @@ def create_work_order(doc,action):
     company = doc.company
     for i in doc.items:
         bom = frappe.get_all("BOM",fields=["name"],filters={'item':i.item_code,'is_default':1})
-        print(bom[0].name)
         new_work_order = frappe.new_doc('Work Order')
         new_work_order.production_item = i.item_code
         new_work_order.company = company
