@@ -5,6 +5,7 @@ from sgp.sgp.utils.buying.purchase_order import purchase_order
 from sgp.sgp.utils.buying.purchase_receipt import purchase_receipt
 from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
+from sgp.sgp.utils.hr.role.roles import create_role
 from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sales_invoice_customization
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
 from sgp.sgp.utils.projects.site_work.site_work import site_doc_name 
@@ -31,3 +32,4 @@ def function_calling():
     quotation_customization()
     workflow_document_creation()
     work_order_custom()
+    create_role()
