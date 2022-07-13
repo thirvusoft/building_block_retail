@@ -1,4 +1,6 @@
 import frappe
+from sgp.sgp.utils.hr.role.roles import create_role
+
 def workflow_document_creation():
     create_state()
     create_action()
@@ -8,6 +10,7 @@ def workflow_document_creation():
 def create_quotation_flow():
     if frappe.db.exists('Workflow', 'Quotation Flow'):
         frappe.delete_doc('Workflow', 'Quotation Flow')
+    create_role()
     workflow = frappe.new_doc('Workflow')
     workflow.workflow_name = 'Quotation Flow'
     workflow.document_type = 'Quotation'
@@ -18,11 +21,11 @@ def create_quotation_flow():
         state = 'Draft', allow_edit = 'All',doc_status = 0,
     ))
     workflow.append('states', dict(
-        state = 'Approved', allow_edit = 'Sales Manager',doc_status = 1,
+        state = 'Approved', allow_edit = 'Admin',doc_status = 1,
     ))
     workflow.append('transitions', dict(
         state = 'Draft', action='Approve', next_state = 'Approved',
-        allowed='Sales Manager', allow_self_approval= 1,
+        allowed='Admin', allow_self_approval= 1,
     ))
     workflow.insert(ignore_permissions=True)
     return workflow
