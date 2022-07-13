@@ -40,3 +40,14 @@ def create_timesheet(doc,action):
                 )
         else:
             frappe.msgprint(f"User id not set for Employee: {i}")
+    
+@frappe.whitelist()
+def get_workorder_doc(work_order, opr, workstation, qty=0):
+    wo=frappe.get_doc("Work Order", work_order)
+    over_prdn_prcnt = frappe.db.get_singles_value("Manufacturing Settings", 'overproduction_percentage_for_work_order')
+    wo.update({
+        'over_prdn_prcnt' : over_prdn_prcnt
+    })
+    frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', qty)
+    frappe.db.commit()
+    return wo
