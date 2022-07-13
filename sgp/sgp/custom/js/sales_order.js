@@ -29,7 +29,7 @@ frappe.ui.form.on('Sales Order',{
         frm.set_query('supervisor', function(frm){
             return {
                 filters:{
-                    'designation': 'Site Supervisor'
+                    'designation': 'Supervisor'
                 }
             }
         });

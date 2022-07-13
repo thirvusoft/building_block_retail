@@ -41,7 +41,7 @@ def create_state():
 def create_action():
     pass
 def create_designation():
-    list=["Site Supervisor"]
+    list=["Supervisor"]
     for row in list:
         if not frappe.db.exists('Designation', row):
             new_doc = frappe.new_doc('Designation')
