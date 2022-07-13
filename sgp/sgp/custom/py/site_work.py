@@ -53,9 +53,9 @@ def before_save(doc, action):
             item_cost+=(bin_ or 0)* item.allocated_ft
     
     for item in doc.raw_material:
-        doc=frappe.get_all('Item Price', {'buying':1, 'item_code': item.item}, pluck="price_list_rate")
-        if(doc):
-            rm_cost+=(doc[0] or 0)
+        doc1=frappe.get_all('Item Price', {'buying':1, 'item_code': item.item}, pluck="price_list_rate")
+        if(doc1):
+            rm_cost+=(doc1[0] or 0)
 
         
     doc.actual_site_cost_calculation=(item_cost or 0)+(doc.total or 0)+(doc.total_job_worker_cost or 0)+ (rm_cost or 0)
@@ -97,16 +97,21 @@ def create_status():
     
 
 def validate(self,event):
+    if(self.name not in frappe.get_all('Project', pluck="name")):
+        return
     amount=0
+    total_amount=0
     add_cost=[]
     mode=''
     for row in self.additional_cost:
         if(row.description=="Site Advance"):
-            amount=row.amount
+            child_name=row.name
+            amount=row.amount or 0
+            total_amount+=amount
             mode=row.mode_of_payment
             row.amount=0
             add_cost.append(row)
-            if(amount!=0 and self.is_multi_customer==0 and self.customer):
+            if(amount):
                 mode_of_payment = frappe.get_doc("Mode of Payment",mode).accounts
                 for i in mode_of_payment:
                     if(i.company==self.company):
@@ -126,7 +131,7 @@ def validate(self,event):
                     'posting_date': nowdate(),
                     'mode_of_payment': mode,
                     'party_type': 'Customer',
-                    'party': self.customer,
+                    'party': row.customer if(self.is_multi_customer) else self.customer,
                     'paid_amount': amount,
                     'paid_to': get_bank_cash_account(mode, self.company).get('account'),
                     'project': self.name,
@@ -136,10 +141,14 @@ def validate(self,event):
                 })
                 doc.insert()
                 doc.submit()
+                if(row.name and event=='after_insert'):
+                    frappe.db.set_value("Additional Costs", row.name, 'amount', 0)
         else:
             add_cost.append(row)
-    self.update({
-                    'additional_cost': add_cost,
-                    'total_advance_amount': (self.total_advance_amount or 0)+amount
-                })
-            
+    if(event=='after_insert'):
+        frappe.db.set_value("Project", self.name, 'total_advance_amount', (self.total_advance_amount or 0)+ (total_amount or 0))
+    if(event=='validate'):
+        self.update({
+            'additional_cost': add_cost,
+            'total_advance_amount': (self.total_advance_amount or 0)+ (total_amount or 0)
+        })

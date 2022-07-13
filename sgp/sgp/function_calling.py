@@ -16,7 +16,7 @@ from sgp.sgp.utils.selling.sales_order.sales_order import sales_order_customizat
 from sgp.sgp.utils.hr.vehicle.vehicle import vehicle_customization
 from sgp.sgp.utils.crm.quotation.quotation import quotation_customization
 from sgp.sgp.custom.py.workflow import workflow_document_creation
-
+from sgp.sgp.utils.manufacturing.work_order.work_order import work_order_custom
 def function_calling():
     create_docs()
     purchase_order()
@@ -35,3 +35,5 @@ def function_calling():
     workflow_document_creation()
     create_role()
     create_contracter_expense_account()
+    work_order_custom()
+    create_role()

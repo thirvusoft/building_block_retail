@@ -43,7 +43,7 @@ def customize_field():
               fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
               ),
          dict(fieldname='is_multi_customer', label='is_multi_customer',
-              fieldtype='Check', insert_after='customer_details',
+              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=1
               ),
          dict(fieldname='customer_name', label='Customer Name',
               fieldtype='Table', insert_after='customer',
@@ -137,6 +137,32 @@ def site_doc_name():
          'property': "label",
          'field_name': "project_name",
          "value": "Site Name"
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "allow_in_quick_entry",
+         'field_name': "customer",
+         "value": "1"
+    })
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "mandatory_depends_on",
+         'field_name': "customer",
+         "value": "eval:!doc.is_multi_customer"
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "depends_on",
+         'field_name': "customer",
+         "value": "eval:!doc.is_multi_customer"
     })
     Project.save(ignore_permissions=True),
     Project = frappe.get_doc({
