@@ -1,6 +1,7 @@
 import frappe
-
-
+import json
+from erpnext.stock.get_item_details import get_default_bom
+from frappe.utils.data import flt
 
 def update_qty_sitework(self,event):
     if(not self.is_return):
@@ -167,18 +168,62 @@ def odometer_validate(doc,action):
     if(doc.return_odometer_value):
         doc.total_distance=doc.return_odometer_value-doc.current_odometer_value
         frappe.db.set_value("Delivery Note" , doc.name, "total_distance",doc.return_odometer_value-doc.current_odometer_value)
-        
-def create_work_order(doc,action):
-    company = doc.company
-    for i in doc.items:
-        bom = frappe.get_all("BOM",fields=["name"],filters={'item':i.item_code,'is_default':1})
-        new_work_order = frappe.new_doc('Work Order')
-        new_work_order.production_item = i.item_code
-        new_work_order.company = company
-        new_work_order.bom_no = bom[0].name
-        new_work_order.qty = i.qty
-        new_work_order.fg_warehouse = i.warehouse
-        new_work_order.wip_warehouse = i.warehouse
-        new_work_order.priority = "Low Priority"
-        new_work_order.insert(ignore_permissions=True)
-       
+
+@frappe.whitelist()
+def make_work_orders(items, delivery_note, company, project=None):
+	items = json.loads(items).get("items")
+	out = []
+
+	for i in items:
+		if not i.get("bom"):
+			frappe.throw(_("Please select BOM against item {0}").format(i.get("item_code")))
+		if not i.get("pending_qty"):
+			frappe.throw(_("Please select Qty against item {0}").format(i.get("item_code")))
+
+		work_order = frappe.get_doc(
+			dict(
+				doctype="Work Order",
+				production_item=i["item_code"],
+				bom_no=i.get("bom"),
+				qty=i["pending_qty"],
+				company=company,
+				delivery_note=delivery_note,
+				delivery_note_item=i["delivery_note_item"],
+				project=project,
+				fg_warehouse=i["warehouse"],
+				description=i["description"],
+                priority = "Low Priority"
+			)
+		).insert()
+		work_order.set_work_order_operations()
+		work_order.flags.ignore_mandatory = True
+		work_order.save()
+		out.append(work_order)
+
+	return [p.name for p in out]
+@frappe.whitelist()
+
+def get_work_order_items(self, for_raw_material_request=0):
+    self = json.loads(self)
+    items = []
+    item_codes = [i['item_code'] for i in self['items']]
+    for table in [self['items'], self['packed_items']]:
+        for i in table:
+            bom = get_default_bom(i['item_code'])
+            stock_qty = i['qty'] if i['doctype'] == "Packed Item" else i['stock_qty']
+            pending_qty = stock_qty
+            if pending_qty and i['item_code']:
+                items.append(
+                    dict(
+                        name=i['name'],
+                        item_code=i['item_code'],
+                        description=i['description'],
+                        bom=bom or "",
+                        warehouse=i['warehouse'],
+                        pending_qty=pending_qty,
+                        required_qty=pending_qty if for_raw_material_request else 0,
+                        delivery_note_item=i['name'],
+                    )
+                )
+
+    return items

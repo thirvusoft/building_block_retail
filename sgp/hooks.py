@@ -126,7 +126,6 @@ doc_events = {
 		"on_submit":[
 					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
 					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework",
-					"sgp.sgp.custom.py.delivery_note.create_work_order"
 					],
 		"on_cancel":[
 					"sgp.sgp.custom.py.delivery_note.reduce_qty_sitework",
