@@ -15,10 +15,10 @@ def vehicle_custom_field():
                 label= "Maintanence Details"
             ),
             dict(
-                fieldname= "maintenance_details",
+                fieldname= "maintanence_details_",
                 fieldtype= "Table",
                 insert_after= "section_break_maintenance_details",
-                label= "maintenance_details",
+                label= "Maintanance Details",
                 options= "Maintenance Details"
             )
         ]
