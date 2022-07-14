@@ -18,6 +18,9 @@ from sgp.sgp.utils.hr.vehicle.vehicle import vehicle_customization
 from sgp.sgp.utils.crm.quotation.quotation import quotation_customization
 from sgp.sgp.custom.py.workflow import workflow_document_creation
 from sgp.sgp.utils.manufacturing.work_order.work_order import work_order_custom
+from sgp.sgp.utils.manufacturing.workstation.workstation import workstation_custom
+from sgp.sgp.utils.accounting.journal_entry.journal_entry import journal_entry_customization
+from sgp.sgp.utils.accounting.company.company import company_customization
 def function_calling():
     create_docs()
     purchase_order()
@@ -38,4 +41,10 @@ def function_calling():
     create_contracter_expense_account()
     work_order_custom()
     create_role()
+<<<<<<< HEAD
     create_job_card_custom_fields()
+=======
+    workstation_custom()
+    journal_entry_customization()
+    company_customization()
+>>>>>>> d9e329a532e50837e653b698a71f282798bc28c5

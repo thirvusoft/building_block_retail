@@ -1,3 +1,4 @@
+import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
 def create_contracter_expense_account():
@@ -10,4 +11,4 @@ def create_contracter_expense_account():
     }
     
     create_custom_fields(custom_fields)
-      
+    

@@ -16,10 +16,17 @@ def work_order_custom_fields():
                  in_standard_filter = 1,
                  in_list_view = 1
             ),
+            dict(
+                 fieldname  = "total_expanse",
+                 fieldtype  = "Currency",
+                 insert_after  = "corrective_operation_cost",
+                 label = "Total Expanse",
+                 hidden = 1
+            ),
         ],
     }
     create_custom_fields(custom_fields)
 
 
-def work_order_property_setter():pass
-    # make_property_setter("Work Order", "status", "options", "Urgent Priority\nHigh Priority\nLow Priority", "Data")
+def work_order_property_setter():
+    pass
