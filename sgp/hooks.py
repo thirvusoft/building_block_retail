@@ -136,9 +136,9 @@ doc_events = {
 		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate",]
 
 	},
-	"Job Card":{
-		"on_submit": "sgp.sgp.custom.py.job_card.create_timesheet"
-	},
+	# "Job Card":{
+	# 	"on_submit": "sgp.sgp.custom.py.job_card.create_timesheet"
+	# },
 	"Sales Invoice":{
     	"before_validate":"sgp.sgp.custom.py.sales_invoice.update_customer"
   	},
