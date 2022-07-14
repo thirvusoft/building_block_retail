@@ -149,7 +149,8 @@ doc_events = {
         "on_change":"sgp.sgp.custom.py.work_order.before_save",
     },
     "Stock Entry":{
-        "on_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
+        "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
+        "on_cancel":"sgp.sgp.custom.py.stock_entry.on_cancel"
     },
 
 }
