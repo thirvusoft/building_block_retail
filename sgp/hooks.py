@@ -163,6 +163,7 @@ doctype_js = {
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
+				"Payroll Entry": "/sgp/custom/js/payroll_entry.js"
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
@@ -194,9 +195,9 @@ doctype_js = {
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "sgp.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.erpnext.payroll.doctype.payroll_entry.payroll_entry.make_payment_entry": "sgp.sgp.utils.hr.journel_entry.journel_entry.make_payment_entry"
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,
