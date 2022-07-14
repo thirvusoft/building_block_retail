@@ -43,7 +43,7 @@ def customize_field():
               fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
               ),
          dict(fieldname='is_multi_customer', label='is_multi_customer',
-              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=1
+              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=0
               ),
          dict(fieldname='customer_name', label='Customer Name',
               fieldtype='Table', insert_after='customer',
@@ -102,7 +102,7 @@ def customize_field():
               fieldtype='Section Break', insert_after='message'
               ),
          dict(fieldname='total', label=" Total Amount",
-              fieldtype='Currency', insert_after='additional_cost'
+              fieldtype='Currency', insert_after='total_advance_amount'
               ),
          dict(fieldname='material_supply', label="Material Supply",
               fieldtype='Check', insert_after='total',
@@ -122,6 +122,9 @@ def customize_field():
          dict(fieldname='dust_sweeping', label="Dust Sweeping",
               fieldtype='Check', insert_after='dust_finishing_with_rammer'
               ),
+         dict(fieldname='total_advance_amount', label=" Total Advance Amount",
+                 fieldtype='Float', insert_after='additional_cost', read_only=1
+                )
        ]
    }
  
@@ -283,6 +286,26 @@ def site_doc_name():
          'doc_type': "Project",
          'property': "hidden",
          'field_name': "margin",
+         "property_type": "Check",
+         "value": 1
+    })
+    Project.save(ignore_permissions=True)
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "hidden",
+         'field_name': "section_break_18",
+         "property_type": "Check",
+         "value": 1
+    })
+    Project.save(ignore_permissions=True)
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "hidden",
+         'field_name': "section_break0",
          "property_type": "Check",
          "value": 1
     })

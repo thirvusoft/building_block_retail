@@ -15,16 +15,19 @@ frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
         frappe.ui.form.ProjectQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
             render_dialog: async function() {
-              this._super();
-              let calling_doc = frappe._from_link?.doc;
-                    if(calling_doc.doctype=='Sales Order'){ 
-                        if(!calling_doc.is_multi_customer){
-                            this.doc.customer=calling_doc.customer
-                        }
-                        else{
-                            this.doc.is_multi_customer=1
-                            this.doc.customer_name=calling_doc.customers_name
-                        }
+                this._super();
+                let calling_doc = frappe._from_link?.doc;
+                this.additional_cost=[{'description': 'Any Food Exp in Site'}, 
+                                    {'description': 'Other Labour Work'}, 
+                                    {'description': 'Site Advance'}]
+                if(calling_doc.doctype=='Sales Order'){ 
+                    if(!calling_doc.is_multi_customer){
+                        this.doc.customer=calling_doc.customer
+                    }
+                    else{
+                        this.doc.is_multi_customer=1
+                        this.doc.customer_name=calling_doc.customers_name
+                    }
                 };
             }
         });
