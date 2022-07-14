@@ -11,8 +11,8 @@ def workstation_custom_fields():
                  fieldname  = "expanse_per_piece",
                  fieldtype  = "Currency",
                  insert_after  = "hour_rate_consumable",
-                 label = "Expanse per piece",
-                 description = "per Qty"
+                 label = "Expense Per Piece",
+                 description = "per qty"
             ),
         ],
     }
