@@ -18,6 +18,8 @@ from sgp.sgp.utils.crm.quotation.quotation import quotation_customization
 from sgp.sgp.custom.py.workflow import workflow_document_creation
 from sgp.sgp.utils.manufacturing.work_order.work_order import work_order_custom
 from sgp.sgp.utils.manufacturing.workstation.workstation import workstation_custom
+from sgp.sgp.utils.accounting.journal_entry.journal_entry import journal_entry_customization
+from sgp.sgp.utils.accounting.company.company import company_customization
 def function_calling():
     create_docs()
     purchase_order()
@@ -39,3 +41,5 @@ def function_calling():
     work_order_custom()
     create_role()
     workstation_custom()
+    journal_entry_customization()
+    company_customization()

@@ -39,28 +39,37 @@ def creating_journal_entry(doc,income):
         income_account = frappe.get_value("Employee",debit[0].employee,"contracter_expense_account")
         if debit[0].employee:
             if income_account:
-                default_cash_account = frappe.get_cached_value("Company", doc.company, "default_cash_account")
-                new_journal=frappe.get_doc({
-                    "doctype":"Journal Entry",
-                    "company":doc.company,
-                    "posting_date":doc.posting_date,
-                    "accounts":[
-                        {
-                            "account":default_cash_account,
-                            "credit_in_account_currency":income
-                        },
-                        {
-                            "account":income_account,
-                            "debit_in_account_currency":income,
-                        },
-                    ],
-                })
-                new_journal.insert()
-                new_journal.submit()
+                default_employee_expenses_account = frappe.get_cached_value("Company", doc.company, "default_employee_expenses_account")
+                if default_employee_expenses_account:
+                    new_journal=frappe.get_doc({
+                        "doctype":"Journal Entry",
+                        "company":doc.company,
+                        "posting_date":doc.posting_date,
+                        "stock_entry_linked":doc.name,
+                        "accounts":[
+                            {
+                                "account":default_employee_expenses_account,
+                                "credit_in_account_currency":income
+                            },
+                            {
+                                "account":income_account,
+                                "debit_in_account_currency":income,
+                            },
+                        ],
+                    })
+                    new_journal.insert()
+                    new_journal.submit()
+                else:
+                    linkto = get_link_to_form("Company", doc.company)
+                    frappe.throw(
+                        ("Enter Default Employee Expenses Account in company => {}.").format(
+                            frappe.bold(linkto)
+                        )
+                    )
             else:
                 linkto = get_link_to_form("Employee", debit[0].employee)
                 frappe.throw(
-                    ("Enter Salary Account for Contracter for {}.").format(
+                    ("Enter Salary Account for Contracter in {}.").format(
                         frappe.bold(linkto)
                     )
                 )

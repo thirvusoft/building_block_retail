@@ -150,7 +150,6 @@ doc_events = {
     },
     "Stock Entry":{
         "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
-        "on_cancel":"sgp.sgp.custom.py.stock_entry.on_cancel"
     },
 
 }
@@ -170,7 +169,7 @@ doctype_js = {
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
-    			# "Work Order":"/sgp/custom/js/work_order.js"
+    			"Company":"/sgp/custom/js/company.js"
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
