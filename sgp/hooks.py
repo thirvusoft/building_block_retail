@@ -163,7 +163,8 @@ doctype_js = {
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
-				"Payroll Entry": "/sgp/custom/js/payroll_entry.js"
+				"Payroll Entry": "/sgp/custom/js/payroll_entry.js",
+				"Employee": "/sgp/custom/js/employee.js"
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
