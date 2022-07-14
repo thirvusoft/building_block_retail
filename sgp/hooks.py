@@ -145,6 +145,12 @@ doc_events = {
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",
     },
+	"Stock Entry":{
+		'on_submit': "sgp.sgp.custom.py.stock_entry.set_value_in_jobcard_after_stock_entry"
+	},
+	"Job Card":{
+		'before_submit': "sgp.sgp.utils.manufacturing.job_card.job_card.before_submit"
+	},
 	"Work Order":{
         "on_change":"sgp.sgp.custom.py.work_order.before_save",
     },
@@ -169,9 +175,13 @@ doctype_js = {
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
+<<<<<<< HEAD
+    			"Work Order":"/sgp/custom/js/work_order.js"
+=======
     		"Company":"/sgp/custom/js/company.js",
 				"Payroll Entry": "/sgp/custom/js/payroll_entry.js",
 				"Employee": "/sgp/custom/js/employee.js"
+>>>>>>> d9e329a532e50837e653b698a71f282798bc28c5
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks

@@ -51,3 +51,9 @@ def get_workorder_doc(work_order, opr, workstation, qty=0):
     frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', qty)
     frappe.db.commit()
     return wo
+
+@frappe.whitelist()
+def get_link_to_jobcard(work_order):
+    job_card = frappe.get_all("Job Card", filters={'work_order':work_order},pluck = 'name')
+    return "/app/job-card/"+job_card[-1]
+    

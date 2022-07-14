@@ -7,6 +7,7 @@ from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
 from sgp.sgp.utils.hr.employee.employee import create_contracter_expense_account
 from sgp.sgp.utils.hr.role.roles import create_role
+from sgp.sgp.utils.manufacturing.job_card.job_card import create_job_card_custom_fields
 from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sales_invoice_customization
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
 from sgp.sgp.utils.projects.site_work.site_work import site_doc_name 
@@ -40,6 +41,10 @@ def function_calling():
     create_contracter_expense_account()
     work_order_custom()
     create_role()
+<<<<<<< HEAD
+    create_job_card_custom_fields()
+=======
     workstation_custom()
     journal_entry_customization()
     company_customization()
+>>>>>>> d9e329a532e50837e653b698a71f282798bc28c5

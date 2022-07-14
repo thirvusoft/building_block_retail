@@ -15,12 +15,13 @@ frappe.ui.form.on("Job Card",{
                 }
             })
         }
-        })
+        }).addClass("btn-primary")
     }
 })
 function make_se (frm, purpose) {
     show_prompt_for_qty_input(frm, purpose)
         .then(data => {
+            if(data.qty<=0){return}
             return frappe.xcall('erpnext.manufacturing.doctype.work_order.work_order.make_stock_entry', {
                 'work_order_id': frm.name,
                 'purpose': purpose,
@@ -30,6 +31,7 @@ function make_se (frm, purpose) {
             frappe.model.sync(stock_entry);
             frappe.set_route('Form', stock_entry.doctype, stock_entry.name);
         });
+        
 
 }
 function show_prompt_for_qty_input(frm, purpose) {
