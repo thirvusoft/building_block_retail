@@ -5,6 +5,7 @@ from sgp.sgp.utils.buying.purchase_order import purchase_order
 from sgp.sgp.utils.buying.purchase_receipt import purchase_receipt
 from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
+from sgp.sgp.utils.hr.employee.employee import create_contracter_expense_account
 from sgp.sgp.utils.hr.role.roles import create_role
 from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sales_invoice_customization
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
@@ -18,6 +19,7 @@ from sgp.sgp.custom.py.workflow import workflow_document_creation
 from sgp.sgp.utils.manufacturing.work_order.work_order import work_order_custom
 from sgp.sgp.utils.manufacturing.workstation.workstation import workstation_custom
 def function_calling():
+    create_docs()
     purchase_order()
     purchase_invoice()
     purchase_receipt()
@@ -32,6 +34,8 @@ def function_calling():
     vehicle_customization()
     quotation_customization()
     workflow_document_creation()
+    create_role()
+    create_contracter_expense_account()
     work_order_custom()
     create_role()
     workstation_custom()

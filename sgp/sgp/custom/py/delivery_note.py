@@ -176,9 +176,9 @@ def make_work_orders(items, delivery_note, company, project=None):
 
 	for i in items:
 		if not i.get("bom"):
-			frappe.throw(frappe._("Please select BOM against item {0}").format(i.get("item_code")))
+			frappe.throw(("Please select BOM against item {0}").format(i.get("item_code")))
 		if not i.get("pending_qty"):
-			frappe.throw(frappe._("Please select Qty against item {0}").format(i.get("item_code")))
+			frappe.throw(("Please select Qty against item {0}").format(i.get("item_code")))
 
 		work_order = frappe.get_doc(
 			dict(
