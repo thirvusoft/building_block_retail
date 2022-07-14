@@ -21,5 +21,5 @@ def work_order_custom_fields():
     create_custom_fields(custom_fields)
 
 
-def work_order_property_setter():
-    make_property_setter("Work Order", "status", "options", "Urgent Priority\nHigh Priority\nLow Priority", "Data")
+def work_order_property_setter():pass
+    # make_property_setter("Work Order", "status", "options", "Urgent Priority\nHigh Priority\nLow Priority", "Data")
