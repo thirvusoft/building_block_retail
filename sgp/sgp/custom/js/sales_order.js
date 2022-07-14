@@ -196,9 +196,6 @@ frappe.ui.form.on('Sales Order',{
                 if(r.message){ 
                         frappe.show_alert({message: __("Site Work Updated Successfully"),indicator: 'green'});
                       }
-                else{
-                    frappe.show_alert({message: __("Couldn't Update Site Work"),indicator: 'red'});
-                    }
                 }
         })
     },
@@ -228,6 +225,14 @@ frappe.ui.form.on('Sales Order',{
                     }
                 }
             })
+        }
+    },
+    work: function(frm){
+        if(frm.doc.work=="Supply Only"){
+            frm.set_value('site_work','')
+        }
+        for(let row=0; row<(frm.doc.pavers?frm.doc.pavers.length:0);row++){
+            frappe.model.set_value(frm.doc.pavers[row].doctype, frm.doc.pavers[row].name, 'work', frm.doc.work)
         }
     }
 })
@@ -262,4 +267,8 @@ function amount_rawmet(frm,cdt,cdn){
     let row=locals[cdt][cdn]
     frappe.model.set_value(cdt,cdn,'amount', (row.rate?row.rate:0)*(row.qty?row.qty:0))
 }
-
+ frappe.ui.form.on('Item Detail Pavers', {
+    pavers_add: function(frm, cdt, cdn){
+        frappe.model.set_value(cdt, cdn, 'work', frm.doc.work)
+    }
+ })

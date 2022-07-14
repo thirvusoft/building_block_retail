@@ -35,10 +35,10 @@ frappe.ui.form.on("Project",{
         setquery(frm,cdt,cdn)
 
 		let sw_items=[];
-		for(let item=0;item<frm.doc.item_details?frm.doc.item_details.length:0;item++){
+		for(let item=0;item<(frm.doc.item_details?frm.doc.item_details.length:0);item++){
 			sw_items.push(frm.doc.item_details[item].item)
 		}
-		for(let item=0;item<frm.doc.item_details_compound_wall?frm.doc.item_details_compound_wall.length:0;item++){
+		for(let item=0;item<(frm.doc.item_details_compound_wall?frm.doc.item_details_compound_wall.length:0);item++){
 			sw_items.push(frm.doc.item_details_compound_wall[item].item)
 		}
 		frm.set_query('item','job_worker', function(frm){
@@ -79,10 +79,10 @@ frappe.ui.form.on("Project",{
         }	
     },
     onload:function(frm){
-	 if(cur_frm.doc.additional_cost.length==0){
+	let  additional_cost=cur_frm.doc.additional_cost?cur_frm.doc.additional_cost:[]
+	 if(additional_cost.length==0 && cur_frm.is_new()){
 	
-		let add_on_cost=["Material Supply","Work Completed","Cutting Piece","Dust Swing","Dust Finishing With Rammer",
-			"Dust Sweeping","Any Food Exp in Site","Other Labour Work","Site Advance"]
+		let add_on_cost=["Any Food Exp in Site","Other Labour Work","Site Advance"]
 			for(let row=0;row<add_on_cost.length;row++){
 			
 			var new_row = frm.add_child("additional_cost");
@@ -90,20 +90,6 @@ frappe.ui.form.on("Project",{
 			}
 				refresh_field("additional_cost");
 		}
-		cur_frm.set_df_property("total_amount","read_only",1)
-		if(cur_frm.doc.total_amount==0)
-			cur_frm.set_df_property("total_amount","hidden",1)
-		else
-			cur_frm.set_df_property("total_amount","hidden",0)
-		
-		cur_frm.set_df_property("total_amount_of_raw_material","read_only",1)
-		if(cur_frm.doc.total_amount_of_raw_material==0)
-			cur_frm.set_df_property("total_amount_of_raw_material","hidden",1)
-		else
-			cur_frm.set_df_property("total_amount_of_raw_material","hidden",0)
-
-		
-
 }
 })
 

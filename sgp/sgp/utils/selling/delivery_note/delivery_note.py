@@ -89,7 +89,8 @@ def delivery_note_custom_field():
                 fieldname= "total_distance",
 				fieldtype= "Int",
 				insert_after= "return_odometer_value",
-				label= "Total Distance"
+				label= "Total Distance",
+                read_only=1
             ),
             dict(
                 fieldname= "own_vehicle_no",
@@ -118,7 +119,7 @@ def delivery_note_custom_field():
 				fieldtype= "Data",
 				insert_after= "vehicle_no",
 				label= "Driver Name ",
-                depends_on= "eval:doc.transporter=='Own Transporter'"
+                depends_on= "eval:doc.transporter!='Own Transporter'"
             ),
             dict(
                 fieldname= "branch",
@@ -234,3 +235,10 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note Item", "is_fixed_asset", "hidden", "1", "Check")
     make_property_setter("Delivery Note Item", "purchase_details", "hidden", "1", "Check")
     make_property_setter("Delivery Note Item", "supplier_details", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "driver", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "driver_name", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "vehicle_no", "depends_on", "eval:doc.transporter!='Own Transporter'", "Data")
+
+
+    
+
