@@ -13,14 +13,20 @@
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-07-09 11:51:17.268316",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-07-13 10:06:59.911435",
+ "modified_by": "Administrator",
  "module": "Sgp",
  "name": "Sales Cycle",
  "owner": "parameshwari@gmail.com",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
   {
    "doc_view": "List",
    "label": "Sales Order",
