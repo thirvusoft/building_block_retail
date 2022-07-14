@@ -1,5 +1,4 @@
 import frappe
-from frappe.utils import lazy_loader
 from frappe.utils.data import get_link_to_form
 def before_validate(doc,action):
     if doc.from_bom == 1:
