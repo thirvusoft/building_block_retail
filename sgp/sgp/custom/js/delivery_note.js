@@ -188,8 +188,6 @@ frappe.ui.form.on('Delivery Note', {
 													})
 													frm.set_value("has_work_order",1)
 												}
-												console.log(r.message)
-												
 											}
 											d.hide();
 										}
