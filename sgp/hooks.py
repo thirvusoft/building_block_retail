@@ -145,6 +145,12 @@ doc_events = {
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",
     },
+	"Work Order":{
+        "on_change":"sgp.sgp.custom.py.work_order.before_save",
+    },
+    "Stock Entry":{
+        "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
+    },
 
 }
 after_migrate=["sgp.sgp.custom.py.site_work.create_status"]
@@ -163,6 +169,7 @@ doctype_js = {
 				"Vehicle Log":"/sgp/custom/js/vehicle_log.js",
 				"Job Card": "/sgp/custom/js/job_card.js",
 				"Quotation":"/sgp/custom/js/quotation.js",
+    		"Company":"/sgp/custom/js/company.js",
 				"Payroll Entry": "/sgp/custom/js/payroll_entry.js",
 				"Employee": "/sgp/custom/js/employee.js"
 			 }
