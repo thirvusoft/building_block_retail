@@ -13,6 +13,25 @@ function setquery(frm){
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
+        frappe.ui.form.ProjectQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
+            render_dialog: async function() {
+                this._super();
+                let calling_doc = frappe._from_link?.doc;
+                this.additional_cost=[{'description': 'Any Food Exp in Site'}, 
+                                    {'description': 'Other Labour Work'}, 
+                                    {'description': 'Site Advance'}]
+                if(calling_doc.doctype=='Sales Order'){ 
+                    if(!calling_doc.is_multi_customer){
+                        this.doc.customer=calling_doc.customer
+                    }
+                    else{
+                        this.doc.is_multi_customer=1
+                        this.doc.customer_name=calling_doc.customers_name
+                    }
+                };
+            }
+        });
+        
         if(cur_frm.doc.is_multi_customer){
             cur_frm.set_df_property('customer','reqd',0);
         }
@@ -42,7 +61,7 @@ frappe.ui.form.on('Sales Order',{
         })
         if(cur_frm.doc.docstatus==0){
             cur_frm.fields_dict.site_work.$input.on("click", function() {
-                if(!cur_frm.doc.customer && cur_frm.doc.is_multi_customer==0){
+                if(!cur_frm.doc.customer && !cur_frm.doc.is_multi_customer){
                     frappe.throw('Please Select Customer')
                 }
             });
