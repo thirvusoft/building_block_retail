@@ -96,100 +96,112 @@ frappe.ui.form.on('Delivery Note', {
             
     },
 	refresh: function(frm) {
-        frm.add_custom_button(__('Work Order'), function(){
-            frappe.call({
-				method: 'sgp.sgp.custom.py.delivery_note.get_work_order_items',
-				args:{
-					self:frm.doc,
-				},
-				callback: function(r) {
-					if(!r.message) {
-						frappe.msgprint({
-							title: __('Work Order not created'),
-							message: __('No Items with Bill of Materials to Manufacture'),
-							indicator: 'orange'
-						});
-						return;
-					}
-					else if(!r.message) {
-						frappe.msgprint({
-							title: __('Work Order not created'),
-							message: __('Work Order already created for all items with BOM'),
-							indicator: 'orange'
-						});
-						return;
-					} else {
-						const fields = [{
-							label: 'Items',
-							fieldtype: 'Table',
-							fieldname: 'items',
-							description: __('Select BOM and Qty for Production \nSelect the item check box and then Create '),
-							fields: [{
-								fieldtype: 'Read Only',
-								fieldname: 'item_code',
-								label: __('Item Code'),
-								in_list_view: 1
-							}, {
-								fieldtype: 'Link',
-								fieldname: 'bom',
-								options: 'BOM',
-								reqd: 1,
-								label: __('Select BOM'),
-								in_list_view: 1,
-								get_query: function (doc) {
-									return { filters: { item: doc.item_code } };
-								}
-							}, {
-								fieldtype: 'Float',
-								fieldname: 'pending_qty',
-								reqd: 1,
-								label: __('Qty'),
-								in_list_view: 1
-							}, {
-								fieldtype: 'Data',
-								fieldname: 'sales_order_item',
-								reqd: 1,
-								label: __('Sales Order Item'),
-								hidden: 1
-							}],
-							data: r.message,
-							get_data: () => {
-								return r.message
-							}
-						}]
-						var d = new frappe.ui.Dialog({
-							title: __('Select Items to Manufacture'),
-							fields: fields,
-							primary_action: function() {
-								var data = {items: d.fields_dict.items.grid.get_selected_children()};
-								frappe.call({
-									method: 'sgp.sgp.custom.py.delivery_note.make_work_orders',
-									args: {
-										items: data,
-										company: frm.doc.company,
-										delivery_note: frm.docname,
-										project: frm.project
-									},
-									freeze: true,
-									callback: function(r) {
-										if(r.message) {
-											frappe.msgprint({
-												message: __('Work Orders Created: {0}', [r.message.map(function(d) {
-														return repl('<a href="/app/work-order/%(name)s">%(name)s</a>', {name:d})
-													}).join(', ')]),
-												indicator: 'green'
-											})
-										}
-										d.hide();
+		if (frm.doc.has_work_order == 0){
+			frm.add_custom_button(__('Work Order'), function(){
+				frappe.call({
+					method: 'sgp.sgp.custom.py.delivery_note.get_work_order_items',
+					args:{
+						self:frm.doc,
+					},
+					callback: function(r) {
+						if(!r.message) {
+							frappe.msgprint({
+								title: __('Work Order not created'),
+								message: __('No Items with Bill of Materials to Manufacture'),
+								indicator: 'orange'
+							});
+							return;
+						}
+						else if(!r.message) {
+							frappe.msgprint({
+								title: __('Work Order not created'),
+								message: __('Work Order already created for all items with BOM'),
+								indicator: 'orange'
+							});
+							return;
+						} else {
+							const fields = [{
+								label: 'Items',
+								fieldtype: 'Table',
+								fieldname: 'items',
+								description: __('Select BOM and Qty for Production and the Item Check Box to Create Work'),
+								fields: [{
+									fieldtype: 'Read Only',
+									fieldname: 'item_code',
+									label: __('Item Code'),
+									in_list_view: 1
+								}, {
+									fieldtype: 'Link',
+									fieldname: 'bom',
+									options: 'BOM',
+									reqd: 1,
+									label: __('Select BOM'),
+									in_list_view: 1,
+									get_query: function (doc) {
+										return { filters: { item: doc.item_code } };
 									}
-								});
-							},
-							primary_action_label: __('Create')
-						});
-						d.show();
+								}, {
+									fieldtype: 'Float',
+									fieldname: 'pending_qty',
+									reqd: 1,
+									label: __('Qty'),
+									in_list_view: 1
+								}, {
+									fieldtype: 'Data',
+									fieldname: 'sales_order_item',
+									reqd: 1,
+									label: __('Sales Order Item'),
+									hidden: 1
+								}],
+								data: r.message,
+								get_data: () => {
+									return r.message
+								}
+							}]
+							var d = new frappe.ui.Dialog({
+								title: __('Select Items to Manufacture'),
+								fields: fields,
+								primary_action: function() {
+									var data = {items: d.fields_dict.items.grid.get_selected_children()};
+									frappe.call({
+										method: 'sgp.sgp.custom.py.delivery_note.make_work_orders',
+										args: {
+											items: data,
+											company: frm.doc.company,
+											delivery_note: frm.docname,
+											project: frm.project
+										},
+										freeze: true,
+										callback: function(r) {
+											if(r.message) {
+												if(r.message.length == 0){
+													frappe.throw({
+														message: __('Kindly Select the Item Check Box to Create Work Order')
+													})
+												}
+												else{
+													frappe.msgprint({
+														message: __('Work Orders Created: {0}', [r.message.map(function(d) {
+																return repl('<a href="/app/work-order/%(name)s">%(name)s</a>', {name:d})
+															}).join(', ')]),
+														indicator: 'green'
+													})
+													frm.set_value("has_work_order",1)
+												}
+												console.log(r.message)
+												
+											}
+											d.hide();
+										}
+									});
+								},
+								primary_action_label: __('Create')
+							});
+							d.show();
+						}
 					}
-				}
-			});
-        },"Create");
+				});
+			},"Create");
+		}
 	}
 })
