@@ -14,8 +14,20 @@ frappe.ui.form.on("Journal Receipt", {
 			};
 		});
 	},
-	// company_name: function(frm){
-	// 	frm.set_value('abbr',"Mani")
-	// 	frm.refresh()
-	// }
+
 });
+
+// frappe.ui.form.on('Journal Receipt', {
+//     company_name: function(frm) {
+//         if(company_name)
+//         frappe.call({
+// 			method: "sgp.sgp.doctype.journal_receipt.journal_receipt.abbrivation",
+// 			args: {
+// 				'self': frm.doc
+// 			},
+			
+// 		})}
+        
+ 
+
+//     });

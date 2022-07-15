@@ -13,7 +13,7 @@ class JournalReceipt(Document):
 		gl_doc=frappe.new_doc('GL Entry')
 		gl_doc.posting_date=doc.date
 		gl_doc.account=account
-		# gl_doc.cost_center=doc.cost_center
+		gl_doc.party_type=doc.party_type
 		gl_doc.voucher_type=doc.doctype
 		gl_doc.voucher_no=doc.name
 		gl_doc.credit=credit
@@ -32,5 +32,10 @@ class JournalReceipt(Document):
             )
         )
 			self.create_gl_entry(self.account,credit=self.amount,debit=0)
+			print(self.amount)
 			self.create_gl_entry(empaccount,credit=0,debit=self.amount)
-  
+
+	# @frappe.whitelist()
+	# def abbrivation(self):
+	# 	abbr = frappe.get_value("Company",self.company_name,"abbr")
+	# 	print(abbr)

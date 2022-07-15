@@ -13,6 +13,7 @@ class JournalPayment(Document):
 		gl_doc.account=account
 		# gl_doc.cost_center=doc.cost_center
 		gl_doc.voucher_type=doc.doctype
+		gl_doc.party_type=doc.party_type
 		gl_doc.voucher_no=doc.name
 		gl_doc.credit=credit
 		gl_doc.debit=debit
@@ -29,7 +30,7 @@ class JournalPayment(Document):
                 	frappe.bold(get_link_to_form("Employee", self.party_name))
             )
         )
-		self.create_gl_entry(self.account,credit=self.amount,debit=0)
-		self.create_gl_entry(empaccount,credit=0,debit=self.amount)
+		self.create_gl_entry(self.account,credit=0,debit=self.amount)
+		self.create_gl_entry(empaccount,credit=self.amount,debit=0)
   
 
