@@ -1,4 +1,5 @@
 import frappe 
+from frappe.utils.data import get_link_to_form
 
 def set_value_in_jobcard_after_stock_entry(self, event):
     if(self.work_order):

@@ -127,6 +127,13 @@ def delivery_note_custom_field():
 				insert_after= "sales_team",
 				label= "Branch",
                 options= "Branch"
+            ),
+            dict(
+                fieldname= "has_work_order",
+				fieldtype= "Check",
+				insert_after= "value_bundle",
+				label= "Has Work Order",
+                hidden = 1
             )
 
         ],

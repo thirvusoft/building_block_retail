@@ -133,7 +133,8 @@ doc_events = {
 					 ],
 		"validate":["sgp.sgp.custom.py.delivery_note.validate",
 					],
-		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate",]
+		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate"],
+		"before_submit":"sgp.sgp.custom.py.delivery_note.before_submit"
 
 	},
 	# "Job Card":{
@@ -152,8 +153,8 @@ doc_events = {
 		'before_submit': "sgp.sgp.utils.manufacturing.job_card.job_card.before_submit"
 	},
 	"Work Order":{
-        "on_change":"sgp.sgp.custom.py.work_order.before_save",
-        "validate":"sgp.sgp.custom.py.work_order.validate"
+        "validate":"sgp.sgp.custom.py.work_order.validate",
+        "before_submit":"sgp.sgp.custom.py.work_order.before_save",
     },
     "Stock Entry":{
         "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
@@ -179,7 +180,7 @@ doctype_js = {
     			"Work Order":"/sgp/custom/js/work_order.js",
     			"Company":"/sgp/custom/js/company.js",
 				"Payroll Entry": "/sgp/custom/js/payroll_entry.js",
-				"Employee": "/sgp/custom/js/employee.js"
+				"Employee": "/sgp/custom/js/employee.js",
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
