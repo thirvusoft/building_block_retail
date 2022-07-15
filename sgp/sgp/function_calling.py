@@ -41,10 +41,7 @@ def function_calling():
     create_contracter_expense_account()
     work_order_custom()
     create_role()
-<<<<<<< HEAD
     create_job_card_custom_fields()
-=======
     workstation_custom()
     journal_entry_customization()
     company_customization()
->>>>>>> d9e329a532e50837e653b698a71f282798bc28c5

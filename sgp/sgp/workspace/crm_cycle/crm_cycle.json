@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "CRM Cycle",
  "links": [],
- "modified": "2022-07-09 11:48:01.200431",
+ "modified": "2022-07-14 17:09:41.545562",
  "modified_by": "parameshwari@gmail.com",
  "module": "Sgp",
  "name": "CRM Cycle",
@@ -50,6 +50,60 @@
    "label": "Supplier Group",
    "link_to": "Supplier Group",
    "type": "DocType"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "First Response Time for Opportunity",
+   "link_to": "First Response Time for Opportunity",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Lost Opportunity",
+   "link_to": "Lost Opportunity",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Lead Details",
+   "link_to": "Lead Details",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Lead Conversion Time",
+   "link_to": "Lead Conversion Time",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Lead Owner Efficiency",
+   "link_to": "Lead Owner Efficiency",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Prospects Engaged But Not Converted",
+   "link_to": "Prospects Engaged But Not Converted",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Supplier-Wise Sales Analytics",
+   "link_to": "Supplier-Wise Sales Analytics",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Supplier Ledger Summary",
+   "link_to": "Supplier Ledger Summary",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Customer Ledger Summary",
+   "link_to": "Customer Ledger Summary",
+   "type": "Report"
   }
  ]
 }
