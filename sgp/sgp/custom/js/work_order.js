@@ -9,5 +9,5 @@ frappe.ui.form.on("Work Order",{
                 window.location.assign(r.message)
             }
         })
-    }
+    },
 })
