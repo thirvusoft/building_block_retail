@@ -1,5 +1,5 @@
 frappe.ui.form.on("Employee", {
-    setup: function(frm) {
+    refresh: function(frm) {
         
 		frm.set_query('contracter_expense_account', function(doc) {
             if(!doc.company){

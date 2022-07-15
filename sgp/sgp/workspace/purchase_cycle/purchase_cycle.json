@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "Purchase Cycle",
  "links": [],
- "modified": "2022-07-09 11:47:48.395878",
+ "modified": "2022-07-14 17:02:12.375411",
  "modified_by": "parameshwari@gmail.com",
  "module": "Sgp",
  "name": "Purchase Cycle",
@@ -56,6 +56,66 @@
    "label": "Request for Quotation",
    "link_to": "Request for Quotation",
    "type": "DocType"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Requested Items to Order and Receive",
+   "link_to": "Requested Items to Order and Receive",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Order Analysis",
+   "link_to": "Purchase Order Analysis",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Analytics",
+   "link_to": "Purchase Analytics",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Order Trends",
+   "link_to": "Purchase Order Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item-wise Purchase History",
+   "link_to": "Item-wise Purchase History",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Supplier Quotation Comparison",
+   "link_to": "Supplier Quotation Comparison",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Receipt Trends",
+   "link_to": "Purchase Receipt Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Invoice Trends",
+   "link_to": "Purchase Invoice Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item-wise Purchase Register",
+   "link_to": "Item-wise Purchase Register",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Register",
+   "link_to": "Purchase Register",
+   "type": "Report"
   }
  ]
 }
