@@ -13,6 +13,13 @@ def create_job_card_custom_fields():
                  in_standard_filter = 1,
                  in_list_view = 1
             ),
+            dict(
+                 fieldname  = "doc_onload",
+                 fieldtype  = "Check",
+                 insert_after  = "se_created",
+                 label = "doc_onload",
+                 hidden = 1,
+            ),
         ]
     }
     create_custom_fields(custom_fields)
