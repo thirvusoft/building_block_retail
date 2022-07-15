@@ -46,7 +46,7 @@ def create_site(doc):
                 'amount':row['amount'],
                 'work': row['work'],
                 'sales_order':doc['name'],
-                'warehouse':doc['set_warehouse']
+                'warehouse':doc.get('set_warehouse')
                 } for row in doc['pavers']]
         raw_material=[{
                 'item':row['item'],
@@ -159,3 +159,15 @@ def remove_project_fields(self,event):
         doc.save()
         frappe.db.commit()
         
+@frappe.whitelist()
+def get_stock_availability(items):
+    items = json.loads(items)
+    stock_availability = []
+    for i in items:
+        res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
+        qty, planned_production_qty = 0, 0
+        planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
+        currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
+        if(res_qty<act_qty):qty = qty = act_qty-res_qty
+        stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':qty,'ordered_qty':i.get('stock_qty'),'stock_uom':i.get('stock_uom'),'planned_production_qty':planned_production_qty, 'currently_produced_qty':currently_produced_qty})
+    return stock_availability

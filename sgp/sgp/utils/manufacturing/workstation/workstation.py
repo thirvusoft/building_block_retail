@@ -1,4 +1,3 @@
-import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 def workstation_custom():
@@ -11,8 +10,8 @@ def workstation_custom_fields():
                  fieldname  = "expanse_per_piece",
                  fieldtype  = "Currency",
                  insert_after  = "hour_rate_consumable",
-                 label = "Expanse per piece",
-                 description = "per Qty"
+                 label = "Expense Per Piece",
+                 description = "per qty"
             ),
         ],
     }
@@ -20,4 +19,5 @@ def workstation_custom_fields():
 
 
 def workstation_property_setter():
-    pass
+    doctype="Workstation"
+    make_property_setter(doctype, 'hour_rate_labour', 'description', 'wages per hour', 'Text Editor')

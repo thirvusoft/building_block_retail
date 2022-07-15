@@ -9,5 +9,10 @@ frappe.ui.form.on("Work Order",{
                 window.location.assign(r.message)
             }
         })
+    },
+    refresh(frm){
+        frm.remove_custom_button('Create Job Card')
+        cur_frm.set_value("skip_transfer",1)
+        cur_frm.refresh()
     }
 })
