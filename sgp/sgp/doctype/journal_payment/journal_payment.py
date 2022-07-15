@@ -3,6 +3,7 @@
 
 import frappe
 from frappe.model.document import Document
+from frappe.utils.data import get_link_to_form
 
 class JournalPayment(Document):
     
@@ -22,6 +23,12 @@ class JournalPayment(Document):
 		gl_doc.submit()
 	def on_submit(self):
 		empaccount  = frappe.get_value("Employee",self.party_name,"contracter_expense_account")
+		if empaccount == None:
+			frappe.throw(
+            	("Kindly select Employee Contracter Expense Account {}.").format(
+                	frappe.bold(get_link_to_form("Employee", self.party_name))
+            )
+        )
 		self.create_gl_entry(self.account,credit=self.amount,debit=0)
 		self.create_gl_entry(empaccount,credit=0,debit=self.amount)
   
