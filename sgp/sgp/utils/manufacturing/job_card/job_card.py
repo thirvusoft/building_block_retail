@@ -6,19 +6,12 @@ def create_job_card_custom_fields():
     custom_fields={
         "Job Card" :[
             dict(
-                 fieldname  = "se_created",
-                 fieldtype  = "Check",
-                 insert_after  = "naming_series",
-                 label = "Stock Entry Created",
-                 in_standard_filter = 1,
-                 in_list_view = 1
-            ),
-            dict(
                  fieldname  = "doc_onload",
                  fieldtype  = "Check",
                  insert_after  = "se_created",
                  label = "doc_onload",
                  hidden = 1,
+                 no_copy = 1
             ),
         ]
     }
@@ -36,5 +29,4 @@ def create_property_setter():
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
 def before_submit(self, event):
     se_qty = sum(frappe.db.get_all("Stock Entry", filters={'work_order':self.work_order,'docstatus':1},pluck="fg_completed_qty"))
-    print(se_qty,self.total_completed_qty,"=============================")
     if(se_qty != self.total_completed_qty):frappe.throw("Please click <b>Finish</b> button to create stock entry and then submit this.")

@@ -133,7 +133,8 @@ def delivery_note_custom_field():
 				fieldtype= "Check",
 				insert_after= "value_bundle",
 				label= "Has Work Order",
-                hidden = 1
+                hidden = 1,
+                no_copy = 1
             )
 
         ],

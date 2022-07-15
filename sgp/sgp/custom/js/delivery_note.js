@@ -157,11 +157,19 @@ frappe.ui.form.on('Delivery Note', {
 								get_data: () => {
 									return r.message
 								}
-							}]
+							},
+							{
+								label: 'Submit Delivery Note',
+								fieldtype: 'Check',
+								fieldname: 'submit',
+								description: __('It will Submit Automatically'),
+								default:1
+							}
+						]
 							var d = new frappe.ui.Dialog({
 								title: __('Select Items to Manufacture'),
 								fields: fields,
-								primary_action: function() {
+								primary_action: function(ts) {
 									var data = {items: d.fields_dict.items.grid.get_selected_children()};
 									frappe.call({
 										method: 'sgp.sgp.custom.py.delivery_note.make_work_orders',
@@ -169,7 +177,7 @@ frappe.ui.form.on('Delivery Note', {
 											items: data,
 											company: frm.doc.company,
 											delivery_note: frm.docname,
-											project: frm.project
+											project: frm.project,
 										},
 										freeze: true,
 										callback: function(r) {
@@ -187,6 +195,17 @@ frappe.ui.form.on('Delivery Note', {
 														indicator: 'green'
 													})
 													frm.set_value("has_work_order",1)
+													if(ts.submit == 1){
+														frappe.call({
+															"method": "frappe.client.submit",
+															"args": {
+																  doc:frm.doc
+															},
+															callback(){
+																frm.refresh()
+															}
+														})
+													}
 												}
 											}
 											d.hide();
