@@ -10,4 +10,7 @@ frappe.ui.form.on("Work Order",{
             }
         })
     },
+    refresh: function(frm){
+        cur_frm.set_value("skip_transfer",1)
+    }
 })
