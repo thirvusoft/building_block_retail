@@ -1,4 +1,5 @@
 from sgp.sgp.utils.Inventory.item import item_customization
+from sgp.sgp.utils.accounting.accounts.accounts import account_customization
 from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
 # from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
 from sgp.sgp.utils.buying.purchase_order import purchase_order
@@ -45,3 +46,4 @@ def function_calling():
     workstation_custom()
     journal_entry_customization()
     company_customization()
+    account_customization()
