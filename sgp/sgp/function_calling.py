@@ -1,4 +1,5 @@
 from sgp.sgp.utils.Inventory.item import item_customization
+from sgp.sgp.utils.accounting.accounts.accounts import account_customization
 from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
 # from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
 from sgp.sgp.utils.buying.purchase_order import purchase_order
@@ -41,10 +42,8 @@ def function_calling():
     create_contracter_expense_account()
     work_order_custom()
     create_role()
-<<<<<<< HEAD
     create_job_card_custom_fields()
-=======
     workstation_custom()
     journal_entry_customization()
     company_customization()
->>>>>>> d9e329a532e50837e653b698a71f282798bc28c5
+    account_customization()
