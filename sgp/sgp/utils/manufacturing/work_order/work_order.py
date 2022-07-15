@@ -29,4 +29,6 @@ def work_order_custom_fields():
 
 
 def work_order_property_setter():
-    pass
+    doctype="Work Order"
+    make_property_setter(doctype, 'more_info', 'hidden', '1', 'Check')
+    make_property_setter(doctype, 'settings_section', 'hidden', '1', 'Check')
