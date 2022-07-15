@@ -4,8 +4,14 @@ import frappe
 def sales_order_customization():
     custom_fields = {
         "Sales Order": [
+            dict(fieldname='available_qty', label='Stock Available Qty',
+                fieldtype='Table',options="TS Availbale Qty",insert_after='naming_series', allow_on_submit =1),
+            
+            dict(fieldname='section', fieldtype='Section Break',insert_after='available_qty'),
+            
             dict(fieldname='is_multi_customer', label='is_multi_customer',
-                fieldtype='Check',insert_after='naming_series'),
+                fieldtype='Check',insert_after='section'),
+            
             dict(fieldname='customers_name', label='Customers Name',
                 fieldtype='Table',insert_after='customer', options='TS Customer', depends_on='eval:doc.is_multi_customer', mandatory_depends_on='eval:doc.is_multi_customer'),
             dict(fieldname='temporary_customer', label='temporary_customer', allow_on_submit=1, hidden=1,

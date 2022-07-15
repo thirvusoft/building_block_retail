@@ -8,7 +8,8 @@ def set_value_in_jobcard_after_stock_entry(self, event):
         if(jc_qty == se_qty):
             frappe.db.set_value("Job Card", {'work_order':self.work_order}, "se_created", 1)
             frappe.db.commit()
-
+import frappe
+from frappe.utils.data import get_link_to_form
 def before_validate(doc,action):
     if doc.from_bom == 1:
         wo=frappe.get_doc("Work Order",doc.work_order)
