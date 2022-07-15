@@ -16,6 +16,14 @@ frappe.ui.form.on("Job Card",{
             })
         }
         }).addClass("btn-primary")
+    },
+    onload: function(frm){
+        if(frm.doc.doc_onload == 0){
+        frm.set_value('time_logs',[])
+        frm.set_value('doc_onload',1)
+        frm.refresh()
+        frm.save()
+        }
     }
 })
 function make_se (frm, purpose) {

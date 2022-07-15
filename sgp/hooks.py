@@ -146,9 +146,6 @@ doc_events = {
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",
     },
-	"Stock Entry":{
-		'on_submit': "sgp.sgp.custom.py.stock_entry.set_value_in_jobcard_after_stock_entry"
-	},
 	"Job Card":{
 		'before_submit': "sgp.sgp.utils.manufacturing.job_card.job_card.before_submit"
 	},
