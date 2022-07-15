@@ -35,4 +35,6 @@ def create_property_setter():
     make_property_setter(doctype, 'batch_no', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
 def before_submit(self, event):
-    if(not self.se_created):frappe.throw("Please click <b>Finish</b> button to create stock entry and then submit this.")
+    se_qty = sum(frappe.db.get_all("Stock Entry", filters={'work_order':self.work_order,'docstatus':1},pluck="fg_completed_qty"))
+    print(se_qty,self.total_completed_qty,"=============================")
+    if(se_qty != self.total_completed_qty):frappe.throw("Please click <b>Finish</b> button to create stock entry and then submit this.")
