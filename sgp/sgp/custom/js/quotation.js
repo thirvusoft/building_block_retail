@@ -8,7 +8,7 @@ frappe.ui.form.on('Quotation', {
     },
     refresh:function(frm){
         if(frm.doc.workflow_state == "Rejected" ){
-            frm.clear_custom_buttons();
+            frm.this.grid_buttons.find('.btn-custom').addClass('hidden');;
         }
     }
 })
