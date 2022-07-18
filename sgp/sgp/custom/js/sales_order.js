@@ -40,9 +40,9 @@ frappe.ui.form.on('Sales Order',{
         }
         setquery(frm)
         
-        if(cur_frm.is_new()==1){
-            frm.clear_table('items')
-        }
+        // if(cur_frm.is_new()==1){
+        //     frm.clear_table('items')
+        // }
         cur_frm.set_df_property('items','reqd',0);
         cur_frm.set_df_property('items','hidden',1);
         frm.set_query('supervisor', function(frm){
@@ -103,6 +103,9 @@ frappe.ui.form.on('Sales Order',{
     },
     type:function(frm){
         setquery(frm)
+        if(cur_frm.is_new()==1){
+        fill_paver_compound_table_from_item(frm)
+        }
     },
     before_save:async function(frm){
         if(cur_frm.doc.is_multi_customer){
@@ -294,3 +297,28 @@ function amount_rawmet(frm,cdt,cdn){
         frappe.model.set_value(cdt, cdn, 'work', frm.doc.work)
     }
  })
+
+
+function fill_paver_compound_table_from_item(frm){
+    if(frm.doc.type=="Compound Wall"){
+        if(frm.doc.compoun_walls.length == 0){
+        frm.doc.items.forEach((row) =>{
+            var child = frm.add_child('compoun_walls')
+            child.item = row.item_code
+            child.rate = row.rate
+        })
+    }
+    }
+    else if(frm.doc.type == "Pavers"){
+        if(frm.doc.pavers.length == 0){
+        frm.doc.items.forEach((row) =>{
+            var child = frm.add_child('pavers')
+            child.item = row.item_code
+            child.required_area=row.qty
+            child.rate = row.rate
+            child.amount = row.amount
+        })
+    }
+    }
+    frm.refresh()
+}
