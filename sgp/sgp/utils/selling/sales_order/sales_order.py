@@ -25,7 +25,7 @@ def sales_order_customization():
             dict(fieldname='supervisor', label='Supervisor',
                 fieldtype='Link',insert_after='site_work', options='Employee'),
             dict(fieldname='supervisor_name', label='Supervisor Name', 
-                fieldtype='Data',insert_after='supervisor', fetch_from='supervisor.first_name'),
+                fieldtype='Data',insert_after='supervisor', fetch_from='supervisor.first_name', read_only=1),
             dict(fieldname='delivery_details', label='Delivery Details', 
                 fieldtype='Section Break',insert_after='tax_id'),
             dict(fieldname='distance', label='Distance (km)', precision=2, allow_on_submit=1,

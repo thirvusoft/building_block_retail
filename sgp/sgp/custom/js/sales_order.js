@@ -17,7 +17,7 @@ frappe.ui.form.on('Sales Order',{
             render_dialog: async function() {
                 this._super();
                 let calling_doc = frappe._from_link?.doc;
-                this.additional_cost=[{'description': 'Any Food Exp in Site'}, 
+                this.doc.additional_cost=[{'description': 'Any Food Exp in Site'}, 
                                     {'description': 'Other Labour Work'}, 
                                     {'description': 'Site Advance'}]
                 if(calling_doc.doctype=='Sales Order'){ 

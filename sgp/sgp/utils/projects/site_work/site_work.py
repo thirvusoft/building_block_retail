@@ -13,22 +13,22 @@ def customize_field():
    custom_fields = {
        "Project": [
          dict(fieldname='work', label='Work',
-              fieldtype='Data', insert_after='status',
+              fieldtype='Data', insert_after='status', read_only=1
               ),
          dict(fieldname='completed', label='% Completed',
-              fieldtype='Percent', insert_after='status',
+              fieldtype='Percent', insert_after='work', read_only=1
               ),
          dict(fieldname='total_expense_amount', label='Total Costing',
-              fieldtype='Currency', insert_after='completed',
+              fieldtype='Currency', insert_after='completed', read_only=1
               ),
          dict(fieldname='job__work', label='Job worker',
               fieldtype='Link', insert_after='completed', options="Employee", hidden=1
               ),
          dict(fieldname='supervisor_name', label='Supervisor Name',
-              fieldtype='Data', insert_after='priority',
+              fieldtype='Data', insert_after='supervisor', read_only=1, fetch_from= "supervisor.employee_name"
               ),
          dict(fieldname='supervisor', label='Supervisor',
-              fieldtype='Link', insert_after='supervisor_name', options="Employee"
+              fieldtype='Link', insert_after='priority', options="Employee"
               ),
          dict(fieldname='total_required_area', label='Total Required Area',
               fieldtype='Data', insert_after='supervisor_name', default=0,read_only=1
@@ -54,7 +54,7 @@ def customize_field():
               ),
          dict(fieldname='job_worker', label='Job Worker',
               fieldtype='Table', insert_after='section_job',
-              options="TS Job Worker"
+              options="TS Job Worker Details"
               ),
          dict(fieldname='additional_costs_1', label='Additional Costs',
               fieldtype='Section Break', insert_after='notes', collapsible=1
@@ -62,7 +62,7 @@ def customize_field():
          dict(fieldname='additional_cost', label='Additional Cost',
               fieldtype='Table', insert_after='additional_costs', options="Additional Costs"
               ),
-         dict(fieldname='section_break_19',
+         dict(fieldname='section_break_19', label="Item Details",
               fieldtype='Section Break', insert_after='sales_order'
               ),
          dict(fieldname='item_details', options= "Pavers", label="Item Details Pavers",

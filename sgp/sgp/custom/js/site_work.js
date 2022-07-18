@@ -29,6 +29,11 @@ frappe.ui.form.on("Project",{
     },
     
     refresh:function(frm,cdt,cdn){
+        if(!cur_frm.is_new()){
+            cur_frm.set_df_property('is_multi_customer', 'read_only', 1)
+            cur_frm.set_df_property('customer_name', 'read_only', 1)
+            cur_frm.set_df_property('customer', 'read_only', 1)
+        }
 		cur_frm.remove_custom_button('Duplicate Project with Tasks')
 		cur_frm.remove_custom_button('Kanban Board')
 		cur_frm.remove_custom_button('Gantt Chart')
