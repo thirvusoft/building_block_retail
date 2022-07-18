@@ -45,6 +45,5 @@ def function_calling():
     create_job_card_custom_fields()
     workstation_custom()
     journal_entry_customization()
-    company_customization()ssssssssssssssssssssssssssssssssss
+    company_customization()
     account_customization()
-
