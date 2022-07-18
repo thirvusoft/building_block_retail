@@ -162,7 +162,7 @@ frappe.ui.form.on('Delivery Note', {
 								label: 'Submit Delivery Note',
 								fieldtype: 'Check',
 								fieldname: 'submit',
-								description: __('It will Submit Automatically'),
+								description: __('It will Submit Delivery Note Automatically'),
 								default:1
 							}
 						]
