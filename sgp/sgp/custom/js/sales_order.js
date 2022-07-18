@@ -22,10 +22,12 @@ frappe.ui.form.on('Sales Order',{
                                     {'description': 'Site Advance'}]
                 if(calling_doc.doctype=='Sales Order'){ 
                     if(!calling_doc.is_multi_customer){
-                        this.doc.customer=calling_doc.customer
+                        this.dialog.get_field("customer").set_value(calling_doc.customer)
                     }
                     else{
-                        this.doc.is_multi_customer=1
+                        this.dialog.get_field("is_multi_customer").set_value(1).then(() => {
+                            this.dialog.refresh()
+                        })
                         this.doc.customer_name=calling_doc.customers_name
                     }
                 };

@@ -43,17 +43,17 @@ def customize_field():
               fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
               ),
          dict(fieldname='is_multi_customer', label='is_multi_customer',
-              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=0
+              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=1
               ),
          dict(fieldname='customer_name', label='Customer Name',
               fieldtype='Table', insert_after='customer',
               depends_on="eval:doc.is_multi_customer==1", options="TS Customer"
               ),
          dict(fieldname='section_job', label='Job Worker Details',
-              fieldtype='Section Break', insert_after='delivery_detail', collapsible=1
+              fieldtype='Section Break', insert_after='delivery_detail', collapsible=0
               ),
          dict(fieldname='job_worker', label='Job Worker',
-              fieldtype='Table', insert_after='dust_sweeping',
+              fieldtype='Table', insert_after='section_job',
               options="TS Job Worker"
               ),
          dict(fieldname='additional_costs_1', label='Additional Costs',
@@ -96,7 +96,7 @@ def customize_field():
               fieldtype='Currency', insert_after='job_worker', read_only=1
               ),
          dict(fieldname='section_break_30',
-              fieldtype='Section Break', insert_after='total_job_worker_cost'
+              fieldtype='Section Break', insert_after='total_job_worker_cost', 
               ),
          dict(fieldname='additional_costs', label="Additional Costs",
               fieldtype='Section Break', insert_after='message'
@@ -150,6 +150,7 @@ def site_doc_name():
          'field_name': "customer",
          "value": "1"
     })
+    Project.save(ignore_permissions=True),
     Project = frappe.get_doc({
          'doctype': 'Property Setter',
          'doctype_or_field': "DocField",
@@ -228,6 +229,15 @@ def site_doc_name():
          'doc_type': "Project",
          'property': "hidden",
          'field_name': "percent_complete_method",
+         "value": 1
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "hidden",
+         'field_name': "percent_complete",
          "value": 1
     })
     Project.save(ignore_permissions=True),
