@@ -55,5 +55,6 @@ def get_workorder_doc(work_order, opr, workstation, qty=0):
 @frappe.whitelist()
 def get_link_to_jobcard(work_order):
     job_card = frappe.get_all("Job Card", filters={'work_order':work_order},pluck = 'name')
+    if(not len(job_card)):frappe.throw("Job Card doesn't Created. This may cause if the <b>Linked BOM doesn't have any Operation.</b>")
     return "/app/job-card/"+job_card[-1]
     
