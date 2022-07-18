@@ -29,7 +29,7 @@ def function_calling():
     purchase_receipt()
     request_for_quotation()
     supplier_quotation()
-    # item_customization()
+    item_customization()
     sales_invoice_customization()
     customize_field()
     site_doc_name()
