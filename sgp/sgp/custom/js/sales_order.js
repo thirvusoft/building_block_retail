@@ -68,6 +68,25 @@ frappe.ui.form.on('Sales Order',{
                 }
             });
         }
+        if(frm.doc.docstatus === 1){
+            frm.add_custom_button('Get Stock Availability', ()=>{
+                frappe.call({
+                    method:'sgp.sgp.custom.py.sales_order.get_stock_availability',
+                    args:{
+                        items: frm.doc.items
+                    },
+                    callback(r){
+                        frm.set_value("available_qty", r.message)
+                        frm.set_df_property('available_qty','hidden',0)
+                        frm.refresh()
+                        frm.save('Update')
+                    }
+                })
+            })
+        }
+        else{
+            frm.set_df_property('available_qty','hidden',1)
+        }
     },
     customer:function(frm){
         cur_frm.set_value('site_work','')

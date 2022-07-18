@@ -15,6 +15,13 @@ def quotation_custom_field():
                 label= "Supervisor",
                 options= "Employee"
             ),
+            dict(
+                fieldname= "supervisor_name",
+                fieldtype= "Data",
+                insert_after= "supervisor",
+                label= "Supervisor Name",
+                fetch_from = "supervisor.first_name"
+            ),
         ]
     }
     create_custom_fields(custom_fields)
