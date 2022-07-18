@@ -23,8 +23,15 @@ def create_quotation_flow():
     workflow.append('states', dict(
         state = 'Approved', allow_edit = 'Admin',doc_status = 1,
     ))
+    workflow.append('states', dict(
+        state = 'Rejected', allow_edit = 'Admin',doc_status = 1,
+    ))
     workflow.append('transitions', dict(
         state = 'Draft', action='Approve', next_state = 'Approved',
+        allowed='Admin', allow_self_approval= 1,
+    ))
+    workflow.append('transitions', dict(
+        state = 'Draft', action='Reject', next_state = 'Rejected',
         allowed='Admin', allow_self_approval= 1,
     ))
     workflow.insert(ignore_permissions=True)
