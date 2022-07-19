@@ -46,7 +46,7 @@ def create_quotation_flow():
     workflow.insert(ignore_permissions=True)
     return workflow
 def create_state():
-    list={"Open":"Danger", "Waiting for Approval":"Primary", "Approved":"Success", "Rejected":"Danger"}
+    list={"Open":"Warning", "Waiting for Approval":"Primary", "Approved":"Success", "Rejected":"Danger"}
     for row in list:
         if not frappe.db.exists('Workflow State', row):
             new_doc = frappe.new_doc('Workflow State')
