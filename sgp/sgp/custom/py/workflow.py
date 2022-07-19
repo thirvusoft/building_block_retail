@@ -18,7 +18,10 @@ def create_quotation_flow():
     workflow.is_active = 1
     workflow.send_email_alert = 1
     workflow.append('states', dict(
-        state = 'Draft', allow_edit = 'All',doc_status = 0,
+        state = 'Open', allow_edit = 'All',doc_status = 0,
+    ))
+    workflow.append('states', dict(
+        state = 'Waiting for Approval', allow_edit = 'Admin',doc_status = 0,
     ))
     workflow.append('states', dict(
         state = 'Approved', allow_edit = 'Admin',doc_status = 1,
@@ -26,24 +29,35 @@ def create_quotation_flow():
     workflow.append('states', dict(
         state = 'Rejected', allow_edit = 'Admin',doc_status = 1,
     ))
+    
+    
     workflow.append('transitions', dict(
-        state = 'Draft', action='Approve', next_state = 'Approved',
+        state = 'Open', action='Send to Approval', next_state = 'Waiting for Approval',
         allowed='Admin', allow_self_approval= 1,
     ))
     workflow.append('transitions', dict(
-        state = 'Draft', action='Reject', next_state = 'Rejected',
+        state = 'Waiting for Approval', action='Approve', next_state = 'Approved',
+        allowed='Admin', allow_self_approval= 1,
+    ))
+    workflow.append('transitions', dict(
+        state = 'Waiting for Approval', action='Reject', next_state = 'Rejected',
         allowed='Admin', allow_self_approval= 1,
     ))
     workflow.insert(ignore_permissions=True)
     return workflow
 def create_state():
-    list=["Draft"]
+    list={"Open":"Warning", "Waiting for Approval":"Primary", "Approved":"Success", "Rejected":"Danger"}
     for row in list:
         if not frappe.db.exists('Workflow State', row):
             new_doc = frappe.new_doc('Workflow State')
             new_doc.workflow_state_name = row
-            if(row=="Draft"):
-                new_doc.style="Danger"
+            new_doc.style=list[row]
+            new_doc.save()
+    list=['Send to Approval', 'Approve', 'Reject']
+    for i in list:
+        if not frappe.db.exists('Workflow Action Master', i):
+            new_doc = frappe.new_doc('Workflow Action Master')
+            new_doc.workflow_action_name = i
             new_doc.save()
 def create_action():
     pass
