@@ -21,6 +21,7 @@ class JournalReceipt(Document):
 		gl_doc.company=doc.company_name
 		gl_doc.credit_in_account_currency=credit
 		gl_doc.debit_in_account_cuurency=debit
+		gl_doc.cost_center = doc.cost_center
 		gl_doc.save()
 		gl_doc.submit()
 	def on_submit(self):
