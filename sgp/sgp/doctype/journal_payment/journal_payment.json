@@ -15,7 +15,8 @@
   "party_name",
   "amount",
   "naming_series",
-  "amended_from"
+  "amended_from",
+  "cost_center"
  ],
  "fields": [
   {
@@ -98,12 +99,19 @@
    "options": "Journal Payment",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fetch_from": "company_name.cost_center",
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-15 10:29:46.173937",
+ "modified": "2022-07-19 10:19:41.802218",
  "modified_by": "Administrator",
  "module": "Sgp",
  "name": "Journal Payment",
