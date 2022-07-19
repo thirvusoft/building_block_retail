@@ -39,10 +39,6 @@ frappe.ui.form.on('Sales Order',{
             cur_frm.set_df_property('customer','reqd',1);
         }
         setquery(frm)
-        
-        // if(cur_frm.is_new()==1){
-        //     frm.clear_table('items')
-        // }
         cur_frm.set_df_property('items','reqd',0);
         cur_frm.set_df_property('items','hidden',1);
         frm.set_query('supervisor', function(frm){
@@ -125,6 +121,7 @@ frappe.ui.form.on('Sales Order',{
         if(cur_frm.doc.type=='Pavers'){
             let rm= cur_frm.doc.pavers?cur_frm.doc.pavers:[]
             for(let row=0;row<rm.length;row++){
+                if(!cur_frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
                 var message;
                 var new_row = frm.add_child("items");
                 new_row.item_code=cur_frm.doc.pavers[row].item
@@ -301,7 +298,7 @@ function amount_rawmet(frm,cdt,cdn){
 
 function fill_paver_compound_table_from_item(frm){
     if(frm.doc.type=="Compound Wall"){
-        if(frm.doc.compoun_walls.length == 0){
+        if(!frm.doc.compoun_walls){
         frm.doc.items.forEach((row) =>{
             var child = frm.add_child('compoun_walls')
             child.item = row.item_code
@@ -310,7 +307,7 @@ function fill_paver_compound_table_from_item(frm){
     }
     }
     else if(frm.doc.type == "Pavers"){
-        if(frm.doc.pavers.length == 0){
+        if(!frm.doc.pavers){
         frm.doc.items.forEach((row) =>{
             var child = frm.add_child('pavers')
             child.item = row.item_code
