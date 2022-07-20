@@ -11,11 +11,11 @@ frappe.ui.form.on("Job Card",{
                     qty : frm.doc.total_completed_qty
                     },
                 callback(r){
-                    make_se(r.message, "Manufacture")
+                    make_se(r.message, "Manufacture",frm)
                 }
             })
         }
-        }).addClass("btn-primary")
+        }).addClass("btn-warning").css({'color':'white','background-color': '#4CBB17','box-shadow': '2px 2px 2px #4CBB17'});
     },
     onload: function(frm){
         if(frm.doc.doc_onload == 0){
@@ -26,7 +26,7 @@ frappe.ui.form.on("Job Card",{
         }
     }
 })
-function make_se (frm, purpose) {
+function make_se (frm, purpose,cur) {
     show_prompt_for_qty_input(frm, purpose)
         .then(data => {
             if(data.qty<=0){return}
@@ -36,6 +36,7 @@ function make_se (frm, purpose) {
                 'qty': data.qty
             });
         }).then(stock_entry => {
+            stock_entry.ts_job_card = cur.doc.name
             frappe.model.sync(stock_entry);
             frappe.set_route('Form', stock_entry.doctype, stock_entry.name);
         });
