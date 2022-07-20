@@ -4,8 +4,24 @@ def stock_entry_custom():
     stock_entry_custom_fields()
     stock_entry_property_setter()
 def stock_entry_custom_fields():
-    pass
-
+    custom_fields = {
+        "Stock Entry": [
+            dict(
+                fieldname= "ts_job_card",
+                fieldtype= "Link",
+                insert_after= "job_card",
+                label= "Job Card",
+                options= "Job Card"
+            ),
+            dict(
+                fieldname= "code",
+                fieldtype= "Code",
+                insert_after= "ts_job_card",
+                label= "Current Completed Qty",
+            ),
+        ]
+    }
+    create_custom_fields(custom_fields)
 def stock_entry_property_setter():
     doctype="Stock Entry"
     make_property_setter(doctype, 'inspection_required', 'hidden', '1', 'Check')
