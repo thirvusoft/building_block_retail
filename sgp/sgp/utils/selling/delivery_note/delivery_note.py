@@ -77,7 +77,9 @@ def delivery_note_custom_field():
                 fieldname= "current_odometer_value",
 				fieldtype= "Int",
 				insert_after= "distance",
-				label= "Current Odometer Value"
+				label= "Current Odometer Value",
+                fetch_from= "own_vehicle_no.last_odometer",
+                read_only=1
             ),
             dict(
                 fieldname= "return_odometer_value",
