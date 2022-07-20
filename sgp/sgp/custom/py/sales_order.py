@@ -234,41 +234,42 @@ def get_stock_and_priority(items):
     item = []
     idx=0
     for row in items:
-        order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
-        stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
-        res, avail_qty, stock_taken, req_qty= -order_qty,0,0,0
-        se_completed_qty=get_pre_work_order_completed_qty(row['name'])
-        priority = ''
-        for i in stock:
-            res+=i['reserved_qty']
-            avail_qty+=i['actual_qty']
-        act_qty = avail_qty - res - se_completed_qty
-        if(act_qty<=0):
-            act_qty=0
-            stock_taken=0
-            req_qty=row['req_qty']
-            priority = 'Urgent Priority'
-        if(act_qty>row['req_qty']):
-            stock_taken = row['req_qty']
-            req_qty = row['req_qty']
-            priority = 'Low Priority'
-        if(act_qty>0 and act_qty<row['req_qty']):
-            priority = 'Low Priority'
-            req_qty = act_qty
-            stock_taken = act_qty
-            new_row=copy(row)
-            new_row['stock_availability'] = 0
-            new_row['stock_taken'] = 0
-            new_row['pending_qty'] = row['req_qty'] - act_qty
-            new_row['priority'] = 'Urgent Priority'
-            item.append(new_row)
-            
-        items[idx]['stock_availability'] = act_qty
-        items[idx]['stock_taken'] = stock_taken
-        items[idx]['pending_qty'] = req_qty
-        items[idx]['priority'] = priority
-        item.append(items[idx])
-        idx+=1
+        if(frappe.get_value('Item', row.get('item_code'),'item_group') != "Raw Material"):
+            order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
+            stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
+            res, avail_qty, stock_taken, req_qty= -order_qty,0,0,0
+            se_completed_qty=get_pre_work_order_completed_qty(row['name'])
+            priority = ''
+            for i in stock:
+                res+=i['reserved_qty']
+                avail_qty+=i['actual_qty']
+            act_qty = avail_qty - res - se_completed_qty
+            if(act_qty<=0):
+                act_qty=0
+                stock_taken=0
+                req_qty=row['req_qty']
+                priority = 'Urgent Priority'
+            if(act_qty>row['req_qty']):
+                stock_taken = row['req_qty']
+                req_qty = row['req_qty']
+                priority = 'Low Priority'
+            if(act_qty>0 and act_qty<row['req_qty']):
+                priority = 'Low Priority'
+                req_qty = act_qty
+                stock_taken = act_qty
+                new_row=copy(row)
+                new_row['stock_availability'] = 0
+                new_row['stock_taken'] = 0
+                new_row['pending_qty'] = row['req_qty'] - act_qty
+                new_row['priority'] = 'Urgent Priority'
+                item.append(new_row)
+                
+            items[idx]['stock_availability'] = act_qty
+            items[idx]['stock_taken'] = stock_taken
+            items[idx]['pending_qty'] = req_qty
+            items[idx]['priority'] = priority
+            item.append(items[idx])
+            idx+=1
     return item
 
 def get_pre_work_order_completed_qty(so_child):
