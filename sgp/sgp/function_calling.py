@@ -49,4 +49,7 @@ def function_calling():
     company_customization()
     account_customization()
     create_designation()
+    
+def execute():
+    function_calling()
 
