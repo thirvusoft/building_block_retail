@@ -37,9 +37,7 @@ def before_validate(doc,action):
                     code =  eval(i.code)
                     for j in code:
                         if j in completed_qty.keys():
-                            x=[] 
-                            x.append(completed_qty[j])
-                            completed_qty.update({j: x[0]+ code[j]})
+                            completed_qty[j] += code[j]
                         else:
                             completed_qty.update({j: code[j]}) 
         for i in job_card.time_logs:
@@ -47,9 +45,7 @@ def before_validate(doc,action):
         index = 0
         for d in emp_list:
             if d in emp_qty.keys():
-                x=[] 
-                x.append(emp_qty[d])
-                emp_qty.update({d: x[0]+ job_card.time_logs[index].completed_qty})
+                emp_qty[d] += job_card.time_logs[index].completed_qty
                 index += 1
             else:
                 emp_qty.update({d: job_card.time_logs[index].completed_qty}) 
