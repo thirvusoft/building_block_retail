@@ -101,6 +101,16 @@ frappe.ui.form.on('Sales Order',{
         cur_frm.set_value('project',cur_frm.doc.site_work)
     },
     type:function(frm){
+        if(frm.doc.customer)
+        {frm.set_query('site_work',function(frm){
+            return {
+                filters:{
+                    'customer': cur_frm.doc.customer,
+                    'status': 'Open',
+                    'is_multi_customer':cur_frm.doc.is_multi_customer
+                }
+            }
+        })}
         setquery(frm)
         if(cur_frm.is_new()==1){
         fill_paver_compound_table_from_item(frm)
@@ -122,6 +132,7 @@ frappe.ui.form.on('Sales Order',{
 
         frm.clear_table("items");
         if(cur_frm.doc.type=='Pavers'){
+            cur_frm.set_value("compoun_walls",[])
             let rm= cur_frm.doc.pavers?cur_frm.doc.pavers:[]
             for(let row=0;row<rm.length;row++){
                 if(!cur_frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
@@ -151,6 +162,9 @@ frappe.ui.form.on('Sales Order',{
                 new_row.delivery_date=cur_frm.doc.delivery_date
                 new_row.work=cur_frm.doc.pavers[row].work
             }
+        }
+        else{
+            cur_frm.set_value('pavers',[])
         }
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
@@ -301,7 +315,7 @@ function amount_rawmet(frm,cdt,cdn){
 
 function fill_paver_compound_table_from_item(frm){
     if(frm.doc.type=="Compound Wall"){
-        if(!frm.doc.compoun_walls){
+        if(!frm.doc.compoun_walls || frm.doc.compoun_walls==0){
         frm.doc.items.forEach((row) =>{
             var child = frm.add_child('compoun_walls')
             child.item = row.item_code
@@ -310,14 +324,30 @@ function fill_paver_compound_table_from_item(frm){
     }
     }
     else if(frm.doc.type == "Pavers"){
-        if(!frm.doc.pavers){
+        if(!frm.doc.pavers || frm.doc.pavers==0){    
         frm.doc.items.forEach((row) =>{
             var child = frm.add_child('pavers')
             child.item = row.item_code
             child.required_area=row.qty
             child.rate = row.rate
             child.amount = row.amount
+            if(row.item_code){
+            frappe.call({
+				method:"sgp.sgp.custom.py.site_work.item_details_fetching_pavers",
+				args:{item_code: row.item_code},
+				callback(r)
+				{
+					child.area_per_bundle = r['message'][0]?parseFloat(r["message"][0]):0
+                    var bundle = child.area_per_bundle?child.required_area / child.area_per_bundle :0
+                    var no_of_bundle = Math.ceil(bundle)
+                    child.number_of_bundle = no_of_bundle?no_of_bundle:0
+                    var allocated_paver = child.number_of_bundle * child.area_per_bundle
+			        child.allocated_paver_area = allocated_paver?allocated_paver:0
+				}
+			})
+        }
         })
+        console.log("Reached")
     }
     }
     frm.refresh()
