@@ -1,7 +1,7 @@
 from . import __version__ as app_version
 
 app_name = "sgp"
-app_title = "Sgp"
+app_title = "Build Block Retail"
 app_publisher = "ts@info.in"
 app_description = "customization"
 app_icon = "octicon octicon-file-directory"

@@ -8,8 +8,8 @@ from requests import options
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
- 
- 
+
+
 def customize_field():
    custom_fields = {
        "Project": [
@@ -100,7 +100,7 @@ def customize_field():
               fieldtype='Currency', insert_after='job_worker', read_only=1
               ),
          dict(fieldname='section_break_30',
-              fieldtype='Section Break', insert_after='total_job_worker_cost', 
+              fieldtype='Section Break', insert_after='total_job_worker_cost',
               ),
          dict(fieldname='additional_costs', label="Additional Costs",
               fieldtype='Section Break', insert_after='message'
@@ -131,12 +131,12 @@ def customize_field():
                 )
        ]
    }
- 
+
    create_custom_fields(custom_fields)
- 
- 
+
+
 def site_doc_name():
- 
+
     Project = frappe.get_doc({
          'doctype': 'Property Setter',
          'doctype_or_field': "DocField",
@@ -324,19 +324,22 @@ def site_doc_name():
          "value": 1
     })
     Project.save(ignore_permissions=True)
-    frappe.get_doc(
-          {
-               "doctype": "Translation",
-               "source_text": "Project",
-               "translated_text": "Site Work",
-               "language_code": frappe.local.lang or "en",
-          }
-     ).insert()
-    frappe.get_doc(
-          {
-               "doctype": "Translation",
-               "source_text": "Projects",
-               "translated_text": "Site Work",
-               "language_code": frappe.local.lang or "en",
-          }
-     ).insert()
+    if(not frappe.get_all('Translation', {"source_text": "Project", "translated_text": "Site Work", "language": "en-US"})):
+        frappe.get_doc(
+            {
+                "doctype": "Translation",
+                "source_text": "Project",
+                "translated_text": "Site Work",
+                "language": "en-US",
+            }
+        ).insert()
+
+    if(not frappe.get_all('Translation', {"source_text": "Projects", "translated_text": "Site Work", "language": "en-US"})):
+        frappe.get_doc(
+            {
+                "doctype": "Translation",
+                "source_text": "Projects",
+                "translated_text": "Site Work",
+                "language": "en-US",
+            }
+        ).insert()

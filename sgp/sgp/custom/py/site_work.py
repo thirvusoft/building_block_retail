@@ -3,6 +3,8 @@ import frappe
 import json
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
 from sgp.sgp.custom.py.sales_order import get_item_rate
+from frappe.utils.csvutils import getlink
+
 
 @frappe.whitelist()
 def item_details_fetching_pavers(item_code):
@@ -159,7 +161,13 @@ def validate_jw_qty(self):
     for row in self.delivery_detail:
         if(row.item not  in delivered_item):
             delivered_item[row.item]=0
-        delivered_item[row.item]+=((row.delivered_bundle or 0)*float(frappe.get_value('Item', row.item, 'bundle_per_sqr_ft') or 0))+(row.delivered_pieces or 0)
+        sqft=((row.delivered_bundle or 0)*float(frappe.get_value('Item', row.item, 'bundle_per_sqr_ft') or 0))+((row.delivered_pieces or 0)*float(frappe.get_value('Item', row.item, 'pavers_per_sqft') or 0))
+        item_doc=frappe.get_doc('Item', row.item, 'uoms')
+        conv_factor=[conv.conversion_factor for conv in item_doc.uoms if(conv.uom==item_doc.sales_uom)]
+        if(not sqft and not conv_factor):
+            frappe.throw('Please enter Sales UOM for an item: '+ frappe.bold(getlink('Item', row.item)))
+        stock_qty=(row.delivered_stock_qty or 0) *(conv_factor[0] if(conv_factor) else 0)
+        delivered_item[row.item]+=sqft if(sqft) else (stock_qty)
     jw_items={}
     for row in self.job_worker:
         if(row.item not  in jw_items):

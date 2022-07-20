@@ -21,7 +21,7 @@ def sales_order_customization():
             dict(fieldname='work', label='Work', 
                 fieldtype='Select',insert_after='type', options='\nSupply Only\nLaying Only\nSupply and Laying'),
             dict(fieldname='site_work', label='Site Name', 
-                fieldtype='Link',insert_after='work', options='Project', allow_on_submit=1, mandatory_depends_on="eval:doc.work!='Supply Only'", depends_on="eval:doc.work!='Supply Only'"),
+                fieldtype='Link',insert_after='work', options='Project', allow_on_submit=0, mandatory_depends_on="eval:doc.work!='Supply Only'", depends_on="eval:doc.work!='Supply Only'"),
             dict(fieldname='supervisor', label='Supervisor',
                 fieldtype='Link',insert_after='site_work', options='Employee'),
             dict(fieldname='supervisor_name', label='Supervisor Name', 

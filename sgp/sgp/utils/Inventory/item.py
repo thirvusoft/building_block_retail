@@ -42,7 +42,8 @@ def item_customization():
             dict(fieldname="pieces_per_bundle",
                 label='Pieces Per Bundle',
                 fieldtype='Int',
-                insert_after='length'),
+                insert_after='length',
+                depends_on='eval:doc.item_group == "Compound Walls"'),
             
             dict(fieldname="weight_per_piece",
                 label='Weight Per Piece',
@@ -56,7 +57,7 @@ def item_customization():
                 insert_after='weight_per_piece',
                 hidden=1),
 
-            dict(fieldname='bundle_per_sqr_ft',
+            dict(fieldname='pavers_per_sqft',
                 label='Pavers Per Sqft',
                 fieldtype='Float',
                 insert_after='per_sqr_ft',
@@ -65,7 +66,7 @@ def item_customization():
             dict(fieldname='weight_per_paver',
                 label='Weight Per Paver',
                 fieldtype="Float",
-                insert_after='bundle_per_sqr_ft',
+                insert_after='pavers_per_sqft',
                 depends_on='eval:doc.item_group == "Pavers"'),
             
             dict(fieldname='sqft_per_slab',
@@ -111,7 +112,7 @@ def item_customization():
                 read_only=1),
 
             
-            dict(fieldname='sqft_per_bundle',
+            dict(fieldname='bundle_per_sqr_ft',
                 label='Sqft Per Bundle',
                 fieldtype='Data',
                 insert_after='weight_per_bundle',
