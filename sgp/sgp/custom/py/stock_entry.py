@@ -61,18 +61,18 @@ def before_validate(doc,action):
         amount = wo.total_expanse * doc.fg_completed_qty
         if doc.amended_from:
             if wo.total_expanse:
-                creating_journal_entry(doc)
+                creating_journal_entry(doc,wo.total_expanse)
         else:
             for i in doc.additional_costs:
                 if expenses_included_in_valuation == i.expense_account:
                     i.amount += amount
                     i.base_amount += amount
                     doc.total_additional_costs += amount
-                    creating_journal_entry(doc)
+                    creating_journal_entry(doc,wo.total_expanse)
                     break
         doc.distribute_additional_costs()
         doc.update_valuation_rate()
-def creating_journal_entry(doc):
+def creating_journal_entry(doc,income):
     code = eval(doc.code)
     for i in code:
         if code[i] != 0:
@@ -88,11 +88,11 @@ def creating_journal_entry(doc):
                         "accounts":[
                             {
                                 "account":default_employee_expenses_account,
-                                "credit_in_account_currency":code[i]
+                                "credit_in_account_currency":code[i]*income
                             },
                             {
                                 "account":income_account,
-                                "debit_in_account_currency":code[i],
+                                "debit_in_account_currency":code[i]*income,
                             },
                         ],
                     })
