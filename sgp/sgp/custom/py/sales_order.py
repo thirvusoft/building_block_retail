@@ -1,9 +1,8 @@
-from codecs import ignore_errors
-import site
+from copy import copy
 import frappe
 import json
-from frappe.model.mapper import get_mapped_doc
-
+from erpnext.stock.get_item_details import get_default_bom
+from frappe.utils.data import flt
 
 @frappe.whitelist()
 def get_item_value(doctype):
@@ -164,10 +163,161 @@ def get_stock_availability(items):
     items = json.loads(items)
     stock_availability = []
     for i in items:
-        res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
-        qty, planned_production_qty = 0, 0
-        planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
-        currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
-        if(res_qty<act_qty):qty = qty = act_qty-res_qty
-        stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':qty,'ordered_qty':i.get('stock_qty'),'stock_uom':i.get('stock_uom'),'planned_production_qty':planned_production_qty, 'currently_produced_qty':currently_produced_qty})
+        if(frappe.get_value('Item', i.get('item_code'),'item_group') != "Raw Material"):
+            res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
+            qty, planned_production_qty = 0, 0
+            planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
+            currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
+            if(res_qty<act_qty):qty = qty = act_qty-res_qty
+            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':qty,'ordered_qty':i.get('stock_qty'),'stock_uom':i.get('stock_uom'),'planned_production_qty':planned_production_qty, 'currently_produced_qty':currently_produced_qty})
     return stock_availability
+
+@frappe.whitelist()
+def remove_raw_materials_from_items(doc):
+    doc = json.loads(doc)
+    items = []
+    raw = [i['item'] for i in doc['raw_materials']]
+    for i in doc['items']:
+        if(i['item_code'] not in raw):items.append(i)
+    doc.update({
+        'items':items
+    })
+    print(doc['items'], len(doc['items']))
+    return doc
+
+@frappe.whitelist()
+def get_work_order_items(self, for_raw_material_request=0):
+    self = json.loads(self)
+    """Returns items with BOM that already do not have a linked work order"""
+    items = []
+    item_codes = [i['item_code'] for i in self['items']]
+    product_bundle_parents = [
+        pb.new_item_code
+        for pb in frappe.get_all(
+            "Product Bundle", {"new_item_code": ["in", item_codes]}, ["new_item_code"]
+        )
+    ]
+
+    for table in [self['items'], self['packed_items']]:
+        for i in table:
+            bom = get_default_bom(i['item_code'])
+            stock_qty = i['qty'] if i['doctype'] == "Packed Item" else i['stock_qty']
+
+            if not for_raw_material_request:
+                total_work_order_qty = flt(
+                    frappe.db.sql(
+                        """select sum(qty) from `tabWork Order`
+                    where production_item=%s and sales_order=%s and sales_order_item = %s and docstatus<2""",
+                        (i['item_code'], self['name'], i['name']),
+                    )[0][0]
+                )
+                pending_qty = stock_qty - total_work_order_qty
+            else:
+                pending_qty = stock_qty
+
+            if pending_qty and i['item_code'] not in product_bundle_parents:
+                items.append(
+                    dict(
+                        name=i['name'],
+                        item_code=i['item_code'],
+                        description=i['description'],
+                        bom=bom or "",
+                        warehouse=i['warehouse'],
+                        req_qty=pending_qty,
+                        required_qty=pending_qty if for_raw_material_request else 0,
+                        sales_order_item=i['name'],
+                    )
+                )
+    item = get_stock_and_priority(items)
+    return item
+
+def get_stock_and_priority(items):
+    item = []
+    item_wise_avail_stock={}
+    print(items)
+    idx=0
+    for row in items:
+        order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
+        stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
+        res, avail_qty, stock_taken, req_qty= -order_qty,0,0,0
+        se_completed_qty=get_pre_work_order_completed_qty(row['name'])
+        priority = ''
+        for i in stock:
+            res+=i['reserved_qty']
+            avail_qty+=i['actual_qty']
+        act_qty = avail_qty - res - se_completed_qty
+        if(act_qty<=0):
+            act_qty=0
+            stock_taken=0
+            req_qty=row['req_qty']
+            priority = 'Urgent Priority'
+        if(act_qty>row['req_qty']):
+            stock_taken = row['req_qty']
+            req_qty = row['req_qty']
+            priority = 'Low Priority'
+        if(act_qty>0 and act_qty<row['req_qty']):
+            priority = 'Low Priority'
+            req_qty = act_qty
+            stock_taken = act_qty
+            new_row=copy(row)
+            new_row['stock_availability'] = 0
+            new_row['stock_taken'] = 0
+            new_row['pending_qty'] = row['req_qty'] - act_qty
+            new_row['priority'] = 'Urgent Priority'
+            print(new_row)
+            item.append(new_row)
+            
+        items[idx]['stock_availability'] = act_qty
+        items[idx]['stock_taken'] = stock_taken
+        items[idx]['pending_qty'] = req_qty
+        items[idx]['priority'] = priority
+        print(items[idx])
+        item.append(items[idx])
+        idx+=1
+    return item
+
+def get_pre_work_order_completed_qty(so_child):
+    print(so_child)
+    so = frappe.get_value('Sales Order Item', so_child, 'parent')
+    wo = frappe.get_all("Work Order",filters={'sales_order':so}, pluck='name')
+    qty=0
+    print(so)
+    for i in wo:
+        print(i)
+        qty += (sum(frappe.get_all("Stock Entry", filters={'work_order':i}, pluck='fg_completed_qty')) or 0)
+    print(qty)
+    return qty
+
+@frappe.whitelist()
+def make_work_orders(items, sales_order, company, project=None):
+	"""Make Work Orders against the given Sales Order for the given `items`"""
+	items = json.loads(items).get("items")
+	out = []
+
+	for i in items:
+		if not i.get("bom"):
+			frappe.throw(_("Please select BOM against item {0}").format(i.get("item_code")))
+		if not i.get("pending_qty"):
+			frappe.throw(_("Please select Qty against item {0}").format(i.get("item_code")))
+
+		work_order = frappe.get_doc(
+			dict(
+				doctype="Work Order",
+				production_item=i["item_code"],
+				bom_no=i.get("bom"),
+				qty=i["pending_qty"],
+				company=company,
+				sales_order=sales_order,
+				sales_order_item=i["sales_order_item"],
+				project=project,
+				fg_warehouse=i["warehouse"],
+				description=i["description"],
+				priority=i['priority']
+			)
+		).insert()
+		work_order.set_work_order_operations()
+		work_order.flags.ignore_mandatory = True
+		work_order.save()
+		out.append(work_order)
+
+	return [p.name for p in out]

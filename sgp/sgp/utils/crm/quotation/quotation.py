@@ -27,4 +27,4 @@ def quotation_custom_field():
     create_custom_fields(custom_fields)
 
 def quotation_property_setter():
-    pass
+    make_property_setter('Quotation', 'items', 'reqd', '0', 'Check')

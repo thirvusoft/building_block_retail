@@ -48,8 +48,6 @@ def get_workorder_doc(work_order, opr, workstation, qty=0):
     wo.update({
         'over_prdn_prcnt' : over_prdn_prcnt
     })
-    frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', qty)
-    frappe.db.commit()
     return wo
 
 @frappe.whitelist()
@@ -58,3 +56,9 @@ def get_link_to_jobcard(work_order):
     if(not len(job_card)):frappe.throw("Job Card doesn't Created. This may cause if the <b>Linked BOM doesn't have any Operation.</b>")
     return "/app/job-card/"+job_card[-1]
     
+    
+@frappe.whitelist()
+def update_operation_completed_qty(work_order, opr, workstation, qty=0):
+    completed_qty = frappe.get_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty') or 0
+    frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', float(qty)+float(completed_qty))
+    frappe.db.commit()
