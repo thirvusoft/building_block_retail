@@ -1,0 +1,85 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-07-19 14:35:01.695096",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Purchase Reports",
+ "links": [],
+ "modified": "2022-07-19 14:38:05.619943",
+ "modified_by": "parameshwari@gmail.com",
+ "module": "Sgp",
+ "name": "Purchase Reports",
+ "owner": "parameshwari@gmail.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "Report Builder",
+   "label": "Requested Items to Order and Receive",
+   "link_to": "Requested Items to Order and Receive",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Order Analysis",
+   "link_to": "Purchase Order Analysis",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Analytics",
+   "link_to": "Purchase Analytics",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Order Trends",
+   "link_to": "Purchase Order Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item-wise Purchase History",
+   "link_to": "Item-wise Purchase History",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Supplier Quotation Comparison",
+   "link_to": "Supplier Quotation Comparison",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Receipt Trends",
+   "link_to": "Purchase Receipt Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Invoice Trends",
+   "link_to": "Purchase Invoice Trends",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item-wise Purchase Register",
+   "link_to": "Item-wise Purchase Register",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Purchase Register",
+   "link_to": "Purchase Register",
+   "type": "Report"
+  }
+ ]
+}

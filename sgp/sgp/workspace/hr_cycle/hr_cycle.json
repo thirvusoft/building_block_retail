@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-07-18 12:35:48.663853",
+ "creation": "2022-07-19 12:47:16.589095",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
@@ -11,32 +11,32 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Manufacturing Cycle",
+ "label": "HR Cycle",
  "links": [],
- "modified": "2022-07-19 16:15:53.523153",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-07-19 14:19:57.266025",
+ "modified_by": "Administrator",
  "module": "Sgp",
- "name": "Manufacturing Cycle",
- "owner": "Administrator",
+ "name": "HR Cycle",
+ "owner": "parameshwari@gmail.com",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Work Order",
-   "link_to": "Work Order",
+   "label": "Employee",
+   "link_to": "Employee",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Job Card",
-   "link_to": "Job Card",
+   "label": "Journal Payment",
+   "link_to": "Journal Payment",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Stock Entry",
-   "link_to": "Stock Entry",
+   "label": "Journal Receipt",
+   "link_to": "Journal Receipt",
    "type": "DocType"
   }
  ]
