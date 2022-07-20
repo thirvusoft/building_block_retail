@@ -109,6 +109,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
+	"Bin": {
+		"on_update": "sgp.sgp.custom.py.site_work.update_site_work"
+	},
 	"Driver":{
 		"validate":"sgp.sgp.custom.py.driver.validate_phone"
 	},
@@ -141,7 +144,15 @@ doc_events = {
 	# 	"on_submit": "sgp.sgp.custom.py.job_card.create_timesheet"
 	# },
 	"Sales Invoice":{
-    	"before_validate":"sgp.sgp.custom.py.sales_invoice.update_customer"
+    	"before_validate":"sgp.sgp.custom.py.sales_invoice.update_customer",
+    	"on_submit":[
+					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
+					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework",
+					],
+		"on_cancel":[
+					"sgp.sgp.custom.py.delivery_note.reduce_qty_sitework",
+					"sgp.sgp.custom.py.delivery_note.reduce_return_qty_sitework"
+					 ]
   	},
 	"Vehicle":{
         "validate":"sgp.sgp.custom.py.vehicle.reference_date",

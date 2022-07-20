@@ -2,6 +2,7 @@ from email.policy import default
 from ipaddress import collapse_addresses
 from optparse import Option
 from os import link
+from pydoc import describe
 from ssl import Options
 from requests import options
 import frappe
@@ -18,8 +19,11 @@ def customize_field():
          dict(fieldname='completed', label='% Completed',
               fieldtype='Percent', insert_after='work', read_only=1
               ),
-         dict(fieldname='total_expense_amount', label='Total Costing',
-              fieldtype='Currency', insert_after='completed', read_only=1
+         dict(fieldname='total_expense_amount', label='Total Costing as Per Bill',
+              fieldtype='Currency', insert_after='completed', read_only=1, description='It includes Items sales rate, Raw Materials Sales Rate and Additional Cost except Site Advance.'
+              ),
+          dict(fieldname='actual_site_cost_calculation', label='Actual Costing of this Site',
+              fieldtype='Currency', insert_after='total_expense_amount', read_only=1, description= 'It includes Items Valuation rate, Raw Materials Buying Rate, Job Workers cost and Additional Cost except Site Advance.'
               ),
          dict(fieldname='job__work', label='Job worker',
               fieldtype='Link', insert_after='completed', options="Employee", hidden=1
@@ -102,7 +106,7 @@ def customize_field():
               fieldtype='Section Break', insert_after='message'
               ),
          dict(fieldname='total', label=" Total Amount",
-              fieldtype='Currency', insert_after='total_advance_amount'
+              fieldtype='Currency', insert_after='total_advance_amount', read_only=1
               ),
          dict(fieldname='material_supply', label="Material Supply",
               fieldtype='Check', insert_after='total',

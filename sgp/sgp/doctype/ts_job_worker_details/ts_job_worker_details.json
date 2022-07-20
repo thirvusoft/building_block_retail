@@ -23,19 +23,21 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Name",
-   "options": "Employee"
+   "options": "Employee",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
-   "columns": 2,
+   "columns": 1,
    "fieldname": "start_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Start Date"
+   "label": "Start Date",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
-   "columns": 2,
+   "columns": 1,
    "fieldname": "end_date",
    "fieldtype": "Date",
    "in_list_view": 1,
@@ -47,7 +49,8 @@
    "fieldname": "rate",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Rate/Sqft"
+   "label": "Rate/Sqft",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
@@ -55,7 +58,8 @@
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Amount"
+   "label": "Amount",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
@@ -63,22 +67,24 @@
    "fieldname": "sqft_allocated",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Completed Sqft"
+   "label": "Completed Sqft",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
+   "columns": 2,
    "fieldname": "item",
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_preview": 1,
    "label": "item",
-   "options": "Item"
+   "options": "Item",
+   "reqd": 1
   },
   {
    "allow_on_submit": 1,
    "fieldname": "completed_bundle",
    "fieldtype": "Float",
-   "in_list_view": 1,
    "in_preview": 1,
    "label": "Completed Bundle"
   }
@@ -86,7 +92,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-07-05 13:10:05.955259",
+ "modified": "2022-07-19 20:38:31.400874",
  "modified_by": "Administrator",
  "module": "Sgp",
  "name": "TS Job Worker Details",
