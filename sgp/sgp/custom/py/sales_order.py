@@ -182,7 +182,6 @@ def remove_raw_materials_from_items(doc):
     doc.update({
         'items':items
     })
-    print(doc['items'], len(doc['items']))
     return doc
 
 @frappe.whitelist()
@@ -233,8 +232,6 @@ def get_work_order_items(self, for_raw_material_request=0):
 
 def get_stock_and_priority(items):
     item = []
-    item_wise_avail_stock={}
-    print(items)
     idx=0
     for row in items:
         order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
@@ -264,28 +261,22 @@ def get_stock_and_priority(items):
             new_row['stock_taken'] = 0
             new_row['pending_qty'] = row['req_qty'] - act_qty
             new_row['priority'] = 'Urgent Priority'
-            print(new_row)
             item.append(new_row)
             
         items[idx]['stock_availability'] = act_qty
         items[idx]['stock_taken'] = stock_taken
         items[idx]['pending_qty'] = req_qty
         items[idx]['priority'] = priority
-        print(items[idx])
         item.append(items[idx])
         idx+=1
     return item
 
 def get_pre_work_order_completed_qty(so_child):
-    print(so_child)
     so = frappe.get_value('Sales Order Item', so_child, 'parent')
     wo = frappe.get_all("Work Order",filters={'sales_order':so}, pluck='name')
     qty=0
-    print(so)
     for i in wo:
-        print(i)
         qty += (sum(frappe.get_all("Stock Entry", filters={'work_order':i}, pluck='fg_completed_qty')) or 0)
-    print(qty)
     return qty
 
 @frappe.whitelist()
