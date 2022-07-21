@@ -11,7 +11,7 @@ class JournalPayment(Document):
 		gl_doc=frappe.new_doc('GL Entry')
 		gl_doc.posting_date=doc.date
 		gl_doc.account=account
-		# gl_doc.cost_center=doc.cost_center
+		gl_doc.cost_center=doc.cost_center
 		gl_doc.voucher_type=doc.doctype
 		gl_doc.party_type=doc.party_type
 		gl_doc.voucher_no=doc.name

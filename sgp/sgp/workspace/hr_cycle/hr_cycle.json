@@ -1,0 +1,43 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-07-19 12:47:16.589095",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "HR Cycle",
+ "links": [],
+ "modified": "2022-07-19 14:19:57.266025",
+ "modified_by": "Administrator",
+ "module": "Sgp",
+ "name": "HR Cycle",
+ "owner": "parameshwari@gmail.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Employee",
+   "link_to": "Employee",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Journal Payment",
+   "link_to": "Journal Payment",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Journal Receipt",
+   "link_to": "Journal Receipt",
+   "type": "DocType"
+  }
+ ]
+}

@@ -23,6 +23,9 @@ from sgp.sgp.utils.manufacturing.workstation.workstation import workstation_cust
 from sgp.sgp.utils.accounting.journal_entry.journal_entry import journal_entry_customization
 from sgp.sgp.utils.accounting.company.company import company_customization
 from sgp.sgp.custom.py.defaults import create_designation
+from sgp.sgp.utils.stock.stock_entry.stock_entry import stock_entry_custom
+from sgp.sgp.utils.Inventory.item_custom import item_Customization
+
 def function_calling():
     create_docs()
     purchase_order()
@@ -30,6 +33,7 @@ def function_calling():
     purchase_receipt()
     request_for_quotation()
     supplier_quotation()
+    item_Customization()
     item_customization()
     sales_invoice_customization()
     customize_field()
@@ -49,7 +53,7 @@ def function_calling():
     company_customization()
     account_customization()
     create_designation()
+    stock_entry_custom()
     
 def execute():
     function_calling()
-

@@ -15,7 +15,8 @@
   "party_name",
   "amount",
   "naming_series",
-  "amended_from"
+  "amended_from",
+  "cost_center"
  ],
  "fields": [
   {
@@ -88,6 +89,7 @@
    "fetch_from": "company_name.abbr",
    "fieldname": "abbr",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Abbr"
   },
   {
@@ -98,12 +100,19 @@
    "options": "Journal Receipt",
    "print_hide": 1,
    "read_only": 1
+  },
+  {
+   "fetch_from": "company_name.cost_center",
+   "fieldname": "cost_center",
+   "fieldtype": "Link",
+   "label": "Cost Center",
+   "options": "Cost Center"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2022-07-15 12:39:04.268034",
+ "modified": "2022-07-19 09:55:25.139116",
  "modified_by": "Administrator",
  "module": "Sgp",
  "name": "Journal Receipt",

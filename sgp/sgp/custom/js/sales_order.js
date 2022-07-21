@@ -51,10 +51,6 @@ frappe.ui.form.on('Sales Order',{
             cur_frm.set_df_property('customer','reqd',1);
         }
         setquery(frm)
-        
-        if(cur_frm.is_new()==1){
-            frm.clear_table('items')
-        }
         cur_frm.set_df_property('items','reqd',0);
         cur_frm.set_df_property('items','hidden',1);
         frm.set_query('supervisor', function(frm){
@@ -93,6 +89,9 @@ frappe.ui.form.on('Sales Order',{
                     }
                 })
             })
+            frm.add_custom_button('Work Order', ()=>{
+                make_work_order(frm)
+            },("Create"))
         }
         else{
             frm.set_df_property('available_qty','hidden',1)
@@ -126,7 +125,20 @@ frappe.ui.form.on('Sales Order',{
         cur_frm.set_value('project',cur_frm.doc.site_work)
     },
     type:function(frm){
+        if(frm.doc.customer)
+        {frm.set_query('site_work',function(frm){
+            return {
+                filters:{
+                    'customer': cur_frm.doc.customer,
+                    'status': 'Open',
+                    'is_multi_customer':cur_frm.doc.is_multi_customer
+                }
+            }
+        })}
         setquery(frm)
+        if(cur_frm.is_new()==1){
+        fill_paver_compound_table_from_item(frm)
+        }
     },
     before_save:async function(frm){
         if(cur_frm.doc.is_multi_customer){
@@ -144,8 +156,10 @@ frappe.ui.form.on('Sales Order',{
 
         frm.clear_table("items");
         if(cur_frm.doc.type=='Pavers'){
+            cur_frm.set_value("compoun_walls",[])
             let rm= cur_frm.doc.pavers?cur_frm.doc.pavers:[]
             for(let row=0;row<rm.length;row++){
+                if(!cur_frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
                 var message;
                 var new_row = frm.add_child("items");
                 new_row.item_code=cur_frm.doc.pavers[row].item
@@ -173,6 +187,7 @@ frappe.ui.form.on('Sales Order',{
                 new_row.work=cur_frm.doc.pavers[row].work
             }
         }
+
         
         if(cur_frm.doc.type=='Compound Wall'){
             let rmm= cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
@@ -202,6 +217,7 @@ frappe.ui.form.on('Sales Order',{
             }
         }
         
+
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
             var message;
@@ -394,4 +410,172 @@ function amount_rawmet(frm,cdt,cdn){
 function amt(frm, cdt, cdn){
     let row=locals[cdt][cdn]
     frappe.model.set_value(cdt,cdn,'amount',Math.round(row.allocated_ft*row.rate));
+
+function fill_paver_compound_table_from_item(frm){
+    if(frm.doc.type=="Compound Wall"){
+        if(!frm.doc.compoun_walls || frm.doc.compoun_walls==0){
+        frm.doc.items.forEach((row) =>{
+            var child = frm.add_child('compoun_walls')
+            child.item = row.item_code
+            child.rate = row.rate
+        })
+    }
+    }
+    else if(frm.doc.type == "Pavers"){
+        if(!frm.doc.pavers || frm.doc.pavers==0){    
+        frm.doc.items.forEach((row) =>{
+            var child = frm.add_child('pavers')
+            child.item = row.item_code
+            child.required_area=row.qty
+            child.rate = row.rate
+            child.amount = row.amount
+            if(row.item_code){
+            frappe.call({
+				method:"sgp.sgp.custom.py.site_work.item_details_fetching_pavers",
+				args:{item_code: row.item_code},
+				callback(r)
+				{
+					child.area_per_bundle = r['message'][0]?parseFloat(r["message"][0]):0
+                    var bundle = child.area_per_bundle?child.required_area / child.area_per_bundle :0
+                    var no_of_bundle = Math.ceil(bundle)
+                    child.number_of_bundle = no_of_bundle?no_of_bundle:0
+                    var allocated_paver = child.number_of_bundle * child.area_per_bundle
+			        child.allocated_paver_area = allocated_paver?allocated_paver:0
+				}
+			})
+        }
+        })
+        console.log("Reached")
+    }
+    }
+    frm.refresh()
+}
+
+function make_work_order(frm) {
+    // var doc = frm.doc
+    frappe.call({
+        method: "sgp.sgp.custom.py.sales_order.remove_raw_materials_from_items",
+        args: {doc:frm.doc},
+        callback(so){
+            console.log("KKKK", so.message.items)
+            frappe.call({
+                // doc: so.message,
+                method: 'sgp.sgp.custom.py.sales_order.get_work_order_items',
+                args:{self: so.message},
+                callback: function(r) {
+                   if(!r.message.length) {
+                        frappe.msgprint({
+                            title: __('Work Order not created'),
+                            message: __('Work Order already created for all items with BOM'),
+                            indicator: 'orange'
+                        });
+                        return;
+                    } else {
+                        console.log(r.message)
+                        const fields = [{
+                            label: 'Items',
+                            fieldtype: 'Table',
+                            fieldname: 'items',
+                            description: __('Select BOM and Qty for Production'),
+                            fields: [{
+                                fieldtype: 'Read Only',
+                                fieldname: 'item_code',
+                                label: __('Item Code'),
+                                in_list_view: 1
+                            }, {
+                                fieldtype: 'Link',
+                                fieldname: 'bom',
+                                options: 'BOM',
+                                reqd: 1,
+                                label: __('Select BOM'),
+                                in_list_view: 1,
+                                get_query: function (doc) {
+                                    return { filters: { item: doc.item_code } };
+                                }
+                            }, {
+                                fieldtype: 'Float',
+                                fieldname: 'req_qty',
+                                reqd: 1,
+                                label: __('Order Qty'),
+                                in_list_view: 1,
+                                columns: 1
+                            }, {
+                                fieldtype: 'Data',
+                                fieldname: 'sales_order_item',
+                                reqd: 1,
+                                label: __('Sales Order Item'),
+                                hidden: 1
+                            },
+                                {
+                                    fieldtype: 'Float',
+                                    fieldname: 'stock_availability',
+                                    label: 'Available Stock',
+                                    in_list_view: 1,
+                                    columns: 1
+                                },
+                                {
+                                    fieldtype: 'Float',
+                                    fieldname: 'stock_taken',
+                                    label: 'Stock Taken',
+                                    in_list_view: 1,
+                                    columns: 1
+                                },
+                                {
+                                    fieldtype: 'Float',
+                                    fieldname: 'pending_qty',
+                                    label: 'Required Qty',
+                                    in_list_view: 1,
+                                    columns: 1
+                                },
+                                {
+                                    fieldtype: 'Select',
+                                    fieldname: 'priority',
+                                    label: 'Priority',
+                                    in_list_view: 1,
+                                    options: 'Low Priority\nHigh Priority\nUrgent Priority'
+                                }
+                                     ],
+                            data: r.message,
+                            get_data: () => {
+                                return r.message
+                            }
+                        }]
+                        var d = new frappe.ui.Dialog({
+                            title: __('Items to Manufacture'),
+                            fields: fields,
+                            size: 'large',
+                            primary_action: function() {
+                                var data = {items: d.fields_dict.items.grid.data};
+                                console.log(data)
+                                frappe.call({
+                                    method: 'sgp.sgp.custom.py.sales_order.make_work_orders',
+                                    args: {
+                                        items: data,
+                                        company: so.message.company,
+                                        sales_order: so.message.name,
+                                        project: so.message.site_work
+                                    },
+                                    freeze: true,
+                                    callback: function(r) {
+                                        if(r.message) {
+                                            frappe.msgprint({
+                                                message: __('Work Orders Created: {0}', [r.message.map(function(d) {
+                                                        return repl('<a href="/app/work-order/%(name)s">%(name)s</a>', {name:d})
+                                                    }).join(', ')]),
+                                                indicator: 'green'
+                                            })
+                                        }
+                                        d.hide();
+                                    }
+                                });
+                            },
+                            primary_action_label: __('Create')
+                        });
+                        d.show();
+                    }
+                }
+            });
+        }
+    })
+    
 }

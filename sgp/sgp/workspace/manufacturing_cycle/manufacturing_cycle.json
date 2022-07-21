@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-06-30 14:08:36.405099",
+ "creation": "2022-07-18 12:35:48.663853",
  "developer_mode_only": 0,
  "disable_user_customization": 0,
  "docstatus": 0,
@@ -11,44 +11,32 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Inventory",
+ "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2022-07-19 14:19:41.166810",
- "modified_by": "Administrator",
+ "modified": "2022-07-19 16:15:53.523153",
+ "modified_by": "parameshwari@gmail.com",
  "module": "Sgp",
- "name": "Inventory",
- "owner": "administrator",
+ "name": "Manufacturing Cycle",
+ "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Item",
-   "link_to": "Item",
+   "label": "Work Order",
+   "link_to": "Work Order",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Item Group",
-   "link_to": "Item Group",
+   "label": "Job Card",
+   "link_to": "Job Card",
    "type": "DocType"
   },
   {
    "doc_view": "List",
    "label": "Stock Entry",
    "link_to": "Stock Entry",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Stock Reconciliation",
-   "link_to": "Stock Reconciliation",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Batch",
-   "link_to": "Batch",
    "type": "DocType"
   }
  ]
