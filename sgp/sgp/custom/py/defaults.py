@@ -35,3 +35,9 @@ def create_designation():
         "value":"\nOpen\nCompleted\nCancelled\nStock Pending at Site\nPart Measurement"
     })
     doc.save()
+
+    if(not frappe.db.exists("Designation", "Contracter")):
+        doc = frappe.new_doc("Designation")
+        doc.designation_name = "Contracter"
+        doc.save(ignore_permissions=True)
+    frappe.db.commit()
