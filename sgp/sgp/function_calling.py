@@ -9,6 +9,7 @@ from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
 from sgp.sgp.utils.hr.employee.employee import create_contracter_expense_account
 from sgp.sgp.utils.hr.role.roles import create_role
+from sgp.sgp.utils.hr.salary_slip.salary_slip import create_salary_custom_field
 from sgp.sgp.utils.manufacturing.job_card.job_card import create_job_card_custom_fields
 from sgp.sgp.utils.selling.sales_invoice.sales_invoice_custom_fields import sales_invoice_customization
 from sgp.sgp.utils.projects.site_work.site_work import customize_field
@@ -34,8 +35,8 @@ def function_calling():
     purchase_receipt()
     request_for_quotation()
     supplier_quotation()
-    item_Customization()
-    item_customization()
+    # item_Customization()
+    # item_customization()
     sales_invoice_customization()
     customize_field()
     site_doc_name()
@@ -55,7 +56,7 @@ def function_calling():
     account_customization()
     create_designation()
     stock_entry_custom()
-    create_designation()
+    create_salary_custom_field()
     
 def execute():
     function_calling()

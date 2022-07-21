@@ -166,7 +166,9 @@ doc_events = {
     "Stock Entry":{
         "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
     },
-
+    'Salary Slip':{
+		'validate': 'sgp.sgp.custom.py.salary_slip.salary_slip_add_gross_pay'
+	}
 }
 after_migrate=["sgp.sgp.custom.py.site_work.create_status"]
 doctype_js = {
@@ -220,7 +222,9 @@ doctype_js = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"erpnext.erpnext.payroll.doctype.payroll_entry.payroll_entry.make_payment_entry": "sgp.sgp.utils.hr.journel_entry.journel_entry.make_payment_entry"
+	"erpnext.erpnext.payroll.doctype.payroll_entry.payroll_entry.make_payment_entry": "sgp.sgp.utils.hr.journel_entry.journel_entry.make_payment_entry",
+	'erpnext.payroll.doctype.payroll_entry.payroll_entry.get_start_end_dates': 'sgp.sgp.custom.py.salary_slip.get_start_end_dates',
+	'erpnext.payroll.doctype.payroll_entry.payroll_entry.submit_salary_slips_for_employees': 'sgp.sgp.custom.py.salary_slip.submit_salary_slips_for_employees'
 }
 #
 # each overriding function accepts a `data` argument;
