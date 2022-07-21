@@ -1,3 +1,4 @@
+from sgp.sgp.custom.py.defaults import create_designation
 from sgp.sgp.utils.Inventory.item import item_customization
 from sgp.sgp.utils.accounting.accounts.accounts import account_customization
 from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
@@ -51,3 +52,4 @@ def function_calling():
     company_customization()
     account_customization()
     stock_entry_custom()
+    create_designation()
