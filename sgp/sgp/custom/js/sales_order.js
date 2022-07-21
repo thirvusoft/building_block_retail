@@ -410,6 +410,7 @@ function amount_rawmet(frm,cdt,cdn){
 function amt(frm, cdt, cdn){
     let row=locals[cdt][cdn]
     frappe.model.set_value(cdt,cdn,'amount',Math.round(row.allocated_ft*row.rate));
+}
 
 function fill_paver_compound_table_from_item(frm){
     if(frm.doc.type=="Compound Wall"){
