@@ -347,7 +347,6 @@ function fill_paver_compound_table_from_item(frm){
 			})
         }
         })
-        console.log("Reached")
     }
     }
     frm.refresh()
@@ -359,7 +358,6 @@ function make_work_order(frm) {
         method: "sgp.sgp.custom.py.sales_order.remove_raw_materials_from_items",
         args: {doc:frm.doc},
         callback(so){
-            console.log("KKKK", so.message.items)
             frappe.call({
                 // doc: so.message,
                 method: 'sgp.sgp.custom.py.sales_order.get_work_order_items',
@@ -373,7 +371,6 @@ function make_work_order(frm) {
                         });
                         return;
                     } else {
-                        console.log(r.message)
                         const fields = [{
                             label: 'Items',
                             fieldtype: 'Table',
@@ -448,7 +445,6 @@ function make_work_order(frm) {
                             size: 'large',
                             primary_action: function() {
                                 var data = {items: d.fields_dict.items.grid.data};
-                                console.log(data)
                                 frappe.call({
                                     method: 'sgp.sgp.custom.py.sales_order.make_work_orders',
                                     args: {
