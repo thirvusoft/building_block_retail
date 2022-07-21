@@ -50,7 +50,7 @@ def sales_order_customization():
         
         ['hidden', 'Check', 'currency_and_price_list', 1],
         
-        ['hidden', 'Check', 'set_warehouse', 1],
+        # ['hidden', 'Check', 'set_warehouse', 1],
         
         ['hidden', 'Check', 'scan_barcode', 1],
         
