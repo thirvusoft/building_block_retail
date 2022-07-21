@@ -8,6 +8,15 @@ function setquery(frm){
             }
         }
     })
+    frm.set_query('item','compoun_walls',function(frm){
+        return {
+            filters:{
+                'is_sales_item':1,
+                'item_group':'Compound Walls',
+                'has_variants':0
+            }
+        }
+    })
 }
 
 var prop_name;
@@ -17,15 +26,17 @@ frappe.ui.form.on('Sales Order',{
             render_dialog: async function() {
                 this._super();
                 let calling_doc = frappe._from_link?.doc;
-                this.additional_cost=[{'description': 'Any Food Exp in Site'}, 
+                this.doc.additional_cost=[{'description': 'Any Food Exp in Site'}, 
                                     {'description': 'Other Labour Work'}, 
                                     {'description': 'Site Advance'}]
                 if(calling_doc.doctype=='Sales Order'){ 
                     if(!calling_doc.is_multi_customer){
-                        this.doc.customer=calling_doc.customer
+                        this.dialog.get_field("customer").set_value(calling_doc.customer)
                     }
                     else{
-                        this.doc.is_multi_customer=1
+                        this.dialog.get_field("is_multi_customer").set_value(1).then(() => {
+                            this.dialog.refresh()
+                        })
                         this.doc.customer_name=calling_doc.customers_name
                     }
                 };
@@ -34,6 +45,7 @@ frappe.ui.form.on('Sales Order',{
         
         if(cur_frm.doc.is_multi_customer){
             cur_frm.set_df_property('customer','reqd',0);
+            cur_frm.set_df_property('customer','hidden',1)
         }
         else{
             cur_frm.set_df_property('customer','reqd',1);
@@ -83,6 +95,18 @@ frappe.ui.form.on('Sales Order',{
         }
         else{
             frm.set_df_property('available_qty','hidden',1)
+        }
+    },
+    set_warehouse: function(frm){
+        if(frm.doc.set_warehouse){
+            let table=cur_frm.doc.pavers?cur_frm.doc.pavers:[]
+            for(let row=0; row<table.length; row++){
+                frappe.model.set_value(cur_frm.doc.pavers[row].doctype, cur_frm.doc.pavers[row].name, 'warehouse', frm.doc.set_warehouse)
+            }
+            table=cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
+            for(let row=0; row<table.length; row++){
+                frappe.model.set_value(cur_frm.doc.compoun_walls[row].doctype, cur_frm.doc.compoun_walls[row].name, 'warehouse', frm.doc.set_warehouse)
+            }
         }
     },
     customer:function(frm){
@@ -163,9 +187,37 @@ frappe.ui.form.on('Sales Order',{
                 new_row.work=cur_frm.doc.pavers[row].work
             }
         }
-        else{
-            cur_frm.set_value('pavers',[])
+
+        
+        if(cur_frm.doc.type=='Compound Wall'){
+            let rmm= cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
+            for(let row=0;row<rmm.length;row++){
+                var message;
+                var new_row = frm.add_child("items");
+                new_row.item_code=cur_frm.doc.compoun_walls[row].item
+                new_row.qty=cur_frm.doc.compoun_walls[row].allocated_ft
+                new_row.rate=cur_frm.doc.compoun_walls[row].rate
+                new_row.amount=cur_frm.doc.compoun_walls[row].amount
+                await frappe.call({
+                    method:'sgp.sgp.custom.py.sales_order.get_item_value',
+                    args:{
+                        'doctype':cur_frm.doc.compoun_walls[row].item,
+                    },
+                    callback: function(r){
+                        message=r.message;
+                        new_row.item_name=message['item_name']
+                        new_row.uom=message['uom']
+                        new_row.description=message['description']
+                        new_row.conversion_factor=message['uom_conversion']
+                    }
+                })
+                new_row.warehouse=cur_frm.doc.set_warehouse
+                new_row.delivery_date=cur_frm.doc.delivery_date
+                new_row.work=cur_frm.doc.compoun_walls[row].work
+            }
         }
+        
+
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
             var message;
@@ -287,7 +339,15 @@ frappe.ui.form.on('TS Raw Materials',{
         let row=locals[cdt][cdn]
         if(row.item){
             frappe.db.get_doc('Item',row.item).then((item)=>{
-                frappe.model.set_value(cdt,cdn,'rate', item.standard_rate);
+                frappe.call({
+                    method: "sgp.sgp.custom.py.sales_order.get_item_rate",
+                    args:{
+                        item: row.item
+                    },
+                    callback: async function(r){
+                       await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
+                    }
+                })
                 frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
             })
         }
@@ -309,9 +369,48 @@ function amount_rawmet(frm,cdt,cdn){
  frappe.ui.form.on('Item Detail Pavers', {
     pavers_add: function(frm, cdt, cdn){
         frappe.model.set_value(cdt, cdn, 'work', frm.doc.work)
+        frappe.model.set_value(cdt, cdn, 'warehouse', frm.doc.set_warehouse)
     }
  })
 
+
+ frappe.ui.form.on('Item Detail Compound Wall',{
+    compoun_walls_add: function(frm, cdt, cdn){
+        let data = locals[cdt][cdn]
+        console.log((data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
+        frappe.model.set_value(cdt, cdn, 'work', (data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
+    },
+    allocated_ft:function(frm,cdt,cdn){
+       amt(frm, cdt, cdn)
+    },
+    rate:function(frm,cdt,cdn){
+      amt(frm, cdt, cdn)
+  
+    },
+    item:async function(frm,cdt,cdn){
+        let row=locals[cdt][cdn]
+        if(row.item){
+        frappe.db.get_doc('Item',row.item).then((item)=>{
+            frappe.call({
+                method: "sgp.sgp.custom.py.sales_order.get_item_rate",
+                args:{
+                    item: row.item
+                },
+                callback: async function(r){
+                    await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
+                }
+            })
+            frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
+        })
+    }  
+    }
+  
+  })
+  
+function amt(frm, cdt, cdn){
+    let row=locals[cdt][cdn]
+    frappe.model.set_value(cdt,cdn,'amount',Math.round(row.allocated_ft*row.rate));
+}
 
 function fill_paver_compound_table_from_item(frm){
     if(frm.doc.type=="Compound Wall"){

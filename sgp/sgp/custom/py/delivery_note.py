@@ -4,9 +4,11 @@ from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
 
 def update_qty_sitework(self,event):
+    if(self.doctype=='Sales Invoice' and self.update_stock==0):
+        return
     if(not self.is_return):
         for row in self.items:
-            so=row.against_sales_order
+            so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
             if(so):
                 sw=frappe.get_value('Sales Order', so, 'site_work')
                 if(sw):
@@ -17,15 +19,18 @@ def update_qty_sitework(self,event):
                     for item in range(len(delivery_detail)):
                         if(row.item_code==delivery_detail[item].item and item_group!='Raw Material'):
                             create=0
+                            delivery_detail[item].delivered_stock_qty+=row.stock_qty
                             delivery_detail[item].delivered_bundle+=row.ts_qty
                             delivery_detail[item].delivered_pieces+=row.pieces
                     raw_material=doc.raw_material
                     for item in range(len(raw_material)):
-                        if(row.item_code==raw_material[item].item and item_group=='Raw Material'):
+                        ts_so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
+                        if(row.item_code==raw_material[item].item and item_group=='Raw Material' and ts_so==raw_material[item].sales_order):
                             raw_material[item].delivered_quantity+=row.qty
                     if(create and item_group!='Raw Material'):
                         delivery_detail.append({
                             'item':row.item_code,
+                            'delivered_stock_qty': row.stock_qty,
                             'delivered_bundle':row.ts_qty,
                             'delivered_pieces':row.pieces
                         })
@@ -39,9 +44,11 @@ def update_qty_sitework(self,event):
 
 
 def reduce_qty_sitework(self,event):
+    if(self.doctype=='Sales Invoice' and self.update_stock==0):
+        return
     if(not self.is_return):
         for row in self.items:
-            so=row.against_sales_order
+            so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
             if(so):
                 sw=frappe.get_value('Sales Order', so, 'site_work')
                 if(sw):
@@ -52,15 +59,18 @@ def reduce_qty_sitework(self,event):
                     for item in range(len(delivery_detail)):
                         if(row.item_code==delivery_detail[item].item and item_group!='Raw Material'):
                             create=0
+                            delivery_detail[item].delivered_stock_qty-=row.stock_qty
                             delivery_detail[item].delivered_bundle-=row.ts_qty
                             delivery_detail[item].delivered_pieces-=row.pieces
                     raw_material=doc.raw_material
                     for item in range(len(raw_material)):
-                        if(row.item_code==raw_material[item].item and item_group=='Raw Material'):
+                        ts_so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
+                        if(row.item_code==raw_material[item].item and item_group=='Raw Material' and ts_so==raw_material[item].sales_order):
                             raw_material[item].delivered_quantity-=row.qty
                     if(create and item_group!='Raw Material'):
                         delivery_detail.append({
                             'item':row.item_code,
+                            'delivered_stock_qty': row.stock_qty,
                             'delivered_bundle':row.ts_qty,
                             'delivered_pieces':row.pieces
                         })
@@ -75,9 +85,11 @@ def reduce_qty_sitework(self,event):
 
 
 def update_return_qty_sitework(self,event):
+    if(self.doctype=='Sales Invoice' and self.update_stock==0):
+        return
     if(self.is_return):
         for row in self.items:
-            so=row.against_sales_order
+            so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
             if(so):
                 sw=frappe.get_value('Sales Order', so, 'site_work')
                 if(sw):
@@ -88,15 +100,18 @@ def update_return_qty_sitework(self,event):
                     for item in range(len(delivery_detail)):
                         if(row.item_code==delivery_detail[item].item and item_group!='Raw Material'):
                             create=0
+                            delivery_detail[item].returned_stock_qty+=row.stock_qty
                             delivery_detail[item].returned_bundle+=row.ts_qty
                             delivery_detail[item].returned_pieces+=row.pieces
                     raw_material=doc.raw_material
                     for item in range(len(raw_material)):
-                        if(row.item_code==raw_material[item].item and item_group=='Raw Material'):
+                        ts_so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
+                        if(row.item_code==raw_material[item].item and item_group=='Raw Material'  and ts_so==raw_material[item].sales_order):
                             raw_material[item].returned_quantity+=row.qty
                     if(create and item_group!='Raw Material'):
                         delivery_detail.append({
                             'item':row.item_code,
+                            'returned_stock_qty':row.stock_qty,
                             'returned_bundle':row.ts_qty,
                             'returned_pieces':row.pieces
                         })
@@ -111,9 +126,11 @@ def update_return_qty_sitework(self,event):
 
 
 def reduce_return_qty_sitework(self,event):
+    if(self.doctype=='Sales Invoice' and self.update_stock==0):
+        return
     if(self.is_return):
         for row in self.items:
-            so=row.against_sales_order
+            so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
             if(so):
                 sw=frappe.get_value('Sales Order', so, 'site_work')
                 if(sw):
@@ -124,15 +141,18 @@ def reduce_return_qty_sitework(self,event):
                     for item in range(len(delivery_detail)):
                         if(row.item_code==delivery_detail[item].item and item_group!='Raw Material'):
                             create=0
+                            delivery_detail[item].returned_stock_qty-=row.stock_qty
                             delivery_detail[item].returned_bundle-=row.ts_qty
                             delivery_detail[item].returned_pieces-=row.pieces
                     raw_material=doc.raw_material
                     for item in range(len(raw_material)):
-                        if(row.item_code==raw_material[item].item and item_group=='Raw Material'):
+                        ts_so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
+                        if(row.item_code==raw_material[item].item and item_group=='Raw Material' and ts_so==raw_material[item].sales_order):
                             raw_material[item].returned_quantity-=row.qty
                     if(create and item_group!='Raw Material'):
                         delivery_detail.append({
                             'item':row.item_code,
+                            'returned_stock_qty':row.stock_qty,
                             'returned_bundle':row.ts_qty,
                             'returned_pieces':row.pieces
                         })
@@ -148,7 +168,7 @@ def reduce_return_qty_sitework(self,event):
 def update_customer(self,event):
     cus=self.customer
     for row in self.items:
-        so=row.against_sales_order
+        so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
         if(so):
             doc=frappe.get_doc('Sales Order', so)
             if(cus!=doc.customer):

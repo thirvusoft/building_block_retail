@@ -29,6 +29,11 @@ frappe.ui.form.on("Project",{
     },
     
     refresh:function(frm,cdt,cdn){
+        if(!cur_frm.is_new()){
+            cur_frm.set_df_property('is_multi_customer', 'read_only', 1)
+            cur_frm.set_df_property('customer_name', 'read_only', 1)
+            cur_frm.set_df_property('customer', 'read_only', 1)
+        }
 		cur_frm.remove_custom_button('Duplicate Project with Tasks')
 		cur_frm.remove_custom_button('Kanban Board')
 		cur_frm.remove_custom_button('Gantt Chart')
@@ -36,10 +41,14 @@ frappe.ui.form.on("Project",{
 
 		let sw_items=[];
 		for(let item=0;item<(frm.doc.item_details?frm.doc.item_details.length:0);item++){
-			sw_items.push(frm.doc.item_details[item].item)
+			if(!(sw_items.includes(frm.doc.item_details[item].item))){
+				sw_items.push(frm.doc.item_details[item].item)
+			}
 		}
 		for(let item=0;item<(frm.doc.item_details_compound_wall?frm.doc.item_details_compound_wall.length:0);item++){
-			sw_items.push(frm.doc.item_details_compound_wall[item].item)
+			if(!(sw_items.includes(frm.doc.item_details_compound_wall[item].item))){
+				sw_items.push(frm.doc.item_details_compound_wall[item].item)
+			}
 		}
 		frm.set_query('item','job_worker', function(frm){
 			return {
@@ -65,6 +74,7 @@ frappe.ui.form.on("Project",{
             }
         });
         
+		customer_query()
     },
     is_multi_customer:function(frm){
         if(cur_frm.doc.is_multi_customer){
@@ -288,7 +298,15 @@ frappe.ui.form.on('Raw Materials',{
         let row=locals[cdt][cdn]
         if(row.item){
             frappe.db.get_doc('Item',row.item).then((item)=>{
-                frappe.model.set_value(cdt,cdn,'rate', item.standard_rate);
+                frappe.call({
+                    method: "sgp.sgp.custom.py.sales_order.get_item_rate",
+                    args:{
+                        item: row.item
+                    },
+                    callback: async function(r){
+                       await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
+                    }
+                })
                 frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
             })
         }
@@ -308,67 +326,19 @@ function amount_rawmet(frm,cdt,cdn){
 }
 
 
-
-
-//compound wall
-
-// frappe.ui.form.on("Item Detail Compound Wall", {
-// 	item : function(frm,cdt,cdn) {      
-// 		let data = locals[cdt][cdn]
-// 		let item_code = data.item
-// 		if(item_code){
-// 			frappe.call({
-// 				method:"sgp.sgp.custom.py.site_work.item_details_fetching_compoundwall",
-// 				args:{item_code},
-// 				callback(r)
-// 				{
-// 					frappe.model.set_value(cdt,cdn,"area_per_bundle",r['message'][0]?parseFloat(r["message"][0]):0)
-// 					frappe.model.set_value(cdt,cdn,"rate",r["message"][1]?parseFloat(r["message"][1]):0)
-// 				}
-// 			})
-// 		}
-// 	},
-// 	running_sqft : function(frm,cdt,cdn) {
-// 			let data = locals[cdt][cdn]
-// 			let rft = data.running_sqft
-// 			let bundle = rft / cw_area_bundle
-// 			let no_of_bundle = Math.ceil(bundle)
-// 			frappe.model.set_value(cdt, cdn, "allocated_ft",no_of_bundle)
-		
-// 	},
-// 	allocated_ft : function(frm,cdt,cdn) {
-// 			let data = locals[cdt][cdn]
-// 			let aft = data.allocated_ft
-// 			cwtot_amount = item_price * no_of_bundle
-// 			frappe.model.set_value(cdt, cdn,"rate",item_price)
-// 			frappe.model.set_value(cdt, cdn,"amount",cwtot_amount)
-	
-// 	},
-// 	rate : function(frm,cdt,cdn) {
-// 			let data = locals[cdt][cdn]
-// 			let cwtot_amount = data.rate * data.number_of_bundle
-// 			frappe.model.set_value(cdt, cdn,"amount",cwtot_amount)
-// 	}
-// })
-
-
-// frappe.ui.form.on('Project',{
-// 	validate: function(frm,cdt,cdn){
-// 		let arg;
-// 		if(cur_frm.doc.project_type == "Pavers"){
-// 			arg = cur_frm.doc.item_details
-// 		}
-// 		if(cur_frm.doc.project_type == "Compound Walls"){
-// 			arg = cur_frm.doc.item_details_compound_wall
-// 		}
-// 		if(arg){
-// 			frappe.call({
-// 				method:"sgp.sgp.custom.py.site_work.add_total_amount",
-// 				args:{items: arg},
-// 				callback: function(res){
-// 					cur_frm.set_value('estimated_costing',res.message)
-// 				}
-// 			})
-// 	}
-// 	}
-// })
+function customer_query(){
+	let frm=cur_frm;
+	let customer_list = []
+	for(let row=0; row<frm.doc.customer_name.length; row++){
+		if(!(customer_list.includes(frm.doc.customer_name[row].customer))){
+			customer_list.push(frm.doc.customer_name[row].customer)
+		}
+	}
+	frm.set_query('customer', 'additional_cost', function(){
+		return {
+			filters: {
+				name: ['in', customer_list]
+			}
+		}
+	})
+}

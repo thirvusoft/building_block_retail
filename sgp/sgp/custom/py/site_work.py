@@ -2,12 +2,15 @@ from frappe.utils import nowdate
 import frappe
 import json
 from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
+from sgp.sgp.custom.py.sales_order import get_item_rate
+from frappe.utils.csvutils import getlink
+
 
 @frappe.whitelist()
 def item_details_fetching_pavers(item_code):
     if item_code:
         doc = frappe.get_doc("Item",item_code)
-        item_price = doc.standard_rate
+        item_price = get_item_rate(item_code)
         area_bundle= doc.bundle_per_sqr_ft
         return area_bundle,item_price
 	
@@ -15,11 +18,11 @@ def item_details_fetching_pavers(item_code):
 def item_details_fetching_compoundwall(item_code):
     if item_code:
         doc = frappe.get_doc("Item",item_code)
-        item_price = doc.standard_rate
+        item_price = get_item_rate(item_code)
         area_bundle= doc.bundle_per_sqr_ft
         return area_bundle,item_price
 
-def before_save(doc, action):
+def before_save(doc, action=None):
     additionalcost_total= 0
     item_details_total = 0
     job_worker_total = 0
@@ -57,9 +60,8 @@ def before_save(doc, action):
         if(doc1):
             rm_cost+=(doc1[0] or 0)
 
-        
     doc.actual_site_cost_calculation=(item_cost or 0)+(doc.total or 0)+(doc.total_job_worker_cost or 0)+ (rm_cost or 0)
-
+    return doc
 
 @frappe.whitelist()
 def add_total_amount(items):
@@ -97,6 +99,7 @@ def create_status():
     
 
 def validate(self,event):
+    validate_jw_qty(self)
     if(self.name not in frappe.get_all('Project', pluck="name")):
         return
     amount=0
@@ -152,3 +155,37 @@ def validate(self,event):
             'additional_cost': add_cost,
             'total_advance_amount': (self.total_advance_amount or 0)+ (total_amount or 0)
         })
+        
+def validate_jw_qty(self):
+    delivered_item={}
+    for row in self.delivery_detail:
+        if(row.item not  in delivered_item):
+            delivered_item[row.item]=0
+        sqft=((row.delivered_bundle or 0)*float(frappe.get_value('Item', row.item, 'bundle_per_sqr_ft') or 0))+((row.delivered_pieces or 0)*float(frappe.get_value('Item', row.item, 'pavers_per_sqft') or 0))
+        item_doc=frappe.get_doc('Item', row.item, 'uoms')
+        conv_factor=[conv.conversion_factor for conv in item_doc.uoms if(conv.uom==item_doc.sales_uom)]
+        if(not sqft and not conv_factor):
+            frappe.throw('Please enter Sales UOM for an item: '+ frappe.bold(getlink('Item', row.item)))
+        stock_qty=(row.delivered_stock_qty or 0) *(conv_factor[0] if(conv_factor) else 0)
+        delivered_item[row.item]+=sqft if(sqft) else (stock_qty)
+    jw_items={}
+    for row in self.job_worker:
+        if(row.item not  in jw_items):
+            jw_items[row.item]=0
+        jw_items[row.item]+=float(row.sqft_allocated or 0)
+    wrong_items=[]
+    for item in jw_items:
+        if((jw_items.get(item) or 0)>(delivered_item.get(item) or 0)):
+            wrong_items.append(frappe.bold(item))
+    if(wrong_items):
+        frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
+    
+
+def update_site_work(doc, action):
+    sw_list=frappe.get_all('Project', pluck="name")
+    for sw in sw_list:
+        doc=frappe.get_doc('Project', sw)
+        doc=before_save(doc)
+        doc.flags.ignore_mandatory=True
+        doc.flags.ignore_permissions=True
+        doc.save()

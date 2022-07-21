@@ -40,7 +40,7 @@ def sales_invoice_custom_field():
                 fieldtype= "Select",
                 insert_after= "eway_bill_cancelled",
                 label= "Work",
-                options= "\nSupply Only\nLaying Only\nSupply & Laying",
+                options= '\nSupply Only\nLaying Only\nSupply and Laying',
                 reqd = 1 
             ),
             dict(
