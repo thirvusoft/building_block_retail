@@ -150,7 +150,6 @@ doc_events = {
 		'before_submit': "sgp.sgp.utils.manufacturing.job_card.job_card.before_submit"
 	},
 	"Work Order":{
-        "validate":"sgp.sgp.custom.py.work_order.validate",
         "before_submit":"sgp.sgp.custom.py.work_order.before_save",
     },
     "Stock Entry":{

@@ -1,7 +1,14 @@
+let tot_comp_qty = 0;
+let opr = '';
+let workstation = '';
 frappe.ui.form.on("Job Card",{
     refresh: function(frm){
+        if(frm.doc.status != 'Completed' && frm.doc.status != 'Open')
         frm.add_custom_button("Finish",()=>{
             if(frm.doc.work_order){
+                tot_comp_qty = frm.doc.total_completed_qty
+                opr = frm.doc.operation
+                workstation = frm.doc.workstation
             frappe.call({
                 method:"sgp.sgp.custom.py.job_card.get_workorder_doc",
                 args:{
@@ -11,7 +18,7 @@ frappe.ui.form.on("Job Card",{
                     qty : frm.doc.total_completed_qty
                     },
                 callback(r){
-                    make_se(r.message, "Manufacture",frm)
+                    make_se(tot_comp_qty,r.message, "Manufacture", frm)
                 }
             })
         }
@@ -24,21 +31,38 @@ frappe.ui.form.on("Job Card",{
         frm.refresh()
         frm.save()
         }
+    },
+    before_save: function(frm){
+        frm.set_value('max_qty', frm.doc.for_quantity)
     }
 })
-function make_se (frm, purpose,cur) {
+function make_se (tot_comp_qty, frm, purpose, cur) {
     show_prompt_for_qty_input(frm, purpose)
         .then(data => {
             if(data.qty<=0){return}
-            return frappe.xcall('erpnext.manufacturing.doctype.work_order.work_order.make_stock_entry', {
-                'work_order_id': frm.name,
-                'purpose': purpose,
-                'qty': data.qty
-            });
-        }).then(stock_entry => {
-            stock_entry.ts_job_card = cur.doc.name
-            frappe.model.sync(stock_entry);
-            frappe.set_route('Form', stock_entry.doctype, stock_entry.name);
+            frappe.call({
+                method: 'sgp.sgp.custom.py.job_card.update_operation_completed_qty',
+                args:{work_order:frm.name,
+                    opr,
+                    workstation,
+                    qty : tot_comp_qty
+                    },
+                callback(){
+                    frappe.call({
+                        method: 'erpnext.manufacturing.doctype.work_order.work_order.make_stock_entry', 
+                        args:{
+                        'work_order_id': frm.name,
+                        'purpose': purpose,
+                        'qty': data.qty
+                        },
+                        callback(r){
+                            r.message.ts_job_card = cur.doc.name
+                            frappe.model.sync(r.message);
+                            frappe.set_route('Form', r.message.doctype, r.message.name);
+                        }
+                        });
+                }
+            })
         });
         
 

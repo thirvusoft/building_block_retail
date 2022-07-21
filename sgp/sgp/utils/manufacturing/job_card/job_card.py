@@ -13,6 +13,19 @@ def create_job_card_custom_fields():
                  hidden = 1,
                  no_copy = 1
             ),
+            dict(
+                fieldname = 'col123',
+                fieldtype = "Column Break",
+                insert_after = 'total_completed_qty'  
+            ),
+            dict(
+                 fieldname  = "max_qty",
+                 fieldtype  = "Float",
+                 insert_after  = "col123",
+                 label = "Maximum Qty to Produce",
+                 fetch_from = 'for_quantity',
+                 read_only = 1
+            ),
         ]
     }
     create_custom_fields(custom_fields)
@@ -28,6 +41,7 @@ def create_property_setter():
     make_property_setter(doctype, 'batch_no', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'wip_warehouse', 'hidden', '1', 'Check')
+    make_property_setter(doctype, 'for_quantity', 'reqd', '1', 'Check')
 def before_submit(self, event):
     se_qty = sum(frappe.db.get_all("Stock Entry", filters={'work_order':self.work_order,'docstatus':1},pluck="fg_completed_qty"))
     if(se_qty != self.total_completed_qty):frappe.throw("Please click <b>Finish</b> button to create stock entry and then submit this.")
