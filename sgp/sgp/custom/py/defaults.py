@@ -9,7 +9,6 @@ def create_designation():
             'designation_name': 'Job Worker'
         })
         doc.save()
-        frappe.db.commit
     
     if(not frappe.db.exists('Designation', 'Operator')):
         doc=frappe.new_doc('Designation')
@@ -18,7 +17,6 @@ def create_designation():
             'designation_name': 'Operator'
         })
         doc.save()
-        frappe.db.commit
     
     if(not frappe.db.exists('Designation', 'Supervisor')):
         doc=frappe.new_doc('Designation')
@@ -27,7 +25,6 @@ def create_designation():
             'designation_name': 'Supervisor'
         })
         doc.save()
-        frappe.db.commit()
         
     doc=frappe.new_doc('Property Setter')
     doc.update({
@@ -38,4 +35,3 @@ def create_designation():
         "value":"\nOpen\nCompleted\nCancelled\nStock Pending at Site\nPart Measurement"
     })
     doc.save()
-    frappe.db.commit()

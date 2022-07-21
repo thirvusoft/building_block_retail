@@ -2,33 +2,37 @@ from email.policy import default
 from ipaddress import collapse_addresses
 from optparse import Option
 from os import link
+from pydoc import describe
 from ssl import Options
 from requests import options
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
- 
- 
+
+
 def customize_field():
    custom_fields = {
        "Project": [
          dict(fieldname='work', label='Work',
-              fieldtype='Data', insert_after='status',
+              fieldtype='Data', insert_after='status', read_only=1
               ),
          dict(fieldname='completed', label='% Completed',
-              fieldtype='Percent', insert_after='status',
+              fieldtype='Percent', insert_after='work', read_only=1
               ),
-         dict(fieldname='total_expense_amount', label='Total Costing',
-              fieldtype='Currency', insert_after='completed',
+         dict(fieldname='total_expense_amount', label='Total Costing as Per Bill',
+              fieldtype='Currency', insert_after='completed', read_only=1, description='It includes Items sales rate, Raw Materials Sales Rate and Additional Cost except Site Advance.'
+              ),
+          dict(fieldname='actual_site_cost_calculation', label='Actual Costing of this Site',
+              fieldtype='Currency', insert_after='total_expense_amount', read_only=1, description= 'It includes Items Valuation rate, Raw Materials Buying Rate, Job Workers cost and Additional Cost except Site Advance.'
               ),
          dict(fieldname='job__work', label='Job worker',
               fieldtype='Link', insert_after='completed', options="Employee", hidden=1
               ),
          dict(fieldname='supervisor_name', label='Supervisor Name',
-              fieldtype='Data', insert_after='priority',
+              fieldtype='Data', insert_after='supervisor', read_only=1, fetch_from= "supervisor.employee_name"
               ),
          dict(fieldname='supervisor', label='Supervisor',
-              fieldtype='Link', insert_after='supervisor_name', options="Employee"
+              fieldtype='Link', insert_after='priority', options="Employee"
               ),
          dict(fieldname='total_required_area', label='Total Required Area',
               fieldtype='Data', insert_after='supervisor_name', default=0,read_only=1
@@ -43,18 +47,18 @@ def customize_field():
               fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
               ),
          dict(fieldname='is_multi_customer', label='is_multi_customer',
-              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=0
+              fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=1
               ),
          dict(fieldname='customer_name', label='Customer Name',
               fieldtype='Table', insert_after='customer',
               depends_on="eval:doc.is_multi_customer==1", options="TS Customer"
               ),
          dict(fieldname='section_job', label='Job Worker Details',
-              fieldtype='Section Break', insert_after='delivery_detail', collapsible=1
+              fieldtype='Section Break', insert_after='delivery_detail', collapsible=0
               ),
          dict(fieldname='job_worker', label='Job Worker',
-              fieldtype='Table', insert_after='dust_sweeping',
-              options="TS Job Worker"
+              fieldtype='Table', insert_after='section_job',
+              options="TS Job Worker Details"
               ),
          dict(fieldname='additional_costs_1', label='Additional Costs',
               fieldtype='Section Break', insert_after='notes', collapsible=1
@@ -62,7 +66,7 @@ def customize_field():
          dict(fieldname='additional_cost', label='Additional Cost',
               fieldtype='Table', insert_after='additional_costs', options="Additional Costs"
               ),
-         dict(fieldname='section_break_19',
+         dict(fieldname='section_break_19', label="Item Details",
               fieldtype='Section Break', insert_after='sales_order'
               ),
          dict(fieldname='item_details', options= "Pavers", label="Item Details Pavers",
@@ -96,13 +100,13 @@ def customize_field():
               fieldtype='Currency', insert_after='job_worker', read_only=1
               ),
          dict(fieldname='section_break_30',
-              fieldtype='Section Break', insert_after='total_job_worker_cost'
+              fieldtype='Section Break', insert_after='total_job_worker_cost',
               ),
          dict(fieldname='additional_costs', label="Additional Costs",
               fieldtype='Section Break', insert_after='message'
               ),
          dict(fieldname='total', label=" Total Amount",
-              fieldtype='Currency', insert_after='total_advance_amount'
+              fieldtype='Currency', insert_after='total_advance_amount', read_only=1
               ),
          dict(fieldname='material_supply', label="Material Supply",
               fieldtype='Check', insert_after='total',
@@ -127,12 +131,12 @@ def customize_field():
                 )
        ]
    }
- 
+
    create_custom_fields(custom_fields)
- 
- 
+
+
 def site_doc_name():
- 
+
     Project = frappe.get_doc({
          'doctype': 'Property Setter',
          'doctype_or_field': "DocField",
@@ -150,6 +154,7 @@ def site_doc_name():
          'field_name': "customer",
          "value": "1"
     })
+    Project.save(ignore_permissions=True),
     Project = frappe.get_doc({
          'doctype': 'Property Setter',
          'doctype_or_field': "DocField",
@@ -236,6 +241,15 @@ def site_doc_name():
          'doctype_or_field': "DocField",
          'doc_type': "Project",
          'property': "hidden",
+         'field_name': "percent_complete",
+         "value": 1
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "hidden",
          'field_name': "sales_order",
          "value": 1
     })
@@ -310,19 +324,22 @@ def site_doc_name():
          "value": 1
     })
     Project.save(ignore_permissions=True)
-    frappe.get_doc(
-          {
-               "doctype": "Translation",
-               "source_text": "Project",
-               "translated_text": "Site Work",
-               "language_code": frappe.local.lang or "en",
-          }
-     ).insert()
-    frappe.get_doc(
-          {
-               "doctype": "Translation",
-               "source_text": "Projects",
-               "translated_text": "Site Work",
-               "language_code": frappe.local.lang or "en",
-          }
-     ).insert()
+    if(not frappe.get_all('Translation', {"source_text": "Project", "translated_text": "Site Work", "language": "en-US"})):
+        frappe.get_doc(
+            {
+                "doctype": "Translation",
+                "source_text": "Project",
+                "translated_text": "Site Work",
+                "language": "en-US",
+            }
+        ).insert()
+
+    if(not frappe.get_all('Translation', {"source_text": "Projects", "translated_text": "Site Work", "language": "en-US"})):
+        frappe.get_doc(
+            {
+                "doctype": "Translation",
+                "source_text": "Projects",
+                "translated_text": "Site Work",
+                "language": "en-US",
+            }
+        ).insert()

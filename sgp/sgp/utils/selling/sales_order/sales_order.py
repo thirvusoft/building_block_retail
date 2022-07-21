@@ -21,11 +21,11 @@ def sales_order_customization():
             dict(fieldname='work', label='Work', 
                 fieldtype='Select',insert_after='type', options='\nSupply Only\nLaying Only\nSupply and Laying'),
             dict(fieldname='site_work', label='Site Name', 
-                fieldtype='Link',insert_after='work', options='Project', allow_on_submit=1, mandatory_depends_on="eval:doc.work!='Supply Only'", depends_on="eval:doc.work!='Supply Only'"),
+                fieldtype='Link',insert_after='work', options='Project', allow_on_submit=0, mandatory_depends_on="eval:doc.work!='Supply Only'", depends_on="eval:doc.work!='Supply Only'"),
             dict(fieldname='supervisor', label='Supervisor',
                 fieldtype='Link',insert_after='site_work', options='Employee'),
             dict(fieldname='supervisor_name', label='Supervisor Name', 
-                fieldtype='Data',insert_after='supervisor', fetch_from='supervisor.first_name'),
+                fieldtype='Data',insert_after='supervisor', fetch_from='supervisor.first_name', read_only=1),
             dict(fieldname='delivery_details', label='Delivery Details', 
                 fieldtype='Section Break',insert_after='tax_id'),
             dict(fieldname='distance', label='Distance (km)', precision=2, allow_on_submit=1,
@@ -50,8 +50,10 @@ def sales_order_customization():
         
         ['hidden', 'Check', 'currency_and_price_list', 1],
         
-        # ['hidden', 'Check', 'set_warehouse', 1],
+        ['hidden', 'Check', 'set_warehouse', 0],
         
+        ['reqd', 'Check', 'set_warehouse', 0],
+
         ['hidden', 'Check', 'scan_barcode', 1],
         
         ['hidden', 'Check', 'packing_list', 1],

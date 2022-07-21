@@ -6,30 +6,19 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "name1",
-  "attach",
-  "attach_image"
+  "test"
  ],
  "fields": [
   {
-   "fieldname": "name1",
-   "fieldtype": "Data",
-   "label": "Name"
-  },
-  {
-   "fieldname": "attach",
-   "fieldtype": "Attach",
-   "label": "Attach"
-  },
-  {
-   "fieldname": "attach_image",
-   "fieldtype": "Attach Image",
-   "label": "attach image"
+   "fieldname": "test",
+   "fieldtype": "Table MultiSelect",
+   "label": "test",
+   "options": "Delivery Status"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-06-24 17:30:04.485140",
+ "modified": "2022-07-19 18:29:50.469581",
  "modified_by": "Administrator",
  "module": "Sgp",
  "name": "GP_Test",
@@ -49,6 +38,5 @@
   }
  ],
  "sort_field": "modified",
- "sort_order": "DESC",
- "states": []
+ "sort_order": "DESC"
 }
