@@ -53,7 +53,7 @@ def sales_order_customization():
         ['hidden', 'Check', 'set_warehouse', 0],
         
         ['reqd', 'Check', 'set_warehouse', 0],
-        
+
         ['hidden', 'Check', 'scan_barcode', 1],
         
         ['hidden', 'Check', 'packing_list', 1],
