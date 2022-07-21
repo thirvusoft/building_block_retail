@@ -165,6 +165,7 @@ doc_events = {
     },
     "Stock Entry":{
         "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
+        "on_submit":"sgp.sgp.custom.py.stock_entry.after_submit"
     },
 
 }
