@@ -137,7 +137,7 @@ doc_events = {
 		"validate":["sgp.sgp.custom.py.delivery_note.validate",
 					],
 		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate"],
-		"before_submit":"sgp.sgp.custom.py.delivery_note.before_submit"
+		# "before_submit":"sgp.sgp.custom.py.delivery_note.before_submit"
 
 	},
 	# "Job Card":{

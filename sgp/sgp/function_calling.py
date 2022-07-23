@@ -56,6 +56,7 @@ def function_calling():
     account_customization()
     create_designation()
     stock_entry_custom()
+    create_designation()
     create_salary_custom_field()
     
 def execute():

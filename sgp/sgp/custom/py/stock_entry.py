@@ -3,25 +3,6 @@ from operator import index
 import frappe 
 from frappe.utils.data import get_link_to_form
 def before_validate(doc,action):
-    #-----------------------------------usecase is changed it will remove after conform-----------------------------------------
-    # if doc.from_bom == 1:
-    #     wo=frappe.get_doc("Work Order",doc.work_order)
-    #     expenses_included_in_valuation = frappe.get_cached_value("Company", wo.company, "expenses_included_in_valuation")
-    #     amount = wo.total_expanse * doc.fg_completed_qty
-    #     if doc.amended_from:
-    #         if wo.total_expanse:
-    #             creating_journal_entry(doc,amount)
-    #     else:
-    #         for i in doc.additional_costs:
-    #             if expenses_included_in_valuation == i.expense_account:
-    #                 i.amount += amount
-    #                 i.base_amount += amount
-    #                 doc.total_additional_costs += amount
-    #                 creating_journal_entry(doc,amount)
-    #                 break
-    # doc.distribute_additional_costs()
-    # doc.update_valuation_rate()
-    #---------------------------------------------------------------------------------------------------------------------------
     if doc.from_bom == 1:
         doc.code = ""
         emp_qty={}

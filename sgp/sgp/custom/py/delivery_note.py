@@ -247,6 +247,3 @@ def get_work_order_items(self, for_raw_material_request=0):
                 )
 
     return items
-def before_submit(self,action):
-    if(self.has_work_order == 0):
-        frappe.throw("Before Submit Create Work Order => Create --> Work Order")

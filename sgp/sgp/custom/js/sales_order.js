@@ -63,7 +63,8 @@ frappe.ui.form.on('Sales Order',{
         frm.set_query('item','raw_materials',function(frm){
             return {
                 filters:{
-                    'item_group':'Raw Material'
+                    'item_group':'Raw Material',
+                    'has_variants':0
                 }
             }
         })
@@ -505,11 +506,12 @@ function make_work_order(frm) {
                                 hidden: 1
                             },
                                 {
-                                    fieldtype: 'Float',
+                                    fieldtype: 'Read Only',
                                     fieldname: 'stock_availability',
                                     label: 'Available Stock',
                                     in_list_view: 1,
-                                    columns: 1
+                                    columns: 1,
+                                    // read_only :1
                                 },
                                 {
                                     fieldtype: 'Float',
