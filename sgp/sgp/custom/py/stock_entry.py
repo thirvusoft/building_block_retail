@@ -3,7 +3,7 @@ from operator import index
 import frappe 
 from frappe.utils.data import get_link_to_form
 def before_validate(doc,action):
-    if doc.from_bom == 1:
+    if doc.from_bom == 1 and doc.stock_entry_type == "Manufacture":
         doc.code = ""
         emp_qty={}
         emp_list=[]
@@ -54,10 +54,11 @@ def before_validate(doc,action):
         doc.distribute_additional_costs()
         doc.update_valuation_rate()
 def after_submit(doc,action):
-    job_card= frappe.get_doc("Job Card",doc.ts_job_card)
-    get_job_card = frappe.get_all("Stock Entry", pluck = 'fg_completed_qty', filters={"ts_job_card": job_card.name,"docstatus": 1})  
-    if job_card.for_quantity == float(sum(get_job_card)):
-        job_card.submit()
+    if(doc.stock_entry_type == 'Manufacture'):
+        job_card= frappe.get_doc("Job Card",doc.ts_job_card)
+        get_job_card = frappe.get_all("Stock Entry", pluck = 'fg_completed_qty', filters={"ts_job_card": job_card.name,"docstatus": 1})  
+        if job_card.for_quantity == float(sum(get_job_card)):
+            job_card.submit()
 def creating_journal_entry(doc,income):
     code = eval(doc.code)
     for i in code:
