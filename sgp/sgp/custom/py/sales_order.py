@@ -203,12 +203,15 @@ def get_stock_availability(items):
     stock_availability = []
     for i in items:
         if(frappe.get_value('Item', i.get('item_code'),'item_group') != "Raw Material"):
+            conv = frappe.get_value('Item', i.get('item_code'), 'pavers_per_sqft')
+            if(not conv):conv=1
+            
             res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
             qty, planned_production_qty = 0, 0
             planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
             currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
             if(res_qty<act_qty):qty = qty = act_qty-res_qty
-            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':qty,'ordered_qty':i.get('stock_qty'),'stock_uom':i.get('stock_uom'),'planned_production_qty':planned_production_qty, 'currently_produced_qty':currently_produced_qty})
+            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':float(qty or 0)*conv,'ordered_qty':float(i.get('stock_qty') or 0)*conv,'stock_uom':i.get('stock_uom'),'planned_production_qty':float(planned_production_qty or 0)*conv, 'currently_produced_qty':float(currently_produced_qty or 0)*conv})
     return stock_availability
 
 @frappe.whitelist()
@@ -329,35 +332,37 @@ def get_pre_work_order_completed_qty(so_child):
 
 @frappe.whitelist()
 def make_work_orders(items, sales_order, company, project=None):
-	"""Make Work Orders against the given Sales Order for the given `items`"""
-	items = json.loads(items).get("items")
-	out = []
+    """Make Work Orders against the given Sales Order for the given `items`"""
+    items = json.loads(items).get("items")
+    out = []
 
-	for i in items:
-		if not i.get("bom"):
-			frappe.throw(("Please select BOM against item {0}").format(i.get("item_code")))
-		if not i.get("pending_qty"):
-			frappe.throw(("Please select Qty against item {0}").format(i.get("item_code")))
+    for i in items:
+        if not i.get("bom"):
+            frappe.throw(("Please select BOM against item {0}").format(i.get("item_code")))
+        if not i.get("pending_qty"):
+            frappe.throw(("Please select Qty against item {0}").format(i.get("item_code")))
+        conv = frappe.db.get_value('Item',i["item_code"], 'pavers_per_sqft')
+        if(not conv):conv=1
+        work_order = frappe.get_doc(
+            dict(
+                doctype="Work Order",
+                production_item=i["item_code"],
+                bom_no=i.get("bom"),
+                qty=(i["pending_qty"] / conv),
+                ts_qty_to_manufacture = i["pending_qty"],
+                company=company,
+                sales_order=sales_order,
+                sales_order_item=i["sales_order_item"],
+                project=project,
+                fg_warehouse=i["warehouse"],
+                description=i["description"],
+                priority=i['priority']
+            )
+        ).insert()
+        work_order.set_work_order_operations()
+        work_order.flags.ignore_mandatory = True
+        work_order.save()
+        out.append(work_order)
 
-		work_order = frappe.get_doc(
-			dict(
-				doctype="Work Order",
-				production_item=i["item_code"],
-				bom_no=i.get("bom"),
-				qty=i["pending_qty"],
-				company=company,
-				sales_order=sales_order,
-				sales_order_item=i["sales_order_item"],
-				project=project,
-				fg_warehouse=i["warehouse"],
-				description=i["description"],
-				priority=i['priority']
-			)
-		).insert()
-		work_order.set_work_order_operations()
-		work_order.flags.ignore_mandatory = True
-		work_order.save()
-		out.append(work_order)
-
-	return [p.name for p in out]
+    return [p.name for p in out]
 

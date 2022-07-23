@@ -6,6 +6,7 @@ from sgp.sgp.utils.buying.purchase_invoice import purchase_invoice
 from sgp.sgp.utils.buying.purchase_order import purchase_order
 from sgp.sgp.utils.buying.purchase_receipt import purchase_receipt
 from sgp.sgp.utils.buying.request_for_quotation import request_for_quotation
+from sgp.sgp.utils.buying.supplier import supplier_customizations
 from sgp.sgp.utils.buying.supplier_quotation import supplier_quotation
 from sgp.sgp.utils.hr.employee.employee import create_contracter_expense_account
 from sgp.sgp.utils.hr.role.roles import create_role
@@ -27,6 +28,7 @@ from sgp.sgp.utils.accounting.company.company import company_customization
 from sgp.sgp.custom.py.defaults import create_designation
 from sgp.sgp.utils.stock.stock_entry.stock_entry import stock_entry_custom
 from sgp.sgp.utils.Inventory.item_custom import item_Customization
+from sgp.sgp.utils.property_setter import create_property_setter
 
 def function_calling():
     create_docs()
@@ -58,6 +60,8 @@ def function_calling():
     stock_entry_custom()
     create_designation()
     create_salary_custom_field()
+    create_property_setter()
+    supplier_customizations()
     
 def execute():
     function_calling()
