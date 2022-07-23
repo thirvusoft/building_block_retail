@@ -3,26 +3,7 @@ from operator import index
 import frappe 
 from frappe.utils.data import get_link_to_form
 def before_validate(doc,action):
-    #-----------------------------------usecase is changed it will remove after conform-----------------------------------------
-    # if doc.from_bom == 1:
-    #     wo=frappe.get_doc("Work Order",doc.work_order)
-    #     expenses_included_in_valuation = frappe.get_cached_value("Company", wo.company, "expenses_included_in_valuation")
-    #     amount = wo.total_expanse * doc.fg_completed_qty
-    #     if doc.amended_from:
-    #         if wo.total_expanse:
-    #             creating_journal_entry(doc,amount)
-    #     else:
-    #         for i in doc.additional_costs:
-    #             if expenses_included_in_valuation == i.expense_account:
-    #                 i.amount += amount
-    #                 i.base_amount += amount
-    #                 doc.total_additional_costs += amount
-    #                 creating_journal_entry(doc,amount)
-    #                 break
-    # doc.distribute_additional_costs()
-    # doc.update_valuation_rate()
-    #---------------------------------------------------------------------------------------------------------------------------
-    if doc.from_bom == 1:
+    if doc.from_bom == 1 and doc.stock_entry_type == "Manufacture":
         doc.code = ""
         emp_qty={}
         emp_list=[]
@@ -72,6 +53,12 @@ def before_validate(doc,action):
                     break
         doc.distribute_additional_costs()
         doc.update_valuation_rate()
+def after_submit(doc,action):
+    if(doc.stock_entry_type == 'Manufacture'):
+        job_card= frappe.get_doc("Job Card",doc.ts_job_card)
+        get_job_card = frappe.get_all("Stock Entry", pluck = 'fg_completed_qty', filters={"ts_job_card": job_card.name,"docstatus": 1})  
+        if job_card.for_quantity == float(sum(get_job_card)):
+            job_card.submit()
 def creating_journal_entry(doc,income):
     code = eval(doc.code)
     for i in code:

@@ -137,7 +137,7 @@ doc_events = {
 		"validate":["sgp.sgp.custom.py.delivery_note.validate",
 					],
 		"on_change":["sgp.sgp.custom.py.delivery_note.odometer_validate"],
-		"before_submit":"sgp.sgp.custom.py.delivery_note.before_submit"
+		# "before_submit":"sgp.sgp.custom.py.delivery_note.before_submit"
 
 	},
 	# "Job Card":{
@@ -165,6 +165,7 @@ doc_events = {
     },
     "Stock Entry":{
         "before_submit":"sgp.sgp.custom.py.stock_entry.before_validate",
+        "on_submit":"sgp.sgp.custom.py.stock_entry.after_submit"
     },
     'Salary Slip':{
 		'validate': 'sgp.sgp.custom.py.salary_slip.salary_slip_add_gross_pay'

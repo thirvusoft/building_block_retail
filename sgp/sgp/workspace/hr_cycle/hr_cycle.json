@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "HR Cycle",
  "links": [],
- "modified": "2022-07-19 14:19:57.266025",
- "modified_by": "Administrator",
+ "modified": "2022-07-21 15:49:33.065433",
+ "modified_by": "parameshwari@gmail.com",
  "module": "Sgp",
  "name": "HR Cycle",
  "owner": "parameshwari@gmail.com",
@@ -37,6 +37,42 @@
    "doc_view": "List",
    "label": "Journal Receipt",
    "link_to": "Journal Receipt",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Salary Slip",
+   "link_to": "Salary Slip",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Salary Structure",
+   "link_to": "Salary Structure",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Salary Structure Assignment",
+   "link_to": "Salary Structure Assignment",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Payroll Entry",
+   "link_to": "Payroll Entry",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Holiday List",
+   "link_to": "Holiday List",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Leave Application",
+   "link_to": "Leave Application",
    "type": "DocType"
   }
  ]

@@ -273,6 +273,8 @@ def get_stock_and_priority(items):
     item = []
     idx=0
     for row in items:
+        conv = frappe.db.get_value('Item',row.get('item_code'), 'pavers_per_sqft')
+        if(not conv):conv=1
         if(frappe.get_value('Item', row.get('item_code'),'item_group') != "Raw Material"):
             order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
             stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
@@ -296,17 +298,23 @@ def get_stock_and_priority(items):
                 priority = 'Low Priority'
                 req_qty = act_qty
                 stock_taken = act_qty
+                copy_req_qty = row['req_qty']
+                row['req_qty'] *= conv
+                row['req_qty'] = round(row['req_qty'])
                 new_row=copy(row)
                 new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
-                new_row['pending_qty'] = row['req_qty'] - act_qty
+                new_row['pending_qty'] = round((row['req_qty'] - act_qty)*conv)
                 new_row['priority'] = 'Urgent Priority'
                 item.append(new_row)
+                row['req_qty'] = copy_req_qty
                 
-            items[idx]['stock_availability'] = act_qty
-            items[idx]['stock_taken'] = stock_taken
-            items[idx]['pending_qty'] = req_qty
+            items[idx]['stock_availability'] = round(act_qty*conv)
+            items[idx]['stock_taken'] = round(stock_taken*conv)
+            items[idx]['pending_qty'] = round(req_qty*conv)
             items[idx]['priority'] = priority
+            items[idx]['req_qty'] *= conv
+            items[idx]['req_qty'] = round(items[idx]['req_qty'])
             item.append(items[idx])
             idx+=1
     return item
@@ -327,9 +335,9 @@ def make_work_orders(items, sales_order, company, project=None):
 
 	for i in items:
 		if not i.get("bom"):
-			frappe.throw(_("Please select BOM against item {0}").format(i.get("item_code")))
+			frappe.throw(("Please select BOM against item {0}").format(i.get("item_code")))
 		if not i.get("pending_qty"):
-			frappe.throw(_("Please select Qty against item {0}").format(i.get("item_code")))
+			frappe.throw(("Please select Qty against item {0}").format(i.get("item_code")))
 
 		work_order = frappe.get_doc(
 			dict(

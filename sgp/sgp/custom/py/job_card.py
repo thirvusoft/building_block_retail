@@ -1,6 +1,6 @@
 import frappe
 from frappe.desk.form import assign_to
-
+import json
 def create_timesheet(doc,action):
     time_logs = doc.time_logs
     employees = list(set([i.employee for i in time_logs]))
@@ -56,7 +56,12 @@ def get_link_to_jobcard(work_order):
     if(not len(job_card)):frappe.throw("Job Card doesn't Created. This may cause if the <b>Linked BOM doesn't have any Operation.</b>")
     return "/app/job-card/"+job_card[-1]
     
-    
+@frappe.whitelist()
+def calculate_max_qty(job_card):
+    cur_job_card = frappe.get_doc("Job Card",job_card)
+    get_job_card = frappe.get_all("Stock Entry", pluck = 'fg_completed_qty', filters={"ts_job_card": job_card,"docstatus": 1})  
+    max = float(cur_job_card.total_completed_qty) - float(sum(get_job_card))
+    return max
 @frappe.whitelist()
 def update_operation_completed_qty(work_order, opr, workstation, qty=0):
     completed_qty = frappe.get_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty') or 0

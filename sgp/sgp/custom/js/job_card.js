@@ -1,8 +1,10 @@
 let tot_comp_qty = 0;
 let opr = '';
 let workstation = '';
+let job_card_name = '';
 frappe.ui.form.on("Job Card",{
     refresh: function(frm){
+        job_card_name = frm.doc.name
         if(frm.doc.status != 'Completed' && frm.doc.status != 'Open')
         frm.add_custom_button("Finish",()=>{
             if(frm.doc.work_order){
@@ -92,7 +94,16 @@ function show_prompt_for_qty_input(frm, purpose) {
 function get_max_transferable_qty (frm, purpose){
     let max = 0;
     if (frm.skip_transfer) {
-        max = flt(frm.qty) - flt(frm.produced_qty);
+        frappe.call({
+            method:"sgp.sgp.custom.py.job_card.calculate_max_qty",
+            async:false,
+            args:{
+                job_card:job_card_name,
+                },
+            callback(r){
+                max = r.message
+            }
+        })
     } else {
         if (purpose === 'Manufacture') {
             max = flt(frm.material_transferred_for_manufacturing) - flt(frm.produced_qty);

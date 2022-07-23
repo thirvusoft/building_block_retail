@@ -33,10 +33,4 @@ class JournalReceipt(Document):
             )
         )
 			self.create_gl_entry(self.account,credit=self.amount,debit=0)
-			print(self.amount)
 			self.create_gl_entry(empaccount,credit=0,debit=self.amount)
-
-	# @frappe.whitelist()
-	# def abbrivation(self):
-	# 	abbr = frappe.get_value("Company",self.company_name,"abbr")
-	# 	print(abbr)

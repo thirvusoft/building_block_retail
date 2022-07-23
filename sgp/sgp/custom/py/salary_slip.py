@@ -1,8 +1,8 @@
 from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_month_details
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
+from frappe import _
 from frappe.utils import (
-	DATE_FORMAT,
 	add_days,
 	getdate
 )
@@ -85,18 +85,56 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
     
     
 def salary_slip_add_gross_pay(doc, event):
-    stock_entry = frappe.get_all("Stock Entry", filters={'work_order': ['!=',None]}, pluck = 'Name')
+    if(doc.designation != 'Contracter'):return
+    stock_entry = frappe.get_all("Stock Entry", filters={'company':doc.company,'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'Name')
     journal_entry = frappe.get_all("Journal Entry", filters={'stock_entry_linked': ['in', stock_entry]}, pluck='name')
-    # emp_name_account = frappe.db.sql('''
-    #                                  SELECT name as employee, contracter_expense_account as account
-    #                                  FROM `tabEmployee`
-    #                                  WHERE status = 'Active'
-    #                                  ''')
-    # emp_name_wise_acc = {i[1]:i[0] for i in emp_name_account}
-    journal_emp_acc = {i['account']:i['debit_in_account_currency'] for i in frappe.get_all("Journal Entry Account", filters={'credit_in_account_currency':0, 'parent': ['in',journal_entry]},fields=['account', 'debit_in_account_currency'])}
-    emp_amount = 0
     emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
-    for i in journal_emp_acc:
-        if(i == emp_account):
-            emp_amount += journal_emp_acc[i]
+    je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
+    emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
     doc.gross_pay = emp_amount
+    doc.total_expense = emp_amount
+    doc.net_pay = emp_amount - doc.total_deduction
+    doc.rounded_total = round(doc.net_pay)
+    doc.compute_year_to_date()
+        
+    #Calculation of Month to date
+    doc.compute_month_to_date()
+    doc.compute_component_wise_year_to_date()
+    doc.set_net_total_in_words()
+    
+    #### Get Employee Expense Report Table
+    table = get_employe_expense_report(doc)
+    doc.set('ts_hr_employee_salary_report', table)
+
+def get_employe_expense_report(doc):
+    work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')
+    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order], 'docstatus':1, 'company':doc.company}, fields=['name', 'workstation', 'production_item', 'posting_date'])
+    jc_name = [i['name'] for i in job_card]
+    jc_details = {i['name']:[i['posting_date'], i['workstation'], i['production_item']] for i in job_card}
+    jc_data = {}
+    for i in frappe.get_all('Job Card Time Log', filters={'parent': ['in', jc_name], 'employee':doc.employee}, fields=['completed_qty', 'parent']):
+        if(i['parent'] in list(jc_data.keys())):jc_data[i['parent']] += (i['completed_qty'] or 0)
+        else:jc_data[i['parent']]= i['completed_qty']
+    final_data=[]
+    for i in jc_data:
+        row = {}
+        row['qty_produced'] = jc_data[i]
+        row['date'] = jc_details[i][0]
+        row['workstation'] = jc_details[i][1]
+        row['production_item'] = jc_details[i][2]
+        row['expense'] = get_expense_from_stock_entry(i, doc.employee)
+        final_data.append(row)
+    return final_data
+
+def get_expense_from_stock_entry(job_card, employee):
+    se = frappe.get_all("Stock Entry", filters={'ts_job_card': job_card}, fields=['code', 'work_order', 'name'])
+    wo_name = {i['name']:i['work_order'] for i in se}
+    emp_expense={}
+    for i in wo_name:
+        expense = frappe.get_value("Work Order", wo_name[i], 'total_expanse')
+        emp_expense[wo_name[i]] = expense
+    expense = 0
+    for i in se:
+        exp_dict = eval(i['code'])
+        expense += ((exp_dict.get(employee) or 0) * float(emp_expense[i['work_order']]))
+    return expense

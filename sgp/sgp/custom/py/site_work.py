@@ -85,7 +85,6 @@ def autoname(self, event):
         pass
         
 def create_status():
-    print('Creating Property Setter for Site Work Status')
     doc=frappe.new_doc('Property Setter')
     doc.update({
         "doctype_or_field": "DocField",
