@@ -26,9 +26,6 @@ frappe.ui.form.on("Supplier",{
     remove_items: function(frm){
         frappe.confirm(
             'Are you sure want to delete all linked default supplier items?',
-            // function(){
-            //     window.close();
-            // },
             function(){
                 frappe.call({
                     method: 'sgp.sgp.custom.py.supplier.remove_default_supplier_from_items',
