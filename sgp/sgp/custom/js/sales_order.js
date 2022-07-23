@@ -378,7 +378,6 @@ function amount_rawmet(frm,cdt,cdn){
  frappe.ui.form.on('Item Detail Compound Wall',{
     compoun_walls_add: function(frm, cdt, cdn){
         let data = locals[cdt][cdn]
-        console.log((data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
         frappe.model.set_value(cdt, cdn, 'work', (data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
     },
     allocated_ft:function(frm,cdt,cdn){

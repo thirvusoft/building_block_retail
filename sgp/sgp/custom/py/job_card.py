@@ -59,11 +59,27 @@ def get_link_to_jobcard(work_order):
 @frappe.whitelist()
 def calculate_max_qty(job_card):
     cur_job_card = frappe.get_doc("Job Card",job_card)
+    conv = frappe.get_value('Item', cur_job_card.production_item, 'pavers_per_sqft')
+    if(not conv):conv=1
+    
     get_job_card = frappe.get_all("Stock Entry", pluck = 'fg_completed_qty', filters={"ts_job_card": job_card,"docstatus": 1})  
     max = float(cur_job_card.total_completed_qty) - float(sum(get_job_card))
-    return max
+    return (max*conv), conv
 @frappe.whitelist()
 def update_operation_completed_qty(work_order, opr, workstation, qty=0):
     completed_qty = frappe.get_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty') or 0
     frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', float(qty)+float(completed_qty))
     frappe.db.commit()
+    
+def validate(doc, event):
+    conv = frappe.get_value('Item', doc.production_item, 'pavers_per_sqft')
+    if(not conv):conv=1
+    
+    qty = sum([i.completed_qty for i in doc.time_logs]) or 0
+    if(doc.ts_jc_qty):
+        if(qty > doc.ts_jc_qty):frappe.throw(f"Completed Qty ({doc.ts_total_completed_qty}) must be Below or Equal to Maximum qty({doc.ts_jc_qty}). If You want to Change the Maximum qty, <b>Change Qty To Manufacture under Production Section.</b>")
+    doc.ts_total_completed_qty = qty or 0
+    
+    doc.total_completed_qty = (doc.ts_total_completed_qty / conv)
+    
+    doc.ts_jc_qty = (doc.for_quantity * conv)

@@ -25,7 +25,6 @@ frappe.ui.form.on("Employee Advance Tool",{
 	
 	on_submit:function(frm,cdt,cdn){
 		var advance=locals[cdt][cdn]
-		console.log(advance.employee_advance_details.length)
 		for(var i=0;i<advance.employee_advance_details.length;i++){
 			frappe.call({
 				method:"ganapathy_pavers.ganapathy_pavers.doctype.employee_advance_tool.employee_advance_tool.create_employee_advance",
