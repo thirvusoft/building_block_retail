@@ -88,8 +88,7 @@ before_install = "sgp.sgp.custom.py.warehouse.create_scrap_warehouse"
 # ---------------
 # Override standard doctype classes
 override_doctype_class = {
-	# "Salary Slip":"ganapathy_pavers.utils.py.salary_slip.CustomSalary",
-	# "Payroll Entry":"ganapathy_pavers.utils.py.payroll_entry.MessExpense",
+	"Payroll Entry":"sgp.sgp.custom.py.payroll_entry.JobWorker",
 	"Opening Invoice Creation Tool":"sgp.sgp.custom.py.opening_invoice.OpeningInvoice"
 }
 
@@ -169,9 +168,16 @@ doc_events = {
         "on_submit":"sgp.sgp.custom.py.stock_entry.after_submit"
     },
     'Salary Slip':{
-		'validate': 'sgp.sgp.custom.py.salary_slip.salary_slip_add_gross_pay'
+		'validate': 'sgp.sgp.custom.py.salary_slip.salary_slip_add_gross_pay',
+		'on_submit':'sgp.sgp.custom.py.salary_slip.employee_update'
 	},
     'Purchase Invoice':{
+		'before_validate': 'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'
+	},
+    'Purchase Order':{
+		'before_validate': 'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'
+	},
+    'Purchase Receipt':{
 		'before_validate': 'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     'Supplier':{
@@ -199,7 +205,8 @@ doctype_js = {
     			"Company":"/sgp/custom/js/company.js",
 				"Payroll Entry": "/sgp/custom/js/payroll_entry.js",
 				"Employee": "/sgp/custom/js/employee.js",
-				"Supplier": "/sgp/custom/js/supplier.js"
+				"Supplier": "/sgp/custom/js/supplier.js",
+				"Salary Slip": "/sgp/custom/js/salary_slip.js"
 			 }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks

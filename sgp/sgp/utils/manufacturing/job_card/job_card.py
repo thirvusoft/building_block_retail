@@ -41,6 +41,17 @@ def create_job_card_custom_fields():
                  fetch_from = 'total_completed_qty',
                  read_only = 1
                 ),
+            dict(
+                 fieldname  = "priority",
+                 fieldtype  = "Select",
+                 insert_after  = "posting_date",
+                 label = "Priority",
+                 no_copy = 1,
+                 fetch_from = 'work_order.priority',
+                 options = "\nUrgent Priority\nHigh Priority\nLow Priority",
+                 in_standard_filter = 1,
+                 in_list_view = 1
+            ),
         ]
     }
     create_custom_fields(custom_fields)
@@ -56,7 +67,6 @@ def create_property_setter():
     make_property_setter(doctype, 'batch_no', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'wip_warehouse', 'hidden', '1', 'Check')
-    make_property_setter(doctype, 'for_quantity', 'reqd', '1', 'Check')
     make_property_setter(doctype, 'total_completed_qty', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'for_quantity', 'reqd', '0', 'Check')
     make_property_setter(doctype, 'for_quantity', 'hidden', '1', 'Check')
