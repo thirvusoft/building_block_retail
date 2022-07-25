@@ -22,16 +22,7 @@ def work_order_custom_fields():
                  insert_after  = "corrective_operation_cost",
                  label = "Total Expanse",
                  hidden = 1
-            ),
-            dict(
-                 fieldname  = "ts_qty_to_manufacture",
-                 fieldtype  = "Float",
-                 insert_after  = "qty",
-                 label = "Qty To Manufacture",
-                 in_standard_filter = 1,
-                 in_list_view = 1,
-                 reqd = 1
-            ),
+            )
         ],
     }
     create_custom_fields(custom_fields)
@@ -42,4 +33,3 @@ def work_order_property_setter():
     make_property_setter(doctype, 'more_info', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'settings_section', 'hidden', '1', 'Check') 
     make_property_setter(doctype, 'skip_transfer', 'default', '1', 'Text Editor')
-    make_property_setter(doctype, 'qty', 'hidden', '1', 'Check')
