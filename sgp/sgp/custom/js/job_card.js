@@ -1,4 +1,4 @@
-let tot_comp_qty = 0, conv = 1;
+let tot_comp_qty = 0;
 let opr = '';
 let workstation = '';
 let job_card_name = '';
@@ -35,47 +35,8 @@ frappe.ui.form.on("Job Card",{
         }
     },
     before_save: function(frm){
-        frm.set_value('max_qty', frm.doc.ts_jc_qty)
-    },
-    ts_jc_qty: function(frm){
-        frappe.db.get_value("Item", frm.doc.production_item, 'pavers_per_sqft').then( (data)=>{
-            var conv = data.message.pavers_per_sqft
-            frm.set_value('for_quantity', (frm.doc.ts_jc_qty/conv))
-            frm.set_value('max_qty', frm.doc.ts_jc_qty)
-            frm.refresh()
-        })
-    },
-    ts_total_completed_qty: function(frm){
-        frappe.db.get_value("Item", frm.doc.production_item, 'pavers_per_sqft').then( (data)=>{
-            var conv = data.message.pavers_per_sqft
-            frm.set_value('total_completed_qty', (frm.doc.ts_total_completed_qty/conv))
-            frm.refresh_field('total_completed_qty')
-        })
-    },
-    validate:function(frm){
-        
-        frappe.db.get_value("Item", frm.doc.production_item, 'pavers_per_sqft').then( (data)=>{
-            var conv = data.message.pavers_per_sqft
-            frm.set_value('total_completed_qty', (frm.doc.ts_total_completed_qty/conv))
-            frm.refresh_field('total_completed_qty')
-        }) 
-    },
-    set_total_completed_qty: function(frm) {
-		var total_completed_qty = 0;
-		frm.doc.time_logs.forEach(d => {
-			if (d.completed_qty) {
-				total_completed_qty += d.completed_qty;
-			}
-		});
-        frm.set_value('ts_total_completed_qty', total_completed_qty)
-
-		refresh_field("total_completed_qty");
-	}
-})
-frappe.ui.form.on('Job Card Time Log', {
-	completed_qty: function(frm) {
-		frm.events.set_total_completed_qty(frm);
-	}
+        frm.set_value('max_qty', frm.doc.for_quantity)
+    }
 })
 
 
@@ -96,7 +57,7 @@ function make_se (tot_comp_qty, frm, purpose, cur) {
                         args:{
                         'work_order_id': frm.name,
                         'purpose': purpose,
-                        'qty': (data.qty/conv)
+                        'qty': (data.qty)
                         },
                         callback(r){
                             r.message.ts_job_card = cur.doc.name
@@ -120,7 +81,7 @@ function show_prompt_for_qty_input(frm, purpose) {
             description: __('Max: {0}', [max]),
             default: max
         }, data => {
-            max += (frm.qty * conv * (frm.over_prdn_prcnt || 0.0)) / 100;
+            max += (frm.qty * (frm.over_prdn_prcnt || 0.0)) / 100;
             if (data.qty > max) {
                 frappe.msgprint(__('Quantity must not be more than {0}', [max]));
                 reject();
@@ -141,8 +102,7 @@ function get_max_transferable_qty (frm, purpose){
                 job_card:job_card_name,
                 },
             callback(r){
-                max = r.message[0]
-                conv = r.message[1]
+                max = r.message
             }
         })
     } else {

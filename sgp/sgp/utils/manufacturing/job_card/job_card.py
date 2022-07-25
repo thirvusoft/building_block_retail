@@ -23,24 +23,9 @@ def create_job_card_custom_fields():
                  fieldtype  = "Float",
                  insert_after  = "col123",
                  label = "Maximum Qty to Produce",
-                 fetch_from = 'ts_jc_qty',
+                 fetch_from = 'for_quantity',
                  read_only = 1
             ),
-            dict(
-                 fieldname  = "ts_jc_qty",
-                 fieldtype  = "Float",
-                 insert_after  = "for_quantity",
-                 label = "Qty To Manufacture",
-                 reqd = 1
-            ),
-            dict(
-                 fieldname  = "ts_total_completed_qty",
-                 fieldtype  = "Float",
-                 insert_after  = "total_completed_qty",
-                 label = "Total Completed Qty",
-                 fetch_from = 'total_completed_qty',
-                 read_only = 1
-                ),
             dict(
                  fieldname  = "priority",
                  fieldtype  = "Select",
@@ -67,9 +52,6 @@ def create_property_setter():
     make_property_setter(doctype, 'batch_no', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'wip_warehouse', 'hidden', '1', 'Check')
-    make_property_setter(doctype, 'total_completed_qty', 'hidden', '1', 'Check')
-    make_property_setter(doctype, 'for_quantity', 'reqd', '0', 'Check')
-    make_property_setter(doctype, 'for_quantity', 'hidden', '1', 'Check')
     
 def before_submit(self, event):
     se_qty = sum(frappe.db.get_all("Stock Entry", filters={'ts_job_card':self.name,'docstatus':1},pluck="fg_completed_qty"))
