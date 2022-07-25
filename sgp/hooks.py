@@ -158,7 +158,6 @@ doc_events = {
     },
 	"Job Card":{
 		'before_submit': "sgp.sgp.utils.manufacturing.job_card.job_card.before_submit",
-		'validate': "sgp.sgp.custom.py.job_card.validate"
 	},
 	"Work Order":{
         "before_submit":"sgp.sgp.custom.py.work_order.before_save",
