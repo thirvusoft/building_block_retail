@@ -1,12 +1,8 @@
 # from erpnext.erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
-from dataclasses import fields
 import json
-
-from requests import delete
 import frappe
 from frappe.utils.data import flt
-import erpnext
-from frappe import _, delete_doc
+from frappe import _
 
 
 @frappe.whitelist()
@@ -34,7 +30,7 @@ def create_journal_entry(self):
         total_debit += flt(employee_salary[j][1])
     new_journel.append("accounts",{"account":self.get("payment_account"),"debit_in_account_currency":total_debit})
     # new_journel.docstatus=1
-    new_journel.submit()
+    if(total_debit>0):new_journel.submit()
     # new_journel.make_gl_entries()
     # frappe.delete_doc("Journal Entry",new_journel.get("name"),force=1)
     frappe.msgprint("Journel Entry Submitted")

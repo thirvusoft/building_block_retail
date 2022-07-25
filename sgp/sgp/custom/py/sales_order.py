@@ -307,7 +307,7 @@ def get_stock_and_priority(items):
                 new_row=copy(row)
                 new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
-                new_row['pending_qty'] = round((row['req_qty'] - act_qty)*conv)
+                new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv)
                 new_row['priority'] = 'Urgent Priority'
                 item.append(new_row)
                 row['req_qty'] = copy_req_qty
