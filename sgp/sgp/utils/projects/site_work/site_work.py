@@ -324,6 +324,15 @@ def site_doc_name():
          "value": 1
     })
     Project.save(ignore_permissions=True)
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocType",
+         'doc_type': "Project",
+         'property': "track_changes",
+         "property_type": "Check",
+         "value": 1
+    })
+    Project.save(ignore_permissions=True)
     if(not frappe.get_all('Translation', {"source_text": "Project", "translated_text": "Site Work", "language": "en-US"})):
         frappe.get_doc(
             {

@@ -1,3 +1,4 @@
+from pydoc import doc
 from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_month_details
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
@@ -85,7 +86,9 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
     
     
 def salary_slip_add_gross_pay(doc, event):
-    if(doc.designation != 'Contracter'):return
+    if(doc.designation != 'Contracter'):
+        set_net_pay(doc)
+        return
     stock_entry = frappe.get_all("Stock Entry", filters={'company':doc.company,'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'Name')
     journal_entry = frappe.get_all("Journal Entry", filters={'stock_entry_linked': ['in', stock_entry]}, pluck='name')
     emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
@@ -138,3 +141,52 @@ def get_expense_from_stock_entry(job_card, employee):
         exp_dict = eval(i['code'])
         expense += ((exp_dict.get(employee) or 0) * float(emp_expense[i['work_order']]))
     return expense
+
+
+
+@frappe.whitelist(allow_guest=True)
+def site_work_details(employee,start_date,end_date):
+    job_worker = frappe.db.get_all('TS Job Worker Details',fields=['name1','parent','amount','start_date','end_date'])
+    site_work=[]
+    start_date=getdate(start_date)
+    end_date=getdate(end_date)
+    for data in job_worker:
+            if data.name1 == employee and data.start_date >= start_date and data.start_date <= end_date and data.end_date >= start_date and data.end_date <= end_date:
+                site_work.append([data.parent,data.amount])
+    return site_work
+
+def employee_update(doc,action):
+    employee_doc = frappe.get_doc('Employee',doc.employee)
+    employee_doc.salary_balance=doc.total_unpaid_amount
+    employee_doc.save()
+
+def set_net_pay(self):
+    earnings=self.earnings
+    if self.designation=='Job Worker':
+        for row in range(len(earnings)):
+            if(earnings[row].salary_component=='Basic'):
+                earnings[row].amount=self.total_paid_amount
+        self.update({
+            'earnings':earnings,
+            'gross_pay':self.total_paid_amount,
+        })
+
+    # Calculation of net Pay by round off
+    if self.gross_pay:
+        net_pay=(round(self.gross_pay) - round(self.total_deduction))%10
+        if(net_pay<=2):
+            self.rounded_total=round(self.gross_pay - round(self.total_deduction))-net_pay
+            self.net_pay=round(self.gross_pay - round(self.total_deduction))-net_pay
+        
+        elif(net_pay>2):
+            value = 10- net_pay
+            self.rounded_total=round(self.gross_pay - round(self.total_deduction))+value
+            self.net_pay=round(self.gross_pay - round(self.total_deduction))+value
+
+        #Calculation of year to date
+        self.compute_year_to_date()
+        
+        #Calculation of Month to date
+        self.compute_month_to_date()
+        self.compute_component_wise_year_to_date()
+        self.set_net_total_in_words()
