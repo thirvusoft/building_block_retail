@@ -203,8 +203,7 @@ def get_stock_availability(items):
     stock_availability = []
     for i in items:
         if(frappe.get_value('Item', i.get('item_code'),'item_group') != "Raw Material"):
-            conv = frappe.get_value('Item', i.get('item_code'), 'pavers_per_sqft')
-            if(not conv):conv=1
+            conv=1
             
             res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
             qty, planned_production_qty = 0, 0
@@ -276,8 +275,7 @@ def get_stock_and_priority(items):
     item = []
     idx=0
     for row in items:
-        conv = frappe.db.get_value('Item',row.get('item_code'), 'pavers_per_sqft')
-        if(not conv):conv=1
+        conv=1
         if(frappe.get_value('Item', row.get('item_code'),'item_group') != "Raw Material"):
             order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
             stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
@@ -341,8 +339,7 @@ def make_work_orders(items, sales_order, company, project=None):
             frappe.throw(("Please select BOM against item {0}").format(i.get("item_code")))
         if not i.get("pending_qty"):
             frappe.throw(("Please select Qty against item {0}").format(i.get("item_code")))
-        conv = frappe.db.get_value('Item',i["item_code"], 'pavers_per_sqft')
-        if(not conv):conv=1
+        conv=1
         work_order = frappe.get_doc(
             dict(
                 doctype="Work Order",
