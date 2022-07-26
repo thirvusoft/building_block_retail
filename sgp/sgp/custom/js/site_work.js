@@ -250,6 +250,12 @@ frappe.ui.form.on('TS Job Worker Details',{
 	},
 	item:function(frm,cdt,cdn){
 		completed_bundle_calc(frm,cdt,cdn)
+		let row = locals[cdt][cdn]
+		if(row.item){
+			frappe.db.get_value('Item', row.item, 'laying_cost').then( (data)=>{
+				frappe.model.set_value(cdt, cdn, 'rate', data.message.laying_cost)
+			})
+			}
 	},
 	sqft_allocated: function(frm, cdt, cdn){
 		percent_complete(frm, cdt, cdn)

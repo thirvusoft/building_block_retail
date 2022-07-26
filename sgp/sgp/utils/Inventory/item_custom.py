@@ -10,8 +10,17 @@ def item_customization():
                  fieldname  = "employee_rate",
                  fieldtype  = "Currency",
                  insert_after  = "standard_rate",
-                 label = "Employee Rate",
-                 description = "per qty"
+                 label = "Employee Rate(For Manufacture)",
+                 description = "Per Qty",
+                 depends_on = 'eval:doc.item_group != "Raw Material"'
+            ),
+            dict(
+                 fieldname  = "laying_cost",
+                 fieldtype  = "Currency",
+                 insert_after  = "employee_rate",
+                 label = "Employee Rate(For Laying)",
+                 description = "Per Qty",
+                 depends_on = 'eval:doc.item_group != "Raw Material"'
             ),
         ],
     }
