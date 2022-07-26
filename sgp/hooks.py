@@ -108,6 +108,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
+    "Quotation" :{
+		"before_validate": 'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'	
+	},
 	"Bin": {
 		"on_update": "sgp.sgp.custom.py.site_work.update_site_work"
 	},
@@ -121,10 +124,12 @@ doc_events = {
 		"after_insert":"sgp.sgp.custom.py.site_work.validate"
 	},
 	"Sales Order":{
+		"before_validate":'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description',
 		"on_cancel":"sgp.sgp.custom.py.sales_order.remove_project_fields"
 	},
 	"Delivery Note":{
-		"before_validate":"sgp.sgp.custom.py.delivery_note.update_customer",
+		"before_validate":["sgp.sgp.custom.py.delivery_note.update_customer",
+                     'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'],
 		"on_submit":[
 					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
 					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework",
@@ -143,7 +148,8 @@ doc_events = {
 	# 	"on_submit": "sgp.sgp.custom.py.job_card.create_timesheet"
 	# },
 	"Sales Invoice":{
-    	"before_validate":"sgp.sgp.custom.py.sales_invoice.update_customer",
+    	"before_validate":["sgp.sgp.custom.py.sales_invoice.update_customer",
+                        'sgp.sgp.custom.py.purchase_invoice.remove_tax_percent_from_description'],
     	"on_submit":[
 					"sgp.sgp.custom.py.delivery_note.update_qty_sitework",
 					"sgp.sgp.custom.py.delivery_note.update_return_qty_sitework",

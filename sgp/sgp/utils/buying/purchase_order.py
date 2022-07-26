@@ -68,16 +68,6 @@ def purchase_order():
         'doc_type': "Purchase Order",
         'property':"hidden",
         'property_type':"Check",
-        'field_name':"payment_schedule_section",
-        "value":1
-    })
-    Purchase_Order.save()
-    Purchase_Order=frappe.get_doc({
-        'doctype':'Property Setter',
-        'doctype_or_field': "DocField",
-        'doc_type': "Purchase Order",
-        'property':"hidden",
-        'property_type':"Check",
         'field_name':"more_info",
         "value":1
     })
@@ -120,6 +110,16 @@ def purchase_order():
         'property':"hidden",
         'property_type':"Check",
         'field_name':"subscription_section",
+        "value":1
+    })
+    Purchase_Order.save()
+    Purchase_Order=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Purchase Order",
+        'property':"hidden",
+        'property_type':"Check",
+        'field_name':"get_items_from_open_material_requests",
         "value":1
     })
     Purchase_Order.save()
