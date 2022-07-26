@@ -107,6 +107,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
+    "Quotation" :{
+		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'	
+	},
 	"Bin": {
 		"on_update": "building_block_retail.building_block_retail.custom.py.site_work.update_site_work"
 	},
@@ -120,10 +123,12 @@ doc_events = {
 		"after_insert":"building_block_retail.building_block_retail.custom.py.site_work.validate"
 	},
 	"Sales Order":{
+     	"before_validate":'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
 		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields"
 	},
 	"Delivery Note":{
-		"before_validate":"building_block_retail.building_block_retail.custom.py.delivery_note.update_customer",
+		"before_validate":["building_block_retail.building_block_retail.custom.py.delivery_note.update_customer",
+                     	'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
 		"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
@@ -142,7 +147,8 @@ doc_events = {
 	# 	"on_submit": "building_block_retail.building_block_retail.custom.py.job_card.create_timesheet"
 	# },
 	"Sales Invoice":{
-    	"before_validate":"building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer",
+    	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
+                        'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",

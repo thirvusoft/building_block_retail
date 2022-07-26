@@ -438,6 +438,16 @@ def item_customization():
         'doc_type': "Item",
         'property':"hidden",
         'property_type':"Check",
+        'field_name':"serial_nos_and_batches",
+        "value":1
+    })
+    item.save()
+    item=frappe.get_doc({
+        'doctype':'Property Setter',
+        'doctype_or_field': "DocField",
+        'doc_type': "Item",
+        'property':"hidden",
+        'property_type':"Check",
         'field_name':"grant_commission",
         "value":1
     })
