@@ -137,6 +137,13 @@ def delivery_note_custom_field():
 				label= "Has Work Order",
                 hidden = 1,
                 no_copy = 1
+            ),
+            dict(
+                fieldname= "remarks",
+				fieldtype= "Small Text",
+				insert_after= "items",
+				label= "Remarks",
+                no_copy = 1
             )
 
         ],
@@ -248,7 +255,5 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note", "driver", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "driver_name", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "vehicle_no", "depends_on", "eval:doc.transporter!='Own Transporter'", "Data")
-
-
-    
-
+    make_property_setter("Delivery Note", "value_pieces", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "value_bundle", "hidden", "1", "Check")

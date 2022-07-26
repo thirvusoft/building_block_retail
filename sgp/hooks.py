@@ -212,7 +212,7 @@ doctype_js = {
 				"Employee": "/sgp/custom/js/employee.js",
 				"Supplier": "/sgp/custom/js/supplier.js",
 				"Salary Slip": "/sgp/custom/js/salary_slip.js"
-			 }
+    }
 # doctype_list_js = {"Work Order": "/sgp/custom/js/work_order.js",}
 # Scheduled Tasks
 # ---------------

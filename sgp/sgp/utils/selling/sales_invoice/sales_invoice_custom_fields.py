@@ -129,6 +129,14 @@ def sales_invoice_custom_field():
                 label= "Print Item tax table",
                 options= "Print Items Tax",
             ),
+            dict(
+                fieldname= "si_remarks",
+				fieldtype= "Small Text",
+				insert_after= "items",
+				label= "Remarks",
+                no_copy = 1
+            )
+
         ],
     }
     create_custom_fields(custom_fields)
