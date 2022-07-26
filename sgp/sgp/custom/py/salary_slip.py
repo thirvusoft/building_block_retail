@@ -8,6 +8,7 @@ from frappe.utils import (
 	getdate
 )
 from frappe.utils.data import today
+from numpy import average
 @frappe.whitelist()
 def get_start_end_dates(payroll_frequency, start_date=None, company=None):
     if payroll_frequency == "Monthly" or payroll_frequency == "Bimonthly" or payroll_frequency == "":
@@ -125,11 +126,12 @@ def get_employe_expense_report(doc):
         row['date'] = jc_details[i][0]
         row['workstation'] = jc_details[i][1]
         row['production_item'] = jc_details[i][2]
-        row['expense'] = get_expense_from_stock_entry(i, doc.employee)
+        row['expense'], row['rate_per_piece'], row['manufactured_stock_value'] = get_expense_from_stock_entry(i, doc.employee, jc_details[i][2])
+        # row['rate_per_piece'] = 10
         final_data.append(row)
     return final_data
 
-def get_expense_from_stock_entry(job_card, employee):
+def get_expense_from_stock_entry(job_card, employee, item):
     se = frappe.get_all("Stock Entry", filters={'ts_job_card': job_card}, fields=['code', 'work_order', 'name'])
     wo_name = {i['name']:i['work_order'] for i in se}
     emp_expense={}
@@ -137,10 +139,17 @@ def get_expense_from_stock_entry(job_card, employee):
         expense = frappe.get_value("Work Order", wo_name[i], 'total_expanse')
         emp_expense[wo_name[i]] = expense
     expense = 0
+    rate = []
+    amount = []
+    for i in list(wo_name.keys()):
+        rate.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item}, pluck='valuation_rate')))
+        amount.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item}, pluck='amount')))
+    if(len(rate) == 0):rate=0
+    if(len(amount) == 0):amount=[0]
     for i in se:
         exp_dict = eval(i['code'])
         expense += ((exp_dict.get(employee) or 0) * float(emp_expense[i['work_order']]))
-    return expense
+    return expense, average(rate) or 0, average(amount) or 0
 
 
 
