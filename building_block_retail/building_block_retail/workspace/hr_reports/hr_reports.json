@@ -1,0 +1,79 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-07-19 14:45:04.841319",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "HR Reports",
+ "links": [],
+ "modified": "2022-07-19 14:45:09.914310",
+ "modified_by": "parameshwari@gmail.com",
+ "module": "Building Block Retail",
+ "name": "HR Reports",
+ "owner": "parameshwari@gmail.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "Report Builder",
+   "label": "Vehicle Expenses",
+   "link_to": "Vehicle Expenses",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Analytics",
+   "link_to": "Employee Analytics",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Leave Balance Summary",
+   "link_to": "Employee Leave Balance Summary",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Advance Summary",
+   "link_to": "Employee Advance Summary",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Birthday",
+   "link_to": "Employee Birthday",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Leave Balance",
+   "link_to": "Employee Leave Balance",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Monthly Attendance Sheet",
+   "link_to": "Monthly Attendance Sheet",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employees working on a holiday",
+   "link_to": "Employees working on a holiday",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Employee Information",
+   "link_to": "Employee Information",
+   "type": "Report"
+  }
+ ]
+}

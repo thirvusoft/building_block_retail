@@ -6,9 +6,8 @@ app_publisher = "Thirvusoft"
 app_description = "Building Block Retail"
 app_icon = "octicon octicon-file-directory"
 app_color = "grey"
-app_email = "thirvusoft@gmail.com"
+app_email = "thivusoft@gmail.com"
 app_license = "MIT"
-
 # Includes in <head>
 # ------------------
 
@@ -32,7 +31,7 @@ app_license = "MIT"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-# doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
+doctype_list_js = {"Project" : "/building_block_retail/custom/js/sw_quick_entry.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -57,7 +56,8 @@ app_license = "MIT"
 # ------------
 
 # before_install = "building_block_retail.install.before_install"
-# after_install = "building_block_retail.install.after_install"
+after_install = "building_block_retail.building_block_retail.function_calling.function_calling"
+before_install = "building_block_retail.building_block_retail.custom.py.warehouse.create_scrap_warehouse"
 
 # Uninstallation
 # ------------
@@ -86,6 +86,10 @@ app_license = "MIT"
 # DocType Class
 # ---------------
 # Override standard doctype classes
+override_doctype_class = {
+	"Payroll Entry":"building_block_retail.building_block_retail.custom.py.payroll_entry.JobWorker",
+	"Opening Invoice Creation Tool":"building_block_retail.building_block_retail.custom.py.opening_invoice.OpeningInvoice"
+}
 
 # override_doctype_class = {
 # 	"ToDo": "custom_app.overrides.CustomToDo"
@@ -102,7 +106,107 @@ app_license = "MIT"
 # 		"on_trash": "method"
 #	}
 # }
+doc_events = {
+	"Bin": {
+		"on_update": "building_block_retail.building_block_retail.custom.py.site_work.update_site_work"
+	},
+	"Driver":{
+		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
+	},
+	"Project":{
+		"autoname":"building_block_retail.building_block_retail.custom.py.site_work.autoname",
+		"before_save":"building_block_retail.building_block_retail.custom.py.site_work.before_save",
+		"validate":"building_block_retail.building_block_retail.custom.py.site_work.validate",
+		"after_insert":"building_block_retail.building_block_retail.custom.py.site_work.validate"
+	},
+	"Sales Order":{
+		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields"
+	},
+	"Delivery Note":{
+		"before_validate":"building_block_retail.building_block_retail.custom.py.delivery_note.update_customer",
+		"on_submit":[
+					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
+					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
+					],
+		"on_cancel":[
+					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
+					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_return_qty_sitework"
+					 ],
+		"validate":["building_block_retail.building_block_retail.custom.py.delivery_note.validate",
+					],
+		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
+		# "before_submit":"building_block_retail.building_block_retail.custom.py.delivery_note.before_submit"
 
+	},
+	# "Job Card":{
+	# 	"on_submit": "building_block_retail.building_block_retail.custom.py.job_card.create_timesheet"
+	# },
+	"Sales Invoice":{
+    	"before_validate":"building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer",
+    	"on_submit":[
+					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
+					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
+					],
+		"on_cancel":[
+					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
+					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_return_qty_sitework"
+					 ]
+  	},
+	"Vehicle":{
+        "validate":"building_block_retail.building_block_retail.custom.py.vehicle.reference_date",
+    },
+	"Job Card":{
+		'before_submit': "building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card.before_submit",
+	},
+	"Work Order":{
+        "before_submit":"building_block_retail.building_block_retail.custom.py.work_order.before_save",
+    },
+    "Stock Entry":{
+        "before_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.before_validate",
+        "on_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.after_submit"
+    },
+    'Salary Slip':{
+		'validate': 'building_block_retail.building_block_retail.custom.py.salary_slip.salary_slip_add_gross_pay',
+		'on_submit':'building_block_retail.building_block_retail.custom.py.salary_slip.employee_update'
+	},
+    'Purchase Invoice':{
+		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+	},
+    'Purchase Order':{
+		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+	},
+    'Purchase Receipt':{
+		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+	},
+    'Supplier':{
+		'validate':'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item',
+		'on_load' : 'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item'
+	}
+}
+after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]
+doctype_js = {
+				"Item" : "/building_block_retail/custom/js/item.js",
+				"Payment Entry" : "/building_block_retail/custom/js/payment_entry.js",
+				"Project": "/building_block_retail/custom/js/site_work.js",
+				"Sales Order": [
+								"/building_block_retail/custom/js/site_work.js",
+								"/building_block_retail/custom/js/sales_order.js",
+								],
+				"Vehicle":"/building_block_retail/custom/js/vehicle.js",
+				"Purchase Receipt":"/building_block_retail/custom/js/purchase_receipt.js",
+				"Delivery Note": "/building_block_retail/custom/js/delivery_note.js",
+				"Sales Invoice": "/building_block_retail/custom/js/sales_invoice.js",
+				"Vehicle Log":"/building_block_retail/custom/js/vehicle_log.js",
+				"Job Card": "/building_block_retail/custom/js/job_card.js",
+				"Quotation":"/building_block_retail/custom/js/quotation.js",
+    			"Work Order":"/building_block_retail/custom/js/work_order.js",
+    			"Company":"/building_block_retail/custom/js/company.js",
+				"Payroll Entry": "/building_block_retail/custom/js/payroll_entry.js",
+				"Employee": "/building_block_retail/custom/js/employee.js",
+				"Supplier": "/building_block_retail/custom/js/supplier.js",
+				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js"
+			 }
+# doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks
 # ---------------
 
@@ -132,9 +236,11 @@ app_license = "MIT"
 # Overriding Methods
 # ------------------------------
 #
-# override_whitelisted_methods = {
-# 	"frappe.desk.doctype.event.event.get_events": "building_block_retail.event.get_events"
-# }
+override_whitelisted_methods = {
+	"erpnext.erpnext.payroll.doctype.payroll_entry.payroll_entry.make_payment_entry": "building_block_retail.building_block_retail.utils.hr.journel_entry.journel_entry.make_payment_entry",
+	'erpnext.payroll.doctype.payroll_entry.payroll_entry.get_start_end_dates': 'building_block_retail.building_block_retail.custom.py.salary_slip.get_start_end_dates',
+	'erpnext.payroll.doctype.payroll_entry.payroll_entry.submit_salary_slips_for_employees': 'building_block_retail.building_block_retail.custom.py.salary_slip.submit_salary_slips_for_employees'
+}
 #
 # each overriding function accepts a `data` argument;
 # generated from the base implementation of the doctype dashboard,

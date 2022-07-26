@@ -11,7 +11,7 @@ setup(
 	version=version,
 	description="Building Block Retail",
 	author="Thirvusoft",
-	author_email="thirvusoft@gmail.com",
+	author_email="thivusoft@gmail.com",
 	packages=find_packages(),
 	zip_safe=False,
 	include_package_data=True,

@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-07-14 20:05:29.239814",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "warehouse",
+  "qty",
+  "ordered_qty",
+  "planned_production_qty",
+  "currently_produced_qty",
+  "stock_uom"
+ ],
+ "fields": [
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Available QTY"
+  },
+  {
+   "fieldname": "stock_uom",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Stock UOM",
+   "options": "UOM"
+  },
+  {
+   "fieldname": "ordered_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Ordered QTY"
+  },
+  {
+   "columns": 1,
+   "fieldname": "planned_production_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Planned Production Qty"
+  },
+  {
+   "columns": 1,
+   "fieldname": "currently_produced_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Currently Produced qty"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-07-15 13:30:16.344746",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "TS Availbale Qty",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
