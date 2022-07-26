@@ -5,6 +5,43 @@ frappe.ui.form.on('Salary Slip',{
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
+            if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
+            frappe.call({
+                method:"sgp.sgp.custom.py.salary_slip.site_work_details",
+                args:{
+                    employee:frm.doc.employee,
+                    start_date:frm.doc.start_date,
+                    end_date:frm.doc.end_date
+                },
+                callback:function(r){
+                    let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
+                    frm.clear_table('site_work_details');
+                    for (let data in r.message){
+                        total_amount = total_amount+r.message[data][1]
+                        total_unpaid_amount=total_unpaid_amount+r.message[data][1]
+                        var child = cur_frm.add_child("site_work_details");
+                        frappe.model.set_value(child.doctype, child.name, "site_work_name", r.message[data][0])     
+                        frappe.model.set_value(child.doctype, child.name, "amount",r.message[data][1] )
+                        frappe.model.set_value(child.doctype, child.name, "balance_amount",r.message[data][1] ) 
+                        frappe.model.set_value(child.doctype, child.name, "rate",r.message[data][2] ) 
+                        frappe.model.set_value(child.doctype, child.name, "sqft_allocated",r.message[data][3] ) 
+                    }
+                    cur_frm.refresh_field("site_work_details")
+                    cur_frm.set_value("total_paid_amount",paid_amount);
+                    cur_frm.set_value("total_amount",total_amount);
+                    cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
+                }
+        })
+    }
+        }
+        
+    },
+    end_date:function(frm,cdt,cdn){
+        if(frm.doc.designation=='Job Worker'){
+            frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
+                salary_balance=doc.salary_balance
+            });
+            if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
             frappe.call({
                 method:"sgp.sgp.custom.py.salary_slip.site_work_details",
                 args:{
@@ -29,6 +66,41 @@ frappe.ui.form.on('Salary Slip',{
                     cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
                 }
         })
+    }
+        }
+        
+    },
+    start_date:function(frm,cdt,cdn){
+        if(frm.doc.designation=='Job Worker'){
+            frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
+                salary_balance=doc.salary_balance
+            });
+            if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
+            frappe.call({
+                method:"sgp.sgp.custom.py.salary_slip.site_work_details",
+                args:{
+                    employee:frm.doc.employee,
+                    start_date:frm.doc.start_date,
+                    end_date:frm.doc.end_date
+                },
+                callback:function(r){
+                    let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
+                    frm.clear_table('site_work_details');
+                    for (let data in r.message){
+                        total_amount = total_amount+r.message[data][1]
+                        total_unpaid_amount=total_unpaid_amount+r.message[data][1]
+                        var child = cur_frm.add_child("site_work_details");
+                        frappe.model.set_value(child.doctype, child.name, "site_work_name", r.message[data][0])     
+                        frappe.model.set_value(child.doctype, child.name, "amount",r.message[data][1] )
+                        frappe.model.set_value(child.doctype, child.name, "balance_amount",r.message[data][1] )   
+                    }
+                    cur_frm.refresh_field("site_work_details")
+                    cur_frm.set_value("total_paid_amount",paid_amount);
+                    cur_frm.set_value("total_amount",total_amount);
+                    cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
+                }
+        })
+    }
         }
         
     },

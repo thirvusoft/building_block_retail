@@ -146,13 +146,13 @@ def get_expense_from_stock_entry(job_card, employee):
 
 @frappe.whitelist(allow_guest=True)
 def site_work_details(employee,start_date,end_date):
-    job_worker = frappe.db.get_all('TS Job Worker Details',fields=['name1','parent','amount','start_date','end_date'])
+    job_worker = frappe.db.get_all('TS Job Worker Details',fields=['name1','parent','amount','start_date','end_date', 'rate', 'sqft_allocated'])
     site_work=[]
     start_date=getdate(start_date)
     end_date=getdate(end_date)
     for data in job_worker:
             if data.name1 == employee and data.start_date >= start_date and data.start_date <= end_date and data.end_date >= start_date and data.end_date <= end_date:
-                site_work.append([data.parent,data.amount])
+                site_work.append([data.parent,data.amount, data.rate, data.sqft_allocated])
     return site_work
 
 def employee_update(doc,action):
