@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-07-05 11:36:31.778421",
+ "creation": "2022-07-26 12:37:52.084348",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
  "docstatus": 0,
@@ -11,20 +11,26 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Payment",
+ "label": "TS Settings",
  "links": [],
- "modified": "2022-07-26 11:17:05.408103",
+ "modified": "2022-07-26 12:38:08.560534",
  "modified_by": "Administrator",
  "module": "Sgp",
- "name": "Payment",
+ "name": "TS Settings",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 0,
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Payment Entry",
-   "link_to": "Payment Entry",
+   "label": "Terms and Conditions",
+   "link_to": "Terms and Conditions",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Buying Settings",
+   "link_to": "Buying Settings",
    "type": "DocType"
   }
  ]

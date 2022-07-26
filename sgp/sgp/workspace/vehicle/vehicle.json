@@ -1,9 +1,9 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-07-18 12:35:48.663853",
+ "creation": "2022-07-26 10:39:35.155280",
  "developer_mode_only": 0,
- "disable_user_customization": 1,
+ "disable_user_customization": 0,
  "docstatus": 0,
  "doctype": "Workspace",
  "extends_another_page": 0,
@@ -11,32 +11,32 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Manufacturing Cycle",
+ "label": "Vehicle",
  "links": [],
- "modified": "2022-07-26 11:15:14.759283",
- "modified_by": "Administrator",
+ "modified": "2022-07-26 10:43:34.403597",
+ "modified_by": "parameshwari@gmail.com",
  "module": "Sgp",
- "name": "Manufacturing Cycle",
- "owner": "Administrator",
+ "name": "Vehicle",
+ "owner": "parameshwari@gmail.com",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
   {
    "doc_view": "List",
-   "label": "Work Order",
-   "link_to": "Work Order",
+   "label": "Vehicle",
+   "link_to": "Vehicle",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Job Card",
-   "link_to": "Job Card",
+   "label": "Vehicle Log",
+   "link_to": "Vehicle Log",
    "type": "DocType"
   },
   {
    "doc_view": "List",
-   "label": "Stock Entry",
-   "link_to": "Stock Entry",
+   "label": "Vehicle Service",
+   "link_to": "Vehicle Service",
    "type": "DocType"
   }
  ]
