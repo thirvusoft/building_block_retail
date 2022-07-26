@@ -107,6 +107,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
+    "Item Price":{
+		'validate': 'building_block_retail.building_block_retail.custom.py.item_price.validate'	
+	},
     "Quotation" :{
 		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'	
 	},
@@ -200,6 +203,7 @@ doctype_js = {
 								],
 				"Vehicle":"/building_block_retail/custom/js/vehicle.js",
 				"Purchase Receipt":"/building_block_retail/custom/js/purchase_receipt.js",
+				"Purchase Order": "/building_block_retail/custom/js/purchase_order.js",
 				"Delivery Note": "/building_block_retail/custom/js/delivery_note.js",
 				"Sales Invoice": "/building_block_retail/custom/js/sales_invoice.js",
 				"Vehicle Log":"/building_block_retail/custom/js/vehicle_log.js",

@@ -11,14 +11,14 @@ def item_customization():
                 fieldtype='Link',
                 options='Brand',
                 insert_after='stock_uom',
-                depends_on='eval:!in_list(["Pavers","Compound Wall"], doc.item_group)',
+                depends_on='eval:doc.parent_item_group == "Products"',
                 read_only=0),
 
             dict(fieldname='section_break_inventory',
                 label='Inventory',
                 fieldtype='Section Break',
                 insert_after='is_fixed_asset',
-                depends_on='eval:in_list(["Pavers","Compound Walls"],doc.item_group)'),
+                depends_on='eval:doc.parent_item_group == "Products"'),
 
             dict(fieldname='plates_per_rack',
                 label='Plates Per Rack',
@@ -541,7 +541,11 @@ def item_customization():
             "item_size",
             "block_weight",
             "bundle_weight",
-            "has_batch_no"
+            "has_batch_no",
+            "employee_rate",
+            "laying_cost",
+            "plates_per_rack",
+            "pavers_per_plate"
         ])]
     })
     variant_doc.save()

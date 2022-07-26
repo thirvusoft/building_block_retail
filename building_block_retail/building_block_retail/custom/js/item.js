@@ -1,5 +1,10 @@
 var pavers_per_bundle
 frappe.ui.form.on("Item", {
+    refresh: function(frm){
+        setTimeout(() => {
+			frm.remove_custom_button('Publish in Website', "Actions");
+		}, 500);  
+    },
     pavers_per_layer : function(frm,cdt,cdn) {
         var data = locals[cdt][cdn]
         pavers_per_bundle = data.pavers_per_layer *data.no_of_layers_per_bundle

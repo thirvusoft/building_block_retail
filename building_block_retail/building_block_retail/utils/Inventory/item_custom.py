@@ -17,7 +17,7 @@ def item_customization():
             dict(
                  fieldname  = "sec_brk_cost",
                  fieldtype  = "Section Break",
-                 insert_after  = "is_fixed_asset",
+                 insert_after  = "bundle_per_sqr_ft",
                  label = "Cost",
                  depends_on = 'eval:doc.parent_item_group == "Products"'
             ),
@@ -52,3 +52,6 @@ def create_property_setter():
     make_property_setter('Item', 'purchase_uom', 'depends_on', 'eval:doc.is_purchase_item == 1', 'Text Editor')
     make_property_setter('Item', 'sales_uom', 'mandatory_depends_on', 'eval:doc.is_sales_item == 1', 'Text Editor')
     make_property_setter('Item', 'purchase_uom', 'mandatory_depends_on', 'eval:doc.is_purchase_item == 1', 'Text Editor')
+    make_property_setter('Item', 'valuation_rate', 'depends_on', 'eval:doc.parent_item_group != "Products"', 'Text Editor')
+    make_property_setter('Item', 'standard_rate', 'depends_on', 'eval:doc.parent_item_group != "Products"', 'Text Editor')
+    make_property_setter('Item', 'is_fixed_asset', 'depends_on', 'eval:doc.parent_item_group != "Products"', 'Text Editor')
