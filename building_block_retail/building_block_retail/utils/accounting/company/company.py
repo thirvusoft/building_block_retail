@@ -15,6 +15,13 @@ def company_custom_field():
                 label= "Default Employee Expenses Account",
                 options = "Account",
             ),
+            dict(
+                fieldname= "default_company_bank_account",
+                fieldtype= "Link",
+                insert_after= "date_of_establishment",
+                label= "Default Bank Account",
+                options = "Bank Account",
+            ),
         ]
     }
     create_custom_fields(custom_fields)

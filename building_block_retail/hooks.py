@@ -190,6 +190,9 @@ doc_events = {
     'Supplier':{
 		'validate':'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item',
 		'on_load' : 'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item'
+	},
+    'BOM': {
+		'validate':"building_block_retail.building_block_retail.custom.py.bom.validate"
 	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]

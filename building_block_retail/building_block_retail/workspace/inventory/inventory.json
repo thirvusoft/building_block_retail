@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "Inventory",
  "links": [],
- "modified": "2022-07-26 18:14:49.865255",
+ "modified": "2022-07-27 12:19:14.905656",
  "modified_by": "parameshwari@gmail.com",
  "module": "Building Block Retail",
  "name": "Inventory",
@@ -43,6 +43,12 @@
    "doc_view": "List",
    "label": "Stock Reconciliation",
    "link_to": "Stock Reconciliation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Item Price",
+   "link_to": "Item Price",
    "type": "DocType"
   }
  ]

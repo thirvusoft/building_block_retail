@@ -8,5 +8,13 @@ frappe.ui.form.on("Company",{
                 }
             }
         })
+        frm.set_query("default_company_bank_account",function(){
+            return {
+                "filters": {
+                    "is_company_account":1,
+                    "company":frm.doc.company_name
+                }
+            }
+        })
     }
 })
