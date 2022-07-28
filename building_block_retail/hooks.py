@@ -144,12 +144,7 @@ doc_events = {
 		"validate":["building_block_retail.building_block_retail.custom.py.delivery_note.validate",
 					],
 		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
-		# "before_submit":"building_block_retail.building_block_retail.custom.py.delivery_note.before_submit"
-
 	},
-	# "Job Card":{
-	# 	"on_submit": "building_block_retail.building_block_retail.custom.py.job_card.create_timesheet"
-	# },
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
                         'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
