@@ -4,7 +4,7 @@ frappe.ui.form.on("Employee Advance Tool",{
 		var advance=locals[cdt][cdn]
 		var advance1=advance.designation
 		frappe.call({
-			method:"ganapathy_pavers.ganapathy_pavers.doctype.employee_advance_tool.employee_advance_tool.employee_finder",
+			method:"building_block_retail.building_block_retail.doctype.employee_advance_tool.employee_advance_tool.employee_finder",
 			args:{advance1},
 			callback(r){
 				frm.clear_table("employee_advance_details");
@@ -27,7 +27,7 @@ frappe.ui.form.on("Employee Advance Tool",{
 		var advance=locals[cdt][cdn]
 		for(var i=0;i<advance.employee_advance_details.length;i++){
 			frappe.call({
-				method:"ganapathy_pavers.ganapathy_pavers.doctype.employee_advance_tool.employee_advance_tool.create_employee_advance",
+				method:"building_block_retail.building_block_retail.doctype.employee_advance_tool.employee_advance_tool.create_employee_advance",
 				args:{amount:advance.employee_advance_details[i].current_advance,
 					name:advance.employee_advance_details[i].employee,
 					date:frm.doc.date,
