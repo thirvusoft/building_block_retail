@@ -22,6 +22,16 @@ function setquery(frm){
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
+        setTimeout(() => {
+            frm.remove_custom_button('Pick List', "Create");
+            frm.remove_custom_button('Material Request', "Create");
+            frm.remove_custom_button('Request for Raw Materials', "Create");
+            frm.remove_custom_button('Purchase Order', "Create");
+            frm.remove_custom_button('Site Work', "Create");
+            frm.remove_custom_button('Subscription', "Create");
+        }, 500);   
+        
+        
         frappe.ui.form.ProjectQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
             render_dialog: async function() {
                 this._super();
