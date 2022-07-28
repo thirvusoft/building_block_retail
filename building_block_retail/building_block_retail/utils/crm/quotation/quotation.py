@@ -30,6 +30,14 @@ def quotation_custom_field():
                 fetch_from = "supervisor.cell_number"
             ),
             dict(
+                fieldname= "site_work",
+                fieldtype= "Link",
+                insert_after= "work",
+                label= "Site Name",
+                options= "Project",
+                depends_on="eval:doc.work!='Supply Only'"
+            ),
+            dict(
                 fieldname= "work",
                 fieldtype= "Select",
                 insert_after= "order_type",
