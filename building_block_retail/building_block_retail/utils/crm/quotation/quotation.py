@@ -22,6 +22,29 @@ def quotation_custom_field():
                 label= "Supervisor Name",
                 fetch_from = "supervisor.first_name"
             ),
+            dict(
+                fieldname= "supervisor_number",
+                fieldtype= "Data",
+                insert_after= "supervisor_name",
+                label= "Supervisor Number",
+                fetch_from = "supervisor.cell_number"
+            ),
+            dict(
+                fieldname= "work",
+                fieldtype= "Select",
+                insert_after= "order_type",
+                label= "Work",
+                options= "Supply Only\nSupply and Laying"
+            )
+        ],
+        'Quotation Item':[
+            dict(
+                fieldname= "work",
+                fieldtype= "Select",
+                insert_after= "item_code",
+                label= "Work",
+                options= "Supply Only\nSupply and Laying"
+            ),
         ]
     }
     create_custom_fields(custom_fields)

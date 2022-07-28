@@ -95,9 +95,9 @@ def salary_slip_add_gross_pay(doc, event):
     emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
     je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
     emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
-    doc.gross_pay = emp_amount
+    doc.gross_pay = emp_amount + (sum([(i.amount or 0) for i in doc.earnings]) or 0)
     doc.total_expense = emp_amount
-    doc.net_pay = emp_amount - doc.total_deduction
+    doc.net_pay = doc.gross_pay - doc.total_deduction
     doc.rounded_total = round(doc.net_pay)
     doc.compute_year_to_date()
         
@@ -112,7 +112,7 @@ def salary_slip_add_gross_pay(doc, event):
 
 def get_employe_expense_report(doc):
     work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')
-    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order], 'docstatus':1, 'company':doc.company}, fields=['name', 'workstation', 'production_item', 'posting_date'])
+    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order],  'company':doc.company}, fields=['name', 'workstation', 'production_item', 'posting_date'])
     jc_name = [i['name'] for i in job_card]
     jc_details = {i['name']:[i['posting_date'], i['workstation'], i['production_item']] for i in job_card}
     jc_data = {}
@@ -126,7 +126,7 @@ def get_employe_expense_report(doc):
         row['date'] = jc_details[i][0]
         row['workstation'] = jc_details[i][1]
         row['production_item'] = jc_details[i][2]
-        row['expense'], row['rate_per_piece'], row['manufactured_stock_value'] = get_expense_from_stock_entry(i, doc.employee, jc_details[i][2])
+        row['expense'], row['rate_per_piece'] = get_expense_from_stock_entry(i, doc.employee, jc_details[i][2])
         # row['rate_per_piece'] = 10
         final_data.append(row)
     return final_data
@@ -142,14 +142,14 @@ def get_expense_from_stock_entry(job_card, employee, item):
     rate = []
     amount = []
     for i in list(wo_name.keys()):
-        rate.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item}, pluck='valuation_rate')))
+        rate.append(frappe.db.get_value('Work Order', wo_name[i], 'total_expanse') or 0)
         amount.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item}, pluck='amount')))
     if(len(rate) == 0):rate=0
     if(len(amount) == 0):amount=[0]
     for i in se:
         exp_dict = eval(i['code'])
         expense += ((exp_dict.get(employee) or 0) * float(emp_expense[i['work_order']]))
-    return expense, average(rate) or 0, average(amount) or 0
+    return expense, average(rate) or 0
 
 
 

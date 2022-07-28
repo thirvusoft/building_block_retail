@@ -1,6 +1,7 @@
 from building_block_retail.building_block_retail.custom.py.defaults import create_designation
 from building_block_retail.building_block_retail.utils.Inventory.item import item_customization
 from building_block_retail.building_block_retail.utils.accounting.accounts.accounts import account_customization
+from building_block_retail.building_block_retail.utils.accounting.accounts.bank_account import bank_account_customization
 from building_block_retail.building_block_retail.utils.buying.purchase_invoice import purchase_invoice
 # from building_block_retail.building_block_retail.utils.buying.purchase_invoice import purchase_invoice
 from building_block_retail.building_block_retail.utils.buying.purchase_order import purchase_order
@@ -65,5 +66,7 @@ def function_calling():
     supplier_customizations()
     driver_customization()
     vehicle_log_customization()
+    bank_account_customization()
+    
 def execute():
     function_calling()

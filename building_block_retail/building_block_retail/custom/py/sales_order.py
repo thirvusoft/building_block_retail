@@ -210,7 +210,7 @@ def get_stock_availability(items):
             planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
             currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
             if(res_qty<act_qty):qty = qty = act_qty-res_qty
-            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':float(qty or 0)*conv,'ordered_qty':float(i.get('stock_qty') or 0)*conv,'stock_uom':i.get('stock_uom'),'planned_production_qty':float(planned_production_qty or 0)*conv, 'currently_produced_qty':float(currently_produced_qty or 0)*conv})
+            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':float(qty or 0)*conv,'ordered_qty':round(float(i.get('stock_qty') or 0))*conv,'stock_uom':i.get('stock_uom'),'planned_production_qty':float(planned_production_qty or 0)*conv, 'currently_produced_qty':float(currently_produced_qty or 0)*conv})
     return stock_availability
 
 @frappe.whitelist()

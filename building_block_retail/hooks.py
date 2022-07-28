@@ -201,6 +201,9 @@ doc_events = {
 					 "building_block_retail.building_block_retail.custom.py.vehicle_log.update_transport_cost"],
 		"validate": "building_block_retail.building_block_retail.custom.py.vehicle_log.validate"
 	},
+    'BOM': {
+		'validate':"building_block_retail.building_block_retail.custom.py.bom.validate"
+	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]
 doctype_js = {

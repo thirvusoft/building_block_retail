@@ -171,7 +171,7 @@ def delivery_note_custom_field():
                 fieldtype= "Select",
                 insert_after= "item_code",
                 label= "Work",
-                options= "Supply Only\nLaying Only\nSupply and Laying"
+                options= "Supply Only\nSupply and Laying"
             ),
             dict(
                 fieldname= "ts_required_area_qty",

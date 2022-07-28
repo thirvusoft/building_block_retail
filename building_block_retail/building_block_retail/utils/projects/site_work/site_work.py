@@ -34,8 +34,15 @@ def customize_field():
          dict(fieldname='supervisor', label='Supervisor',
               fieldtype='Link', insert_after='priority', options="Employee"
               ),
+         dict(
+                fieldname= "supervisor_number",
+                fieldtype= "Data",
+                insert_after= "supervisor_name",
+                label= "Supervisor Number",
+                fetch_from = "supervisor.cell_number"
+            ),
          dict(fieldname='total_required_area', label='Total Required Area',
-              fieldtype='Data', insert_after='supervisor_name', default=0,read_only=1
+              fieldtype='Data', insert_after='supervisor_number', default=0,read_only=1
               ),
          dict(fieldname='total_completed_area', label='Total Completed Area',
               fieldtype='Data', insert_after='total_required_area', default=0,read_only=1

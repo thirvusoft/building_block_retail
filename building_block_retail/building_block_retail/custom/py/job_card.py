@@ -64,6 +64,6 @@ def calculate_max_qty(job_card):
     return max
 @frappe.whitelist()
 def update_operation_completed_qty(work_order, opr, workstation, qty=0):
-    completed_qty = frappe.get_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty') or 0
-    frappe.db.set_value("Work Order Operation",{'operation':opr,'workstation':workstation,'parent':work_order},'completed_qty', float(qty)+float(completed_qty))
+    completed_qty = frappe.get_value("Work Order Operation",{'operation':opr,'parent':work_order},'completed_qty') or 0
+    frappe.db.set_value("Work Order Operation",{'operation':opr,'parent':work_order},'completed_qty', float(qty)+float(completed_qty))
     frappe.db.commit()
