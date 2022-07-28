@@ -30,7 +30,8 @@ from building_block_retail.building_block_retail.custom.py.defaults import creat
 from building_block_retail.building_block_retail.utils.stock.stock_entry.stock_entry import stock_entry_custom
 from building_block_retail.building_block_retail.utils.Inventory.item_custom import item_Customization
 from building_block_retail.building_block_retail.utils.property_setter import create_property_setter
-
+from building_block_retail.building_block_retail.utils.hr.driver.driver import driver_customization
+from building_block_retail.building_block_retail.utils.hr.vehicle_log.vehicle_log import vehicle_log_customization
 def function_calling():
     create_docs()
     purchase_order()
@@ -63,6 +64,8 @@ def function_calling():
     create_salary_custom_field()
     create_property_setter()
     supplier_customizations()
+    driver_customization()
+    vehicle_log_customization()
     bank_account_customization()
     
 def execute():

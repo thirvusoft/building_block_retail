@@ -76,7 +76,7 @@ def delivery_note_custom_field():
             dict(
                 fieldname= "current_odometer_value",
 				fieldtype= "Int",
-				insert_after= "distance",
+				insert_after= "lr_date",
 				label= "Current Odometer Value",
                 fetch_from= "own_vehicle_no.last_odometer",
                 read_only=1
@@ -103,18 +103,28 @@ def delivery_note_custom_field():
                 depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
-                fieldname= "driver_name_2",
-				fieldtype= "Data",
+                fieldname= "driver_name2",
+				fieldtype= "Link",
 				insert_after= "own_vehicle_no",
 				label= "Driver Name",
-                depends_on= "eval:doc.transporter=='Own Transporter'"
+                depends_on= "eval:doc.transporter=='Own Transporter'",
+                fetch_from= "own_vehicle_no.driver",
+                options="Driver"
+            ),
+            dict(
+                fieldname= "employee",
+				fieldtype= "Data",
+				insert_after= "driver_name2",
+				label= "Driver Name",
+                fetch_from ="driver_name2.employee"
             ),
             dict(
                 fieldname= "operator_",
 				fieldtype= "Data",
-				insert_after= "own_vehicle_no",
+				insert_after= "employee",
 				label= "Operator",
-                depends_on= "eval:doc.transporter=='Own Transporter'"
+                depends_on= "eval:doc.transporter=='Own Transporter'",
+                fetch_from= "own_vehicle_no.operator"
             ),
             dict(
                 fieldname= "driver_name_1",
@@ -144,6 +154,13 @@ def delivery_note_custom_field():
 				insert_after= "items",
 				label= "Remarks",
                 no_copy = 1
+            ),
+            dict(
+                fieldname= "total_cost",
+				fieldtype= "Data",
+				insert_after= "gst_vehicle_type",
+				label= "Total Cost",
+                read_only = 1
             )
 
         ],
@@ -235,7 +252,7 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note", "lr_no", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "gst_vehicle_type", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "gst_category", "hidden", "1", "Check")
-    make_property_setter("Delivery Note", "distance", "hidden", "0", "Check")
+    make_property_setter("Delivery Note", "distance", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "more_info", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "printing_details", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "sales_team_section_break", "hidden", "1", "Check")
@@ -257,3 +274,5 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note", "vehicle_no", "depends_on", "eval:doc.transporter!='Own Transporter'", "Data")
     make_property_setter("Delivery Note", "value_pieces", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "value_bundle", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "employee", "label", "Employee", "Data")
+    make_property_setter("Delivery Note", "driver_name_2", "hidden", "1", "Check")
