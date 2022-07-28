@@ -105,7 +105,14 @@ frappe.ui.form.on('Sales Invoice', {
             
             
             }
-            
+            setTimeout(() => {
+				frm.remove_custom_button('Fetch Timesheet');
+				frm.remove_custom_button('E-Way Bill JSON', "Create");
+				frm.remove_custom_button('Maintenance Schedule', "Create");
+				frm.remove_custom_button('Subscription', "Create");
+                frm.remove_custom_button('Invoice Discounting', "Create");
+                frm.remove_custom_button('Dunning', "Create");
+			}, 1000); 
         }
 })
 

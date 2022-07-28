@@ -88,7 +88,8 @@ before_install = "building_block_retail.building_block_retail.custom.py.warehous
 # Override standard doctype classes
 override_doctype_class = {
 	"Payroll Entry":"building_block_retail.building_block_retail.custom.py.payroll_entry.JobWorker",
-	"Opening Invoice Creation Tool":"building_block_retail.building_block_retail.custom.py.opening_invoice.OpeningInvoice"
+	"Opening Invoice Creation Tool":"building_block_retail.building_block_retail.custom.py.opening_invoice.OpeningInvoice",
+	"Work Order":"building_block_retail.building_block_retail.custom.py.work_order.TSWorkOrder"
 }
 
 # override_doctype_class = {
