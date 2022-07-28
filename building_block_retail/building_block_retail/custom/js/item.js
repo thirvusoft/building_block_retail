@@ -13,7 +13,7 @@ frappe.ui.form.on("Item", {
     pavers_per_bundle : function(frm,cdt,cdn) {
         bundle(frm,cdt,cdn)
     },
-    weight_per_paver:function(frm,cdt,cdn){
+    weight_per_unit:function(frm,cdt,cdn){
         bundle(frm,cdt,cdn)
     },
     weight_per_piece : function(frm,cdt,cdn) {
@@ -36,8 +36,8 @@ frappe.ui.form.on("Item", {
 
 function bundle(frm,cdt,cdn) {
     var data = locals[cdt][cdn]
-    var weight_per_paver = data.weight_per_paver
-    var weight_per_bundle = data.pavers_per_bundle * weight_per_paver
+    var weight_per_unit = data.weight_per_unit
+    var weight_per_bundle = data.pavers_per_bundle * weight_per_unit
     if(data.weight_per_piece > 0 && data.pieces_per_bundle > 0){
         weight_per_bundle = data.pieces_per_bundle * data.weight_per_piece
     }
@@ -59,7 +59,10 @@ frappe.ui.form.on("Item",
     },
 stock_uom: function(frm) {
     uom(frm);
-    }
+    },
+weight_per_paver: function(frm){
+    frm.set_value("weight_per_unit",frm.doc.weight_per_paver)
+}
 }
 );
  
@@ -94,3 +97,5 @@ stock_uom: function(frm) {
             }
         }
     }
+
+
