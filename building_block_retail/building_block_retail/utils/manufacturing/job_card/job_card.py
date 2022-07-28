@@ -52,7 +52,6 @@ def create_property_setter():
     make_property_setter(doctype, 'batch_no', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'more_information', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'wip_warehouse', 'hidden', '1', 'Check')
-    make_property_setter(doctype, 'production_section', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'quality_inspection', 'hidden', '1', 'Check')
     
 def before_submit(self, event):
