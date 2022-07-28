@@ -41,6 +41,10 @@ async function bundle_calc(frm, cdt, cdn){
 
 
 frappe.ui.form.on('Delivery Note', {
+	return_odometer_value: function(frm){
+        var  total_distance= (cur_frm.doc.return_odometer_value - cur_frm.doc.current_odometer_value)
+        cur_frm.set_value("total_distance",total_distance)
+    },
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
