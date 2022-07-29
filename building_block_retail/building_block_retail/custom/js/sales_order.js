@@ -52,7 +52,7 @@ frappe.ui.form.on('Sales Order',{
         }
         setquery(frm)
         cur_frm.set_df_property('items','reqd',0);
-        cur_frm.set_df_property('items','hidden',1);
+        // cur_frm.set_df_property('items','hidden',1);
         frm.set_query('supervisor', function(frm){
             return {
                 filters:{

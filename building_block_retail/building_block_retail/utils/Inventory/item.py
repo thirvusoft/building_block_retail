@@ -67,7 +67,8 @@ def item_customization():
                 label='Weight Per Paver',
                 fieldtype="Float",
                 insert_after='pavers_per_sqft',
-                depends_on='eval:doc.item_group == "Pavers"'),
+                depends_on='eval:doc.item_group == "Pavers"',
+                hidden=1),
             
             dict(fieldname='sqft_per_slab',
                 label='Sqft Per Slab',
@@ -452,6 +453,7 @@ def item_customization():
         "value":1
     })
     item.save()
+
     create_custom_fields(custom_fields)
 
     variant_doc=frappe.get_doc('Item Variant Settings')
