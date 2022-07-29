@@ -44,13 +44,10 @@ def before_validate(doc,action):
             if wo.total_expanse:
                 creating_journal_entry(doc,wo.total_expanse)
         else:
-            for i in doc.additional_costs:
-                if expenses_included_in_valuation == i.expense_account:
-                    i.amount += amount
-                    i.base_amount += amount
-                    doc.total_additional_costs += amount
-                    creating_journal_entry(doc,wo.total_expanse)
-                    break
+            doc.append('additional_costs', dict(
+                expense_account = expenses_included_in_valuation, amount = float(amount),base_amount = float(amount),description = "Employee Cost",
+            ))
+            creating_journal_entry(doc,wo.total_expanse)
         doc.distribute_additional_costs()
         doc.update_valuation_rate()
 def after_submit(doc,action):

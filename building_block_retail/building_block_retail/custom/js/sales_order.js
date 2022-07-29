@@ -352,6 +352,15 @@ frappe.ui.form.on('TS Raw Materials',{
     },
     qty: function(frm,cdt,cdn){
         amount_rawmet(frm,cdt,cdn)
+    },
+    uom: function(frm,cdt,cdn){
+        let row=locals[cdt][cdn]
+        console.log(row.item,row.uom)
+        if(row.item && row.uom){
+            frappe.db.get_list("Item Price",{filters:{'item_code': row.item,'uom' : row.uom,'price_list': frm.doc.selling_price_list}, fields:['price_list_rate']}).then((data)=>{
+                frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
+            })
+        }
     }
 
 })
