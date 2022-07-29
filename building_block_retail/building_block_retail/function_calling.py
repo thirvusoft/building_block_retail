@@ -7,7 +7,6 @@ from building_block_retail.building_block_retail.utils.buying.purchase_invoice i
 from building_block_retail.building_block_retail.utils.buying.purchase_order import purchase_order
 from building_block_retail.building_block_retail.utils.buying.purchase_receipt import purchase_receipt
 from building_block_retail.building_block_retail.utils.buying.request_for_quotation import request_for_quotation
-from building_block_retail.building_block_retail.utils.buying.supplier import supplier_customizations
 from building_block_retail.building_block_retail.utils.buying.supplier_quotation import supplier_quotation
 from building_block_retail.building_block_retail.utils.hr.employee.employee import create_contracter_expense_account
 from building_block_retail.building_block_retail.utils.hr.role.roles import create_role
@@ -63,7 +62,6 @@ def function_calling():
     create_designation()
     create_salary_custom_field()
     create_property_setter()
-    supplier_customizations()
     driver_customization()
     vehicle_log_customization()
     bank_account_customization()
