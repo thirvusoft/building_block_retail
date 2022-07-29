@@ -16,6 +16,7 @@ def create_property_setter():
     make_property_setter('Quotation','print_settings','hidden',1,'Check')
     make_property_setter('Quotation','supplier_quotation','hidden',1,'Check')
     make_property_setter('Quotation','shipping_rule','hidden',1,'Check')
+    make_property_setter('Quotation Item','warehouse','default',"Finished Goods - SV",'Text Editor')
     make_property_setter('BOM','website_section','hidden',1,'Check')
     make_property_setter('BOM','scrap_section','hidden',1,'Check')
     make_property_setter('BOM','transfer_material_against','hidden',1,'Check')
