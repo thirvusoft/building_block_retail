@@ -92,7 +92,7 @@ def creating_journal_entry(doc,income):
             else:
                 linkto = get_link_to_form("Employee", i)
                 frappe.throw(
-                    ("Enter Salary Account for Contracter in {}.").format(
+                    ("Enter Salary Account for Contractor in {}.").format(
                         frappe.bold(linkto)
                     )
                 )

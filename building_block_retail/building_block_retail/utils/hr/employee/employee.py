@@ -5,11 +5,11 @@ def create_contracter_expense_account():
     custom_fields = {
         "Employee":[
             dict(fieldname='contracter_expense_account',
-                 label="Salary Account for Contracter",
+                 label="Salary Account for Contractor",
                  fieldtype='Link', 
                  insert_after='column_break_52', 
                  options="Account", 
-                 description="Manufacturing cost for Contracter will add in this account."
+                 description="Manufacturing cost for Contractor will add in this account."
               ),
             dict(
                 fieldname = 'salary_balance',
