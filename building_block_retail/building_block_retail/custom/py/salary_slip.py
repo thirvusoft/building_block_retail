@@ -87,7 +87,7 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
     
     
 def salary_slip_add_gross_pay(doc, event):
-    if(doc.designation != 'Contracter'):
+    if(doc.designation != 'Contractor'):
         set_net_pay(doc)
         return
     stock_entry = frappe.get_all("Stock Entry", filters={'company':doc.company,'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'Name')
