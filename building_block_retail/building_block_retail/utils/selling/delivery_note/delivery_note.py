@@ -164,7 +164,15 @@ def delivery_note_custom_field():
 				insert_after= "gst_vehicle_type",
 				label= "Total Cost",
                 read_only = 1
-            )
+            ),
+            dict(
+                fieldname= "work",
+                fieldtype= "Select",
+                insert_after= "site_work",
+                label= "Work",
+                options= "Supply Only\nSupply and Laying",
+                reqd = 1
+            ),
 
         ],
 
