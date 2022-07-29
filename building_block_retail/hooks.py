@@ -184,10 +184,6 @@ doc_events = {
     'Purchase Receipt':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
-    'Supplier':{
-		'validate':'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item',
-		'on_load' : 'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item'
-	},
     "Vehicle Log":{
 		"on_update_after_submit": "ganapathy_pavers.custom.py.vehicle_log.onsubmit",
 		"on_submit": ["building_block_retail.building_block_retail.custom.py.vehicle_log.onsubmit",

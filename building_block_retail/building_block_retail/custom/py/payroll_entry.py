@@ -110,7 +110,7 @@ def create_salary_slips_for_employees(posting_date,start_date,end_date,employees
                     value = frappe.db.get_single_value('HR Settings', 'standard_working_hours')
                     if (data.working_hours)>=float(value):
                             total_days+=1
-                    ot_hours+=data.overtime_hours
+                    ot_hours+= data.overtime_hours or 0
                 
                 args.update({"doctype": "Salary Slip", "total_overtime_hours": ot_hours})
                 args.update({"doctype": "Salary Slip", "days_worked": total_days})
