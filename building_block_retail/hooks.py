@@ -88,7 +88,8 @@ before_install = "building_block_retail.building_block_retail.custom.py.warehous
 # Override standard doctype classes
 override_doctype_class = {
 	"Payroll Entry":"building_block_retail.building_block_retail.custom.py.payroll_entry.JobWorker",
-	"Opening Invoice Creation Tool":"building_block_retail.building_block_retail.custom.py.opening_invoice.OpeningInvoice"
+	"Opening Invoice Creation Tool":"building_block_retail.building_block_retail.custom.py.opening_invoice.OpeningInvoice",
+	"Work Order":"building_block_retail.building_block_retail.custom.py.work_order.TSWorkOrder"
 }
 
 # override_doctype_class = {
@@ -143,12 +144,8 @@ doc_events = {
 		"validate":["building_block_retail.building_block_retail.custom.py.delivery_note.validate",
 					],
 		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
-		# "before_submit":"building_block_retail.building_block_retail.custom.py.delivery_note.before_submit"
-
+  		"before_submit":"building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_creation"
 	},
-	# "Job Card":{
-	# 	"on_submit": "building_block_retail.building_block_retail.custom.py.job_card.create_timesheet"
-	# },
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
                         'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
@@ -190,6 +187,15 @@ doc_events = {
     'Supplier':{
 		'validate':'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item',
 		'on_load' : 'building_block_retail.building_block_retail.custom.py.supplier.add_supplier_to_default_supplier_in_item'
+	},
+    "Vehicle Log":{
+		"on_update_after_submit": "ganapathy_pavers.custom.py.vehicle_log.onsubmit",
+		"on_submit": ["building_block_retail.building_block_retail.custom.py.vehicle_log.onsubmit",
+					  "building_block_retail.building_block_retail.custom.py.vehicle_log.update_transport_cost",
+					  "building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_draft"],
+		"on_cancel":["building_block_retail.building_block_retail.custom.py.vehicle_log.onsubmit",
+					 "building_block_retail.building_block_retail.custom.py.vehicle_log.update_transport_cost"],
+		"validate": "building_block_retail.building_block_retail.custom.py.vehicle_log.validate"
 	},
     'BOM': {
 		'validate':"building_block_retail.building_block_retail.custom.py.bom.validate"

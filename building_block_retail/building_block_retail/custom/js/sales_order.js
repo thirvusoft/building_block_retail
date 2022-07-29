@@ -22,6 +22,16 @@ function setquery(frm){
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
+        setTimeout(() => {
+            frm.remove_custom_button('Pick List', "Create");
+            frm.remove_custom_button('Material Request', "Create");
+            frm.remove_custom_button('Request for Raw Materials', "Create");
+            frm.remove_custom_button('Purchase Order', "Create");
+            frm.remove_custom_button('Site Work', "Create");
+            frm.remove_custom_button('Subscription', "Create");
+        }, 500);   
+        
+        
         frappe.ui.form.ProjectQuickEntryForm = frappe.ui.form.QuickEntryForm.extend({
             render_dialog: async function() {
                 this._super();
@@ -329,12 +339,6 @@ frappe.ui.form.on('Sales Order',{
     }
 })
 
-
-
-
-
-
-
 frappe.ui.form.on('TS Raw Materials',{
     item: function(frm,cdt,cdn){
         let row=locals[cdt][cdn]
@@ -358,6 +362,15 @@ frappe.ui.form.on('TS Raw Materials',{
     },
     qty: function(frm,cdt,cdn){
         amount_rawmet(frm,cdt,cdn)
+    },
+    uom: function(frm,cdt,cdn){
+        let row=locals[cdt][cdn]
+        console.log(row.item,row.uom)
+        if(row.item && row.uom){
+            frappe.db.get_list("Item Price",{filters:{'item_code': row.item,'uom' : row.uom,'price_list': frm.doc.selling_price_list}, fields:['price_list_rate']}).then((data)=>{
+                frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
+            })
+        }
     }
 
 })

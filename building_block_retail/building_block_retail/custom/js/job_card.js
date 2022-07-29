@@ -25,6 +25,20 @@ frappe.ui.form.on("Job Card",{
             })
         }
         }).addClass("btn-warning").css({'color':'white','background-color': '#4CBB17','box-shadow': '2px 2px 2px #4CBB17'});
+        frm.set_query('employee','time_logs', function() {
+            return {
+                filters: {
+                    'Designation': "Contractor"
+                }
+            }
+        });
+        frm.set_query('employee', function() {
+            return {
+                filters: {
+                    'Designation': "Contractor"
+                }
+            }
+        });
     },
     onload: function(frm){
         if(frm.doc.doc_onload == 0){
@@ -76,10 +90,11 @@ function show_prompt_for_qty_input(frm, purpose) {
     return new Promise((resolve, reject) => {
         frappe.prompt({
             fieldtype: 'Float',
-            label: __('Qty for {0}', [purpose]),
+            label: __('Qty {0}', [purpose]),
             fieldname: 'qty',
             description: __('Max: {0}', [max]),
-            default: max
+            default: max,
+            read_only:1,
         }, data => {
             max += (frm.qty * (frm.over_prdn_prcnt || 0.0)) / 100;
             if (data.qty > max) {

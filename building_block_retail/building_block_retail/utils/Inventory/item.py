@@ -68,7 +68,7 @@ def item_customization():
                 fieldtype="Float",
                 insert_after='pavers_per_sqft',
                 depends_on='eval:doc.item_group == "Pavers"',
-                hidden=1),
+                hidden=0),
             
             dict(fieldname='sqft_per_slab',
                 label='Sqft Per Slab',
