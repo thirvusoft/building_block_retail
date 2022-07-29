@@ -166,7 +166,7 @@ def sales_invoice_property_setter():
     make_property_setter("Sales Invoice", "loyalty_points_redemption", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "additional_discount_account", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "column_break4", "hidden", "1", "Check")
-    make_property_setter("Sales Invoice", "payment_schedule_section", "hidden", "1", "Check")
+    make_property_setter("Sales Invoice", "payment_schedule_section", "hidden", "0", "Check")
     make_property_setter("Sales Invoice", "cash_bank_account", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "terms_section_break", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "edit_printing_settings", "hidden", "1", "Check")
