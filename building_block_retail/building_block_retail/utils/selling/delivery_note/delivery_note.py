@@ -79,20 +79,23 @@ def delivery_note_custom_field():
 				insert_after= "lr_date",
 				label= "Current Odometer Value",
                 fetch_from= "own_vehicle_no.last_odometer",
-                read_only=1
+                read_only=1,
+                depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
                 fieldname= "return_odometer_value",
 				fieldtype= "Int",
 				insert_after= "current_odometer_value",
-				label= "Return Odometer Value"
+				label= "Return Odometer Value",
+                depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
                 fieldname= "total_distance",
 				fieldtype= "Int",
 				insert_after= "return_odometer_value",
 				label= "Total Distance",
-                read_only=1
+                read_only=1,
+                depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
                 fieldname= "own_vehicle_no",
@@ -161,7 +164,15 @@ def delivery_note_custom_field():
 				insert_after= "gst_vehicle_type",
 				label= "Total Cost",
                 read_only = 1
-            )
+            ),
+            dict(
+                fieldname= "work",
+                fieldtype= "Select",
+                insert_after= "site_work",
+                label= "Work",
+                options= "Supply Only\nSupply and Laying",
+                reqd = 1
+            ),
 
         ],
 

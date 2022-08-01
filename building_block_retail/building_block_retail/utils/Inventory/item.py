@@ -443,6 +443,7 @@ def item_customization():
         "value":1
     })
     item.save()
+
     create_custom_fields(custom_fields)
 
     variant_doc=frappe.get_doc('Item Variant Settings')

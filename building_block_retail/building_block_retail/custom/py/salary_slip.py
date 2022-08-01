@@ -85,7 +85,7 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
 
     frappe.flags.via_payroll_entry = False
     
-    
+#validate   
 def salary_slip_add_gross_pay(doc, event):
     if(doc.designation != 'Contractor'):
         set_net_pay(doc)
@@ -109,6 +109,7 @@ def salary_slip_add_gross_pay(doc, event):
     #### Get Employee Expense Report Table
     table = get_employe_expense_report(doc)
     doc.set('ts_hr_employee_salary_report', table)
+    doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
 
 def get_employe_expense_report(doc):
     work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')

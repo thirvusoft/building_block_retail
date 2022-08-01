@@ -27,13 +27,13 @@
   {
    "fieldname": "default_email_id_section",
    "fieldtype": "Section Break",
-   "label": "Default Email Id"
+   "label": "Default User Id"
   },
   {
    "fieldname": "admin_email_id",
-   "fieldtype": "Data",
-   "label": "Admin Email Id",
-   "options": "Email"
+   "fieldtype": "Link",
+   "label": "Admin User Id",
+   "options": "User"
   },
   {
    "fieldname": "column_break_5",
@@ -41,15 +41,15 @@
   },
   {
    "fieldname": "fleet_manager_email_id",
-   "fieldtype": "Data",
-   "label": "Fleet Manager Email Id",
-   "options": "Email"
+   "fieldtype": "Link",
+   "label": "Fleet Manager User Id",
+   "options": "User"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2022-07-28 10:11:24.142781",
+ "modified": "2022-07-29 16:12:22.213981",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Vehicle Settings",

@@ -28,3 +28,4 @@ def stock_entry_property_setter():
     make_property_setter(doctype, 'more_info', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'printing_settings', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'apply_putaway_rule', 'hidden', '1', 'Check')
+    make_property_setter(doctype, 'use_multi_level_bOM', 'hidden', '1', 'Check')
