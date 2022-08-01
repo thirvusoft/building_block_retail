@@ -349,16 +349,6 @@ def item_customization():
         'doc_type': "Item",
         'property':"hidden",
         'property_type':"Check",
-        'field_name':"defaults",
-        "value":1
-    })
-    item.save()
-    item=frappe.get_doc({
-        'doctype':'Property Setter',
-        'doctype_or_field': "DocField",
-        'doc_type': "Item",
-        'property':"hidden",
-        'property_type':"Check",
         'field_name':"min_order_qty",
         "value":1
     })
