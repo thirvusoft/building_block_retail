@@ -1,6 +1,7 @@
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 import frappe
 
+
 def sales_order_customization():
     custom_fields = {
         "Sales Order": [
@@ -104,3 +105,19 @@ def sales_order_customization():
             "value":prop[3]
         })
         so.save()
+        
+def item_details_pavers_customization():
+    item_details_custom_fields = {
+        "Item Detail Pavers": [
+              dict(
+                 fieldname  = "cannot_be_bundle",
+                 fieldtype  = "Check",
+                 insert_after  = "item",
+                 label = "Cannot Be Bundle",
+                 fetch_from = 'item.cannot_be_bundle',
+                 hidden=1
+            )
+           
+        ]
+    }
+    create_custom_fields(item_details_custom_fields)

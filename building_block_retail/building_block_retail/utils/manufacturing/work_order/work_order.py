@@ -22,7 +22,8 @@ def work_order_custom_fields():
                  insert_after  = "corrective_operation_cost",
                  label = "Total Expanse",
                  hidden = 1
-            )
+            ),
+         
         ],
     }
     create_custom_fields(custom_fields)

@@ -86,30 +86,31 @@ def item_customization():
                 label='No of Layers Per Bundle',
                 fieldtype='Int',
                 insert_after='colum_break_item',
-                depends_on='eval:doc.item_group == "Pavers"'),
+                depends_on='eval:doc.item_group == "Pavers" && !doc.cannot_be_bundle'),
             
             dict(fieldname='pavers_per_layer',
                 label='Pavers Per Layer',
                 fieldtype='Float',
                 insert_after='no_of_layers_per_bundle',
-                depends_on='eval:doc.item_group == "Pavers"'),
+                depends_on='eval:doc.item_group == "Pavers" '),
             
             dict(fieldname='weight_per_slab',
                 label='Weight Per Slab',
                 insert_after='pavers_per_layer',
-                depends_on='eval:doc.item_group == "Compound Walls"',
+                depends_on='eval:doc.item_group == "Compound Walls" ',
                 hidden=1),
 
             dict(fieldname='pavers_per_bundle',
                 label='Pavers Per Bundle',
                 fieldtype='Int',
                 insert_after='weight_per_slab',
-                depends_on='eval:doc.item_group == "Pavers"'),
+                depends_on='eval:doc.item_group == "Pavers" && !doc.cannot_be_bundle'),
             
             dict(fieldname="weight_per_bundle",
                 label='Weight Per Bundle',
                 fieldtype='Float',
                 insert_after='pavers_per_bundle',
+                depends_on ='eval:!doc.cannot_be_bundle',
                 read_only=1),
 
             
@@ -117,7 +118,7 @@ def item_customization():
                 label='Sqft Per Bundle',
                 fieldtype='Data',
                 insert_after='weight_per_bundle',
-                depends_on='eval:doc.item_group == "Pavers"'),
+                depends_on='eval:doc.item_group == "Pavers" && !doc.cannot_be_bundle'),
 
             dict(fieldname='compound_wall_type',
                 label='Compound Wall Type',
@@ -159,7 +160,20 @@ def item_customization():
                 label='Bundle Weight',
                 fieldtype='Int',
                 insert_after='block_weight',
-                hidden=1)
+                hidden=1),
+            dict(
+                 fieldname  = "over_production_allowance",
+                 fieldtype  = "Float",
+                 insert_after  = "employee_rate",
+                 label = "Over Production Allowance (%)",
+                 depends_on="eval:doc.parent_item_group"
+            ),
+            dict(
+                 fieldname  = "cannot_be_bundle",
+                 fieldtype  = "Check",
+                 insert_after  = "include_item_in_manufacturing",
+                 label = "Cannot Be Bundle",
+            ),
         ],
      
     }
