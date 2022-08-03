@@ -25,6 +25,14 @@ def sales_invoice_item_custom_fields():
                 label= "Branch",
                 options= "Branch",
             ),
+            dict(
+                 fieldname  = "cannot_be_bundle",
+                 fieldtype  = "Check",
+                 insert_after  = "item_code",
+                 label = "Cannot Be Bundle",
+                 fetch_from = 'item_code.cannot_be_bundle',
+                 hidden=1
+            )
            
         ],
     }

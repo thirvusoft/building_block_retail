@@ -135,7 +135,8 @@ def sales_invoice_custom_field():
 				insert_after= "items",
 				label= "Remarks",
                 no_copy = 1
-            )
+            ),
+        
         ],
     }
     create_custom_fields(custom_fields)

@@ -173,6 +173,7 @@ def delivery_note_custom_field():
                 options= "Supply Only\nSupply and Laying",
                 reqd = 1
             ),
+         
 
         ],
 
@@ -243,6 +244,14 @@ def delivery_note_custom_field():
 				fieldtype= "Float",
 				insert_after= "column_break_92",
 				label= "Delivery qty till date"
+            ),
+            dict(
+                 fieldname  = "cannot_be_bundle",
+                 fieldtype  = "Check",
+                 insert_after  = "item_code",
+                 label = "Cannot Be Bundle",
+                 fetch_from = 'item_code.cannot_be_bundle',
+                 hidden=1
             )
 
         ]

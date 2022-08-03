@@ -25,4 +25,7 @@ def create_property_setter():
     make_property_setter('Work Order','serial_no_and_batch_for_finished_good_section','hidden',1,'Check')
     make_property_setter('Work Order','source_warehouse','default','Stores - SV','Text Editor')
     make_property_setter('BOM','with_operations','default',1,'Check')
+    make_property_setter('Sales Invoice Item','ts_qty','depends_on','eval:!doc.cannot_be_bundle','Text Editor')
+    make_property_setter('Sales Invoice Item','area_per_bundle','depends_on','eval:!doc.cannot_be_bundle','Text Editor')
+    make_property_setter('Delivery Note Item','ts_qty','depends_on','eval:!doc.cannot_be_bundle','Text Editor')
     
