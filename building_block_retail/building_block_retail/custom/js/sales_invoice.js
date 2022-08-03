@@ -7,6 +7,21 @@ frappe.ui.form.on('Sales Invoice Item', {
     },
     pieces: function(frm,cdt,cdn){
         bundle_calc(frm, cdt, cdn)
+    },
+    qty: function(frm, cdt,cdn){
+        var p = locals[cdt][cdn]
+        if(p.item_code){
+            frm.doc.items.forEach((item)=>{
+                if(item.sales_order){
+                    frm.doc.job_worker_table.forEach((row)=>{
+                        if(row.item_code === item.item_code){
+                            frappe.model.set_value(row.doctype, row.name, 'sqft', item.qty)
+                        }
+                    })
+                    frm.refresh()
+                }
+            }) 
+        }
     }
 })
 
@@ -102,7 +117,20 @@ frappe.ui.form.on('Sales Invoice', {
                 }
             }
             cur_frm.refresh();
-            
+            if(frm.doc.items){
+                frm.doc.items.forEach((item)=>{
+                    if(item.sales_order){
+                            frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
+                            console.log(data)
+                            var new_row = frm.add_child("job_worker_table");
+                            frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
+                            frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
+                            frappe.model.set_value(new_row.doctype,new_row.name,"ratesqft",data.message.laying_cost)
+                            frappe.model.set_value(new_row.doctype,new_row.name,"ts_amount",item.qty * data.message.laying_cost)
+                        })
+                    }
+                })           
+            }
             
             }
             setTimeout(() => {
@@ -152,5 +180,16 @@ frappe.ui.form.on('Sales Invoice',{
                 }
             }
         })
+    },
+})
+frappe.ui.form.on('TS Job Worker Salary',{
+    ratesqft:function(frm,cdt,cdn){
+        console.log("KKK")
+        var ts_rate = locals[cdt][cdn]
+        frappe.model.set_value(cdt,cdn,"ts_amount",ts_rate.ratesqft * ts_rate.sqft)
+    },
+    sqft:function(frm,cdt,cdn){
+        var ts_rate = locals[cdt][cdn]
+        frappe.model.set_value(cdt,cdn,"ts_amount",ts_rate.ratesqft * ts_rate.sqft)  
     },
 })
