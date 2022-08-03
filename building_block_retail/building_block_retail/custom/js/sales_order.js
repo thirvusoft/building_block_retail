@@ -535,7 +535,7 @@ function make_work_order(frm) {
                                 {
                                     fieldtype: 'Float',
                                     fieldname: 'pending_qty',
-                                    label: 'Required Qty',
+                                    label: 'Required Qty (With Over Production Allowance)',
                                     in_list_view: 1,
                                     columns: 1
                                 },

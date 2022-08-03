@@ -30,3 +30,6 @@ class TSWorkOrder(WorkOrder):
         self.update_ordered_qty()
         ##Prevent Auto Create Job Card
         # self.create_job_card()
+        
+    def validate_work_order_against_so(self):
+        return

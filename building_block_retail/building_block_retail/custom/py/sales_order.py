@@ -255,7 +255,7 @@ def get_work_order_items(self, for_raw_material_request=0):
             else:
                 pending_qty = stock_qty
 
-            if pending_qty and i['item_code'] not in product_bundle_parents:
+            if pending_qty > 0 and i['item_code'] not in product_bundle_parents:
                 items.append(
                     dict(
                         name=i['name'],
@@ -277,6 +277,7 @@ def get_stock_and_priority(items):
     for row in items:
         conv=1
         if(frappe.get_value('Item', row.get('item_code'),'item_group') != "Raw Material"):
+            buffer = frappe.get_value("Item",row['item_code'], 'over_production_allowance')
             order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
             stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
             res, avail_qty, stock_taken, req_qty= -order_qty,0,0,0
@@ -305,14 +306,14 @@ def get_stock_and_priority(items):
                 new_row=copy(row)
                 new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
-                new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv)
+                new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv) + round(round((copy_req_qty - act_qty)*conv)*buffer/100)
                 new_row['priority'] = 'Urgent Priority'
                 item.append(new_row)
                 row['req_qty'] = copy_req_qty
                 
             items[idx]['stock_availability'] = round(act_qty*conv)
             items[idx]['stock_taken'] = round(stock_taken*conv)
-            items[idx]['pending_qty'] = round(req_qty*conv)
+            items[idx]['pending_qty'] = round(req_qty*conv) + round(round(req_qty*conv) * buffer/100)
             items[idx]['priority'] = priority
             items[idx]['req_qty'] *= conv
             items[idx]['req_qty'] = round(items[idx]['req_qty'])
@@ -348,6 +349,7 @@ def make_work_orders(items, sales_order, company, project=None):
                 qty=(i["pending_qty"] / conv),
                 ts_qty_to_manufacture = i["pending_qty"],
                 company=company,
+                use_multi_level_bom = 0,
                 sales_order=sales_order,
                 sales_order_item=i["sales_order_item"],
                 project=project,

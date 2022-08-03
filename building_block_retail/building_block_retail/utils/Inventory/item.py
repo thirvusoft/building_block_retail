@@ -159,7 +159,14 @@ def item_customization():
                 label='Bundle Weight',
                 fieldtype='Int',
                 insert_after='block_weight',
-                hidden=1)
+                hidden=1),
+            dict(
+                 fieldname  = "over_production_allowance",
+                 fieldtype  = "Float",
+                 insert_after  = "employee_rate",
+                 label = "Over Production Allowance (%)",
+                 depends_on="eval:doc.parent_item_group"
+            )
         ],
      
     }
