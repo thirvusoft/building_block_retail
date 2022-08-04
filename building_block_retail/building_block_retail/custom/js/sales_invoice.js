@@ -121,7 +121,7 @@ frappe.ui.form.on('Sales Invoice', {
                 frm.doc.items.forEach((item)=>{
                     if(item.sales_order){
                             frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
-                            console.log(data)
+                           
                             var new_row = frm.add_child("job_worker_table");
                             frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
                             frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
@@ -184,7 +184,6 @@ frappe.ui.form.on('Sales Invoice',{
 })
 frappe.ui.form.on('TS Job Worker Salary',{
     ratesqft:function(frm,cdt,cdn){
-        console.log("KKK")
         var ts_rate = locals[cdt][cdn]
         frappe.model.set_value(cdt,cdn,"ts_amount",ts_rate.ratesqft * ts_rate.sqft)
     },
