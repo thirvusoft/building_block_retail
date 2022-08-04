@@ -155,11 +155,12 @@ frappe.ui.form.on('Sales Invoice', {
                 frm.remove_custom_button('Invoice Discounting', "Create");
                 frm.remove_custom_button('Dunning', "Create");
 			}, 1000); 
-            cur_frm.set_query("jobworker_name",function(){
+            cur_frm.set_query("jobworker_name",function(frm){
                 return {
-                    "filters": {
+                    filters: {
                         "designation":"Job Worker",
-                        "company":frm.doc.company_name
+                        "company":cur_frm.doc.company,
+                        "status":"Active"
                     }
                 }
             })
@@ -171,7 +172,6 @@ frappe.ui.form.on('Sales Invoice', {
                 setTimeout(()=>{
                     var t_amt = 0;
                 if(frm.doc.items){
-                console.log("Reached",cur_frm.doc.items)
                 cur_frm.doc.items.forEach((item)=>{
                     if(item.sales_order){
                         frappe.db.get_value("Sales Order",{'name':item.sales_order},"work").then((work)=>{
@@ -210,7 +210,6 @@ frappe.ui.form.on('Sales Invoice', {
 						per_billed: ["<", 99.99],
 						company: frm.doc.company
 					},callback(r){
-                        console.log("Test")
                     }
 				})
 			}, __("Get Items From"));
@@ -221,8 +220,15 @@ frappe.ui.form.on('Sales Invoice', {
             
 
         },
+        validate:function(frm){
+            if(frm.doc.job_worker_table){
+               for(var i=0;i<frm.doc.job_worker_table.length;i++){
+                  frm.doc.job_worker_table[i].ts_amount = frm.doc.job_worker_table[i].ratesqft * frm.doc.job_worker_table[i].sqft  
+               }
+        }
         
-})
+}})
+
 
 function amount(frm,cdt,cdn){
     let row=locals[cdt][cdn];
@@ -276,7 +282,6 @@ frappe.ui.form.on('TS Job Worker Salary',{
     },
     job_worker_table_remove:function(frm, cdt, cdn){
         total_calculation(frm)
-        console.log("Testing")
     }
    
 })
@@ -288,3 +293,4 @@ function total_calculation(frm){
         })
         cur_frm.set_value("total_amount_job_worker",ts_amt)
 }
+
