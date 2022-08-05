@@ -114,9 +114,6 @@ doc_events = {
     "Quotation" :{
 		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'	
 	},
-	"Bin": {
-		"on_update": "building_block_retail.building_block_retail.custom.py.site_work.update_site_work"
-	},
 	"Driver":{
 		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
 	},
