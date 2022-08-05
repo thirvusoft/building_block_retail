@@ -140,7 +140,7 @@ frappe.ui.form.on('Sales Invoice', {
 				frm.remove_custom_button('Subscription', "Create");
                 frm.remove_custom_button('Invoice Discounting', "Create");
                 frm.remove_custom_button('Dunning', "Create");
-			}, 1000); 
+			}, 500); 
         }
 })
 
