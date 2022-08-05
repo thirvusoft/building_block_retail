@@ -15,9 +15,18 @@ def journal_entry_custom_field():
                 options = "Stock Entry",
                 hidden = 1
             ),
+            dict(
+                fieldname= "ts_salary_slip",
+                fieldtype= "Link",
+                insert_after= "naming_series",
+                label= "Salary Slip",
+                options = "Salary Slip",
+                hidden = 1
+            )
         ]
     }
     create_custom_fields(custom_fields)
+    
 
 def journal_entry_property_setter():
     pass

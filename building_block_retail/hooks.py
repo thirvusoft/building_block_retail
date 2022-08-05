@@ -173,7 +173,8 @@ doc_events = {
     },
     'Salary Slip':{
 		'validate': 'building_block_retail.building_block_retail.custom.py.salary_slip.salary_slip_add_gross_pay',
-		'on_submit':'building_block_retail.building_block_retail.custom.py.salary_slip.employee_update'
+		'on_submit':['building_block_retail.building_block_retail.custom.py.salary_slip.employee_update',
+					 'building_block_retail.building_block_retail.custom.py.salary_slip.create_journal_entry']
 	},
     'Purchase Invoice':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'

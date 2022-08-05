@@ -20,6 +20,7 @@ def create_journal_entry(self):
         frappe.throw("Kindly click submit salary slip button or create salary slip")
         return      
     employee_salary = {}
+    
     for i in salary_slip:
           empaccount = frappe.get_value("Employee",i.employee,"contracter_expense_account")
           if empaccount:
