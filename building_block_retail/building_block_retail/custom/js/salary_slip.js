@@ -34,7 +34,6 @@ frappe.ui.form.on('Salary Slip',{
                     designation: frm.doc.designation
                 },
                 callback:function(r){
-                    console.log(r.message)
                     let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
                     frm.clear_table('site_work_details');
                     cur_frm.set_value('site_work_details',r.message)
@@ -137,7 +136,6 @@ frappe.ui.form.on('Salary Slip',{
     },
     
     total_paid_amount:function(frm){
-        console.log('Reached111 ')
         frm.set_value('total_unpaid_amount',(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance) 
         let earnings = frm.doc.earnings
         
@@ -162,7 +160,6 @@ frappe.ui.form.on('Salary Slip',{
 
 frappe.ui.form.on('Site work Details',{
     paid_amount:function(frm,cdt,cdn){
-        console.log('Reached')
         var row = locals[cdt][cdn];
         var amount_to_pay = 0
         var paid_data = frm.doc.site_work_details
@@ -178,9 +175,6 @@ frappe.ui.form.on('Site work Details',{
         else{
             frm.set_value('total_paid_amount',amount_to_pay)
         }     
-    },
-    site_work_details_add(frm){
-        console.log("LLL")
     }
 })
 

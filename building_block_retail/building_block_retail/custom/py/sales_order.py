@@ -192,7 +192,6 @@ def remove_project_fields(self,event):
 @frappe.whitelist()
 def get_item_rate(item='', uom=None, selling=1):
     filter1={'selling': selling}
-    print(uom)
     if(uom):filter1['uom']=uom
     if(not item or item not in frappe.get_all('Item Price', filter1, pluck='item_code')):
         return 0
