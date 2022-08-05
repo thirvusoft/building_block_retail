@@ -9,6 +9,3 @@ def update_customer(self,event):
             doc=frappe.get_doc('Sales Order', so)
             if(cus!=doc.customer):
                 frappe.db.set(doc, "customer", cus)
-                
-        
-        

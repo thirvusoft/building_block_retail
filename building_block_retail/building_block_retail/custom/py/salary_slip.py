@@ -1,4 +1,7 @@
+from dataclasses import fields
 from pydoc import doc
+import erpnext
+from erpnext.accounts.doctype.accounting_dimension.accounting_dimension import get_accounting_dimensions
 from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_month_details
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
@@ -7,7 +10,7 @@ from frappe.utils import (
 	add_days,
 	getdate
 )
-from frappe.utils.data import today
+from frappe.utils.data import flt, today
 from numpy import average
 @frappe.whitelist()
 def get_start_end_dates(payroll_frequency, start_date=None, company=None):
@@ -95,8 +98,12 @@ def salary_slip_add_gross_pay(doc, event):
     emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
     je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
     emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
-    doc.gross_pay = emp_amount + (sum([(i.amount or 0) for i in doc.earnings]) or 0)
     doc.total_expense = emp_amount
+    com = [i.salary_component for i in doc.earnings]
+    if "Basic" not in com:
+        doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
+    doc.gross_pay =(sum([(i.amount or 0) for i in doc.earnings]) or 0)
+    
     doc.net_pay = doc.gross_pay - doc.total_deduction
     doc.rounded_total = round(doc.net_pay)
     doc.compute_year_to_date()
@@ -109,7 +116,9 @@ def salary_slip_add_gross_pay(doc, event):
     #### Get Employee Expense Report Table
     table = get_employe_expense_report(doc)
     doc.set('ts_hr_employee_salary_report', table)
-    doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
+    
+    
+    
 
 def get_employe_expense_report(doc):
     work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')
@@ -156,14 +165,28 @@ def get_expense_from_stock_entry(job_card, employee, item):
 
 @frappe.whitelist(allow_guest=True)
 def site_work_details(employee,start_date,end_date):
-    job_worker = frappe.db.get_all('TS Job Worker Details',fields=['name1','parent','amount','start_date','end_date', 'rate', 'sqft_allocated'])
-    site_work=[]
-    start_date=getdate(start_date)
-    end_date=getdate(end_date)
-    for data in job_worker:
-            if data.name1 == employee and data.start_date >= start_date and data.start_date <= end_date and data.end_date >= start_date and data.end_date <= end_date:
-                site_work.append([data.parent,data.amount, data.rate, data.sqft_allocated])
-    return site_work
+    
+    sales_invoice = frappe.db.get_all('Sales Invoice',filters={'jobworker_name':employee,'posting_date':["between",  (start_date, end_date)],"docstatus":1},fields=["site_work","name"])
+    sales_name = []
+    for sales in sales_invoice:
+        sales_name.append(sales.name)
+    job_table = frappe.db.get_all("TS Job Worker Salary",filters={'parent': ["in",sales_name]},fields=['ts_amount as amount','ratesqft as rate','sqft as sqft_allocated','parent'])
+    for i in range(len(job_table)):
+        for j in range(len(sales_invoice)):
+            if(job_table[i].parent == sales_invoice[j].name):
+                job_table[i].site_work_name = sales_invoice[j].site_work
+               
+                 
+    #   for i in job_table.parent:  
+    return job_table
+
+#     site_work=[]
+#     start_date=getdate(start_date)
+#     end_date=getdate(end_date)
+#     for data in job_worker.job_worker_table:
+#             if data.name1 == employee and data.start_date >= start_date and data.start_date <= end_date and data.end_date >= start_date and data.end_date <= end_date:
+#                 site_work.append([data.parent,data.amount, data.rate, data.sqft_allocated])
+#     return site_work
 
 def employee_update(doc,action):
     employee_doc = frappe.get_doc('Employee',doc.employee)
@@ -200,3 +223,55 @@ def set_net_pay(self):
         self.compute_month_to_date()
         self.compute_component_wise_year_to_date()
         self.set_net_total_in_words()
+        
+def create_journal_entry(doc,action):
+    component_list=[]
+    
+    amount=[]
+    if doc.earnings:
+        for data in doc.earnings:
+            account = frappe.get_doc('Salary Component',data.salary_component)
+            for account in account.accounts:
+                component_list.append(account.account)
+            amount.append(data.amount)
+
+    if doc.deductions:
+        for data in doc.deductions:
+            account = frappe.get_doc('Salary Component',data.salary_component)
+            for account in account.accounts:
+                component_list.append(account.account)
+            amount.append(data.amount)
+
+    new_jv_doc=frappe.new_doc('Journal Entry')
+    new_jv_doc.voucher_type='Journal Entry'
+    new_jv_doc.posting_date=doc.posting_date
+    new_jv_doc.company = doc.company
+    new_jv_doc.user_remark = _("Accrual Journal Entry for salaries from {0} to {1}").format(
+				doc.start_date, doc.end_date
+			)
+    for data in range(0,len(component_list),1):
+        new_jv_doc.append('accounts',{'account':component_list[data],'debit_in_account_currency':amount[data]})
+    if(frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
+        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.net_pay})
+    else:
+        frappe.msgprint(_("Set Default Payable Account in {0}").format(doc.company), alert=True)
+    new_jv_doc.ts_salary_slip = doc.name
+    new_jv_doc.insert()
+    new_jv_doc.submit()
+    if(doc.designation == "Contractor"):
+        journal_entry(doc)
+
+def journal_entry(doc):
+
+    new_journel = frappe.new_doc("Journal Entry")
+    new_journel.company = doc.get("company")
+    new_journel.posting_date = doc.get("posting_date")
+    new_journel.accounts =  [] 
+
+    empaccount = frappe.get_value("Employee",doc.employee,"contracter_expense_account")
+   
+    new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay})
+    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay})
+    new_journel.insert()
+    new_journel.submit()
+    frappe.msgprint("Journel Entry Submitted")
