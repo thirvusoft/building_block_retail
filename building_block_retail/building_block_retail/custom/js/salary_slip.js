@@ -120,6 +120,7 @@ frappe.ui.form.on('Salary Slip',{
     total_paid_amount:function(frm){
         frm.set_value('total_unpaid_amount',(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance) 
         let earnings = frm.doc.earnings
+        
         var exit=0
         for (let data in earnings){
             if(earnings[data].salary_component=='Basic'){

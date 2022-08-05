@@ -226,6 +226,7 @@ def set_net_pay(self):
         
 def create_journal_entry(doc,action):
     component_list=[]
+    
     amount=[]
     if doc.earnings:
         for data in doc.earnings:

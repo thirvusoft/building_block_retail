@@ -210,6 +210,7 @@ frappe.ui.form.on('Sales Invoice', {
 						per_billed: ["<", 99.99],
 						company: frm.doc.company
 					},callback(r){
+                        
                     }
 				})
 			}, __("Get Items From"));

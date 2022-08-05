@@ -26,6 +26,7 @@ def journal_entry_custom_field():
         ]
     }
     create_custom_fields(custom_fields)
+    
 
 def journal_entry_property_setter():
     pass
