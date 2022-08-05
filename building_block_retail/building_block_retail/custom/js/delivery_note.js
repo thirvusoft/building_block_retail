@@ -7,6 +7,18 @@ frappe.ui.form.on('Delivery Note Item', {
     },
     pieces: function(frm,cdt,cdn){
         bundle_calc(frm, cdt, cdn)
+    },
+    dont_include_in_loadman_cost: function(frm){
+        if(frm.doc.work != "Supply and Laying")return
+        calculate_loading_cost(frm)
+    },
+    qty: function(frm){
+        if(frm.doc.work != "Supply and Laying")return
+        calculate_loading_cost(frm)
+    },
+    items_remove: function(frm){
+        if(frm.doc.work != "Supply and Laying")return
+        calculate_loading_cost(frm)
     }
 })
 
@@ -46,6 +58,17 @@ async function bundle_calc(frm, cdt, cdn){
 
 
 frappe.ui.form.on('Delivery Note', {
+    setup: function(frm){
+        frm.set_query('employee', 'ts_loadman_info',function(frm){
+            return {
+                filters:{
+                    'status':'Active',
+                    'designation':'Loader',
+                    'company':cur_frm.doc.company
+                }
+            }
+        })
+    },
 	return_odometer_value: function(frm){
         var  total_distance= (cur_frm.doc.return_odometer_value - cur_frm.doc.current_odometer_value)
         cur_frm.set_value("total_distance",total_distance)
@@ -118,5 +141,62 @@ frappe.ui.form.on('Delivery Note', {
 				frm.remove_custom_button('Delivery Trip', "Create");
 				frm.remove_custom_button('Subscription', "Create");
 			}, 500);    
+    },
+    work: function(frm){
+        if(frm.doc.work === "Supply and Laying")return
+        frm.clear_table('ts_loadman_info')
+        cur_frm.refresh_field('ts_loadman_info')
+        frm.set_value('ts_loadman_total_amount', 0)
+        cur_frm.refresh_field('ts_loadman_total_amount')
+    },
+    ts_loadman_work: function(frm){
+        if(frm.doc.work != "Supply and Laying")return
+        calculate_loading_cost(frm)
     }
 })
+
+
+frappe.ui.form.on('TS Loadman Cost',{
+    ts_loadman_info_add: function(frm, cdt, cdn){
+        if(frm.doc.work === 'Supply and Laying' &&  !frm.doc.is_return)
+        calculate_loading_cost(frm)
+    },
+    ts_loadman_info_remove: function(frm, cdt, cdn){
+        if(frm.doc.work === 'Supply and Laying' &&  !frm.doc.is_return && frm.doc.ts_loadman_info.length)
+        calculate_loading_cost(frm)
+        else{
+            cur_frm.set_value('ts_loadman_total_amount', 0)
+            cur_frm.refresh_field('ts_loadman_total_amount')
+        }
+    },
+    amount: function(frm){
+        var loading_cost = 0
+        for(var i = 0; i < frm.doc.ts_loadman_info.length; i++){
+            loading_cost += frm.doc.ts_loadman_info[i].amount
+        }
+        cur_frm.set_value('ts_loadman_total_amount', loading_cost)
+        cur_frm.refresh_field('ts_loadman_total_amount')
+    }
+})
+
+function calculate_loading_cost(frm){
+    var loading_cost = 0
+    if(!frm.doc.ts_loadman_info.length)return
+    frappe.call({
+        method: "building_block_retail.building_block_retail.custom.py.delivery_note.get_item_loading_cost",
+        args:{
+            items: frm.doc.items,
+            len:frm.doc.ts_loadman_info.length,
+            work:frm.doc.ts_loadman_work
+        },
+        callback(r){
+            for(var i = 0; i < frm.doc.ts_loadman_info.length; i++){
+                frm.doc.ts_loadman_info[i]['amount'] = r.message;
+                loading_cost += r.message
+            }
+            cur_frm.refresh_field('ts_loadman_info')
+            cur_frm.set_value('ts_loadman_total_amount', loading_cost)
+            cur_frm.refresh_field('ts_loadman_total_amount')
+        }
+    })
+}

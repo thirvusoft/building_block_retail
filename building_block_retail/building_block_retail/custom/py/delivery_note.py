@@ -247,3 +247,15 @@ def get_work_order_items(self, for_raw_material_request=0):
                 )
 
     return items
+
+@frappe.whitelist()
+def get_item_loading_cost(items, len, work=None):
+    items=json.loads(items)
+    multiply=1
+    if(work == "Both Loading and Unloading"):
+        multiply=2
+    loading_cost=0
+    for i in items:
+        if(i.get('dont_include_in_loadman_cost') == 1):continue
+        loading_cost += (frappe.get_value('Item', i.get('item_code'), 'loading_cost') or 0)*i.get('qty')
+    return (loading_cost*multiply)/flt(len)

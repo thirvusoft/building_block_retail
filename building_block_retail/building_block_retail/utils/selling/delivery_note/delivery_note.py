@@ -173,8 +173,35 @@ def delivery_note_custom_field():
                 options= "Supply Only\nSupply and Laying",
                 reqd = 1
             ),
-         
-
+            dict(
+                fieldname= "loadman_info_section",
+                fieldtype= "Section Break",
+                insert_after= "total_distance",
+                label= "Loadman Info",
+                collapsible = 1
+            ),
+            dict(
+                fieldname= "ts_loadman_work",
+                fieldtype= "Select",
+                insert_after= "loadman_info_section",
+                label= "Loadman Work",
+                options='Both Loading and Unloading\nLoading Only\nUnloading Only',
+                default='Both Loading and Unloading',
+                mandatory_depends_on = 'eval: doc.work == "Supply and Laying"'
+            ),
+            dict(
+                fieldname= "ts_loadman_info",
+                fieldtype= "Table",
+                insert_after= "ts_loadman_work",
+                label= "Loadman Info",
+                options= "TS Loadman Cost",
+            ),
+            dict(
+                fieldname= "ts_loadman_total_amount",
+                fieldtype= "Currency",
+                insert_after= "ts_loadman_info",
+                label= "Total Cost For Loading/Unloading",
+            )
         ],
 
         "Delivery Note Item":[
@@ -252,6 +279,13 @@ def delivery_note_custom_field():
                  label = "Cannot Be Bundle",
                  fetch_from = 'item_code.cannot_be_bundle',
                  hidden=1
+            ),
+            dict(
+                 fieldname  = "dont_include_in_loadman_cost",
+                 fieldtype  = "Check",
+                 insert_after  = "ts_required_area_qty",
+                 label = "Don't Include in Loadman Cost",
+                 description = 'If this is checked this item\'s loading cost will not be added in Total Loading/Unloading cost'
             )
 
         ]
