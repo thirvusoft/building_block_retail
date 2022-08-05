@@ -29,16 +29,16 @@ def item_customization():
                  description = "Per Qty",
             ),
             dict(
-              fieldname = "col_brk_cost",
-              fieldtype = "Column Break",
-              insert_after = "employee_rate"  
-            ),
-            dict(
                  fieldname  = "laying_cost",
                  fieldtype  = "Currency",
-                 insert_after  = "col_brk_cost",
+                 insert_after  = "over_production_allowance",
                  label = "Square Foot Rate(For Laying)",
                  description = "Per Qty",
+            ),
+            dict(
+                 fieldname  = "laying_cost_col_brk",
+                 fieldtype  = "Column Break",
+                 insert_after  = "laying_cost",
             ),
         ],
     }

@@ -119,14 +119,13 @@ frappe.ui.form.on('Sales Invoice', {
             cur_frm.refresh();
             var t_amt = 0;
             if(frm.doc.items){
-                
                 frm.doc.items.forEach((item)=>{
                     if(item.sales_order){
                         frappe.db.get_value("Sales Order",{'name':item.sales_order},"work").then((work)=>{
                             if(work.message.work === "Supply and Laying")
                             {
                                 frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
-                           
+                                    if(item.item_group != "Raw Material"){
                                     var new_row = frm.add_child("job_worker_table");
                                     frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
                                     frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
@@ -134,6 +133,7 @@ frappe.ui.form.on('Sales Invoice', {
                                     frappe.model.set_value(new_row.doctype,new_row.name,"ts_amount",item.qty * data.message.laying_cost)
                                     t_amt+=(item.qty * data.message.laying_cost)
                                     cur_frm.set_value("total_amount_job_worker",t_amt)
+                                    }
                     
                                 })
                             }
@@ -154,7 +154,7 @@ frappe.ui.form.on('Sales Invoice', {
 				frm.remove_custom_button('Subscription', "Create");
                 frm.remove_custom_button('Invoice Discounting', "Create");
                 frm.remove_custom_button('Dunning', "Create");
-			}, 1000); 
+			}, 500); 
             cur_frm.set_query("jobworker_name",function(frm){
                 return {
                     filters: {
@@ -167,59 +167,35 @@ frappe.ui.form.on('Sales Invoice', {
         },
         
         refresh:function(frm){
-		    frm.add_custom_button(__('Sales Order'),
-			function() {
-                setTimeout(()=>{
-                    var t_amt = 0;
-                if(frm.doc.items){
-                cur_frm.doc.items.forEach((item)=>{
-                    if(item.sales_order){
-                        frappe.db.get_value("Sales Order",{'name':item.sales_order},"work").then((work)=>{
-                            if(work.message.work === "Supply and Laying")
-                            {
-                                frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
-                           
-                                    var new_row = cur_frm.add_child("job_worker_table");
-                                    frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
-                                    frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
-                                    frappe.model.set_value(new_row.doctype,new_row.name,"ratesqft",data.message.laying_cost)
-                                    frappe.model.set_value(new_row.doctype,new_row.name,"ts_amount",item.qty * data.message.laying_cost)
-                                    t_amt+=(item.qty * data.message.laying_cost)
-                                    cur_frm.set_value("total_amount_job_worker",t_amt)
-                    
-                                })
-                            }
-                        })
-                        
+                var t_amt = 0;
+                if(frm.doc.job_worker_table){
+                    if(!frm.doc.job_worker_table.length){
+                        if(frm.doc.items && frm.is_new()){
+                            cur_frm.doc.items.forEach((item)=>{
+                                if(item.sales_order){
+                                    frappe.db.get_value("Sales Order",{'name':item.sales_order},"work").then((work)=>{
+                                        if(work.message.work === "Supply and Laying")
+                                        {
+                                            frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
+                                       
+                                                var new_row = cur_frm.add_child("job_worker_table");
+                                                frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
+                                                frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
+                                                frappe.model.set_value(new_row.doctype,new_row.name,"ratesqft",data.message.laying_cost)
+                                                frappe.model.set_value(new_row.doctype,new_row.name,"ts_amount",item.qty * data.message.laying_cost)
+                                                t_amt+=(item.qty * data.message.laying_cost)
+                                                cur_frm.set_value("total_amount_job_worker",t_amt)
+                                
+                                            })
+                                        }
+                                    })
+                                    
+                                }
+                            })       
+                            
+                        }
                     }
-                })       
-                
-            }
-                }, 10000);
-              
-				erpnext.utils.map_current_doc({
-					method: "erpnext.selling.doctype.sales_order.sales_order.make_sales_invoice",
-					source_doctype: "Sales Order",
-					target: frm,
-					setters: {
-						customer: frm.doc.customer || undefined,
-					},
-					get_query_filters: {
-						docstatus: 1,
-						status: ["not in", ["Closed", "On Hold"]],
-						per_billed: ["<", 99.99],
-						company: frm.doc.company
-					},callback(r){
-                        
-                    }
-				})
-			}, __("Get Items From"));
-            setTimeout(()=>{
-                cur_frm.fields_dict["job_worker_table"].grid.wrapper.find('.grid-add-row').hide();
-            },10000);
-            
-            
-
+                }
         },
         validate:function(frm){
             if(frm.doc.job_worker_table){
@@ -228,7 +204,8 @@ frappe.ui.form.on('Sales Invoice', {
                }
         }
         
-}})
+    }
+        })
 
 
 function amount(frm,cdt,cdn){
@@ -283,6 +260,12 @@ frappe.ui.form.on('TS Job Worker Salary',{
     },
     job_worker_table_remove:function(frm, cdt, cdn){
         total_calculation(frm)
+    },
+    item_code: function(frm,cdt,cdn){
+        let row = locals[cdt][cdn]
+        frappe.db.get_value('Item', row.item_code, 'loading_cost').then((data)=>{
+            frappe.model.set_value(cdt, cdn, 'ratesqft', data.message.loading_cost)
+        })
     }
    
 })

@@ -160,13 +160,26 @@ def item_customization():
                 label='Bundle Weight',
                 fieldtype='Int',
                 insert_after='block_weight',
-                hidden=1),
+                hidden=1
+            ),
+            dict(
+                 fieldname  = "loading_cost",
+                 fieldtype  = "Currency",
+                 insert_after  = "employee_rate",
+                 label = "Loading/Unloading Cost",
+                 depends_on="eval:doc.parent_item_group=='Products'"
+            ),
+            dict(
+                 fieldname  = "loading_col_brk",
+                 fieldtype  = "Column Break",
+                 insert_after  = "loading_cost",
+            ),
             dict(
                  fieldname  = "over_production_allowance",
                  fieldtype  = "Float",
-                 insert_after  = "employee_rate",
+                 insert_after  = "loading_col_brk",
                  label = "Over Production Allowance (%)",
-                 depends_on="eval:doc.parent_item_group"
+                 depends_on="eval:doc.parent_item_group=='Products'"
             ),
             dict(
                  fieldname  = "cannot_be_bundle",

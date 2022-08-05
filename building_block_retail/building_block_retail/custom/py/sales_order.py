@@ -190,10 +190,13 @@ def remove_project_fields(self,event):
 
 
 @frappe.whitelist()
-def get_item_rate(item='', selling=1):
-    if(not item or item not in frappe.get_all('Item Price', {'selling': selling}, pluck='item_code')):
+def get_item_rate(item='', uom=None, selling=1):
+    filter1={'selling': selling}
+    if(uom):filter1['uom']=uom
+    if(not item or item not in frappe.get_all('Item Price', filter1, pluck='item_code')):
         return 0
-    doc=frappe.get_last_doc('Item Price', {'item_code': item, 'selling': selling})
+    filter1['item_code']=item
+    doc=frappe.get_last_doc('Item Price', filter1)
     return doc.price_list_rate or 0
     
         
@@ -365,3 +368,16 @@ def make_work_orders(items, sales_order, company, project=None):
 
     return [p.name for p in out]
 
+#Validate
+def add_price_list(doc, event):
+    for i in doc.items:
+        if(i.item_group == 'Raw Material' and not frappe.db.exists('Item Price', {'selling':1, 'price_list':doc.selling_price_list, 'item_code':i.item_code, 'uom':i.uom})):
+            pl = frappe.new_doc("Item Price")
+            pl.update({
+                'item_code': i.item_code,
+                'uom': i.uom,
+                'price_list':doc.selling_price_list,
+                'selling':1,
+                'price_list_rate': i.rate
+            })
+            pl.save(ignore_permissions=True)

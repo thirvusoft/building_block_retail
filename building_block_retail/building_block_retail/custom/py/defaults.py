@@ -40,4 +40,8 @@ def create_designation():
         doc = frappe.new_doc("Designation")
         doc.designation_name = "Contractor"
         doc.save(ignore_permissions=True)
+    if(not frappe.db.exists("Designation", "Loader")):
+        doc = frappe.new_doc("Designation")
+        doc.designation_name = "Loader"
+        doc.save(ignore_permissions=True)
     frappe.db.commit()

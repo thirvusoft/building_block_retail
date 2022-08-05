@@ -25,7 +25,6 @@ from building_block_retail.building_block_retail.utils.manufacturing.work_order.
 from building_block_retail.building_block_retail.utils.manufacturing.workstation.workstation import workstation_custom
 from building_block_retail.building_block_retail.utils.accounting.journal_entry.journal_entry import journal_entry_customization
 from building_block_retail.building_block_retail.utils.accounting.company.company import company_customization
-from building_block_retail.building_block_retail.custom.py.defaults import create_designation
 from building_block_retail.building_block_retail.utils.stock.stock_entry.stock_entry import stock_entry_custom
 from building_block_retail.building_block_retail.utils.Inventory.item_custom import item_Customization
 from building_block_retail.building_block_retail.utils.property_setter import create_property_setter
@@ -60,7 +59,6 @@ def function_calling():
     account_customization()
     create_designation()
     stock_entry_custom()
-    create_designation()
     create_salary_custom_field()
     create_property_setter()
     driver_customization()
