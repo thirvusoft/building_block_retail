@@ -164,29 +164,32 @@ def get_expense_from_stock_entry(job_card, employee, item):
 
 
 @frappe.whitelist(allow_guest=True)
-def site_work_details(employee,start_date,end_date):
-    
-    sales_invoice = frappe.db.get_all('Sales Invoice',filters={'jobworker_name':employee,'posting_date':["between",  (start_date, end_date)],"docstatus":1},fields=["site_work","name"])
-    sales_name = []
-    for sales in sales_invoice:
-        sales_name.append(sales.name)
-    job_table = frappe.db.get_all("TS Job Worker Salary",filters={'parent': ["in",sales_name]},fields=['ts_amount as amount','ratesqft as rate','sqft as sqft_allocated','parent'])
-    for i in range(len(job_table)):
-        for j in range(len(sales_invoice)):
-            if(job_table[i].parent == sales_invoice[j].name):
-                job_table[i].site_work_name = sales_invoice[j].site_work
-               
-                 
-    #   for i in job_table.parent:  
-    return job_table
-
-#     site_work=[]
-#     start_date=getdate(start_date)
-#     end_date=getdate(end_date)
-#     for data in job_worker.job_worker_table:
-#             if data.name1 == employee and data.start_date >= start_date and data.start_date <= end_date and data.end_date >= start_date and data.end_date <= end_date:
-#                 site_work.append([data.parent,data.amount, data.rate, data.sqft_allocated])
-#     return site_work
+def site_work_details(employee,start_date,end_date,designation):
+    if(designation == 'Job Worker'):
+        sales_invoice = frappe.db.get_all('Sales Invoice',filters={'jobworker_name':employee,'posting_date':["between",  (start_date, end_date)],"docstatus":1},fields=["site_work","name"])
+        sales_name = []
+        for sales in sales_invoice:
+            sales_name.append(sales.name)
+        job_table = frappe.db.get_all("TS Job Worker Salary",filters={'parent': ["in",sales_name]},fields=['ts_amount as amount','ratesqft as rate','sqft as sqft_allocated','parent'])
+        for i in range(len(job_table)):
+            for j in range(len(sales_invoice)):
+                if(job_table[i].parent == sales_invoice[j].name):
+                    job_table[i].site_work_name = sales_invoice[j].site_work
+                    del job_table[i]['parent']
+        return job_table
+    elif(designation == 'Loader'):
+        frappe.errprint(designation)
+        delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',{start_date, end_date}], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
+        dn_names = [i['name'] for i in delivery_note]
+        loadman_cost = frappe.db.get_all('TS Loadman Cost', filters={'parent':['in', dn_names], 'employee':employee},  fields=['amount', 'rate', 'parent'])
+        frappe.errprint(loadman_cost)
+        for i in range(len(loadman_cost)):
+            for j in delivery_note:
+                if(loadman_cost[i].parent == j.name):
+                    loadman_cost[i]['site_work_name'] = j.site_work
+                    loadman_cost[i]['loadman_work'] = j.ts_loadman_work
+                    del loadman_cost[i]['parent']
+        return loadman_cost
 
 def employee_update(doc,action):
     employee_doc = frappe.get_doc('Employee',doc.employee)
@@ -195,7 +198,7 @@ def employee_update(doc,action):
 
 def set_net_pay(self):
     earnings=self.earnings
-    if self.designation=='Job Worker':
+    if self.designation in ['Job Worker', 'Loader']:
         for row in range(len(earnings)):
             if(earnings[row].salary_component=='Basic'):
                 earnings[row].amount=self.total_paid_amount
@@ -260,9 +263,10 @@ def create_journal_entry(doc,action):
     new_jv_doc.submit()
     if(doc.designation == "Contractor"):
         journal_entry(doc)
+    elif(doc.designation in ['Job Worker', 'Loader']):
+        make_bank_entry(doc)
 
 def journal_entry(doc):
-
     new_journel = frappe.new_doc("Journal Entry")
     new_journel.company = doc.get("company")
     new_journel.posting_date = doc.get("posting_date")
@@ -271,6 +275,18 @@ def journal_entry(doc):
     empaccount = frappe.get_value("Employee",doc.employee,"contracter_expense_account")
    
     new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay})
+    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay})
+    new_journel.insert()
+    new_journel.submit()
+    frappe.msgprint("Journel Entry Submitted")
+
+def make_bank_entry(doc):
+    new_journel = frappe.new_doc("Journal Entry")
+    new_journel.company = doc.get("company")
+    new_journel.posting_date = doc.get("posting_date")
+    new_journel.accounts =  [] 
+    account = doc.payment_account
+    new_journel.append("accounts",{"account":account,"credit_in_account_currency":doc.net_pay})
     new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay})
     new_journel.insert()
     new_journel.submit()

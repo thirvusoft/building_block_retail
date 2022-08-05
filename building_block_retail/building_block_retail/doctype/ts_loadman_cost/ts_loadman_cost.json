@@ -8,7 +8,8 @@
  "field_order": [
   "employee",
   "amount",
-  "sales_order"
+  "site_work",
+  "rate"
  ],
  "fields": [
   {
@@ -26,18 +27,23 @@
    "label": "Amount"
   },
   {
-   "fieldname": "sales_order",
+   "fieldname": "site_work",
    "fieldtype": "Link",
    "hidden": 1,
    "in_list_view": 1,
-   "label": "Sales Order",
+   "label": "Site Work",
    "options": "Sales Order"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-08-05 09:24:01.356112",
+ "modified": "2022-08-05 14:34:54.825849",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Loadman Cost",

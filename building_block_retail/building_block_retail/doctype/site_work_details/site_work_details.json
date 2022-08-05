@@ -11,7 +11,9 @@
   "paid_amount",
   "balance_amount",
   "rate",
-  "sqft_allocated"
+  "sqft_allocated",
+  "no_of_pieces",
+  "loadman_work"
  ],
  "fields": [
   {
@@ -49,15 +51,31 @@
    "label": "Rate"
   },
   {
+   "depends_on": "eval:doc.sqft_allocated",
    "fieldname": "sqft_allocated",
    "fieldtype": "Float",
    "label": "Sqft Allocated"
+  },
+  {
+   "fieldname": "no_of_pieces",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "No of Pieces",
+   "read_only": 1
+  },
+  {
+   "fieldname": "loadman_work",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Loadman Work",
+   "options": "\nBoth Loading and Unloading\nLoading Only\nUnloading Only",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-07-26 09:50:49.062391",
+ "modified": "2022-08-05 15:22:22.651600",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Site work Details",

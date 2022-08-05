@@ -344,10 +344,12 @@ frappe.ui.form.on('TS Raw Materials',{
         let row=locals[cdt][cdn]
         if(row.item){
             frappe.db.get_doc('Item',row.item).then((item)=>{
+                frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
                 frappe.call({
                     method: "building_block_retail.building_block_retail.custom.py.sales_order.get_item_rate",
                     args:{
-                        item: row.item
+                        item: row.item,
+                        uom: item.stock_uom
                     },
                     callback: async function(r){
                        await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
@@ -365,10 +367,18 @@ frappe.ui.form.on('TS Raw Materials',{
     },
     uom: function(frm,cdt,cdn){
         let row=locals[cdt][cdn]
-        console.log(row.item,row.uom)
         if(row.item && row.uom){
             frappe.db.get_list("Item Price",{filters:{'item_code': row.item,'uom' : row.uom,'price_list': frm.doc.selling_price_list}, fields:['price_list_rate']}).then((data)=>{
-                frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
+                
+                if(!data.length){
+                    frappe.show_alert({
+                        message:'Price List Rate not found for <a href="/app/item-price/">'+row.item+'</a> with the UOM '+row.uom,
+                        indicator:'orange'
+                    })
+                }
+                else{
+                    frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
+                }   
             })
         }
     }

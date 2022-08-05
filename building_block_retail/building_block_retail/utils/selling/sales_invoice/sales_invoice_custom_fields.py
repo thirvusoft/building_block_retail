@@ -149,7 +149,8 @@ def sales_invoice_custom_field():
 				fieldtype= "Link",
 				insert_after= "jobworker_salary",
 				label= "Job Worker Name",
-                options = 'Employee'
+                options = 'Employee',
+                mandatory_depends_on = 'eval:doc.work == "Supply and Laying"',
             ),
             dict(
                 fieldname= "job_worker_table",
