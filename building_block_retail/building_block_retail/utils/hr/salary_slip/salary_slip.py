@@ -68,17 +68,25 @@ def create_salary_custom_field():
               depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
             ),
              dict(
-              fieldname = 'column_break_37',
-              fieldtype = 'Column Break',
-              insert_after = 'site_work_details',
-            ),
-             dict(
               fieldname = 'site_work_details',
               fieldtype = 'Table',
               label = 'Site work Details',
               insert_after = 'section_break_26',
               options = 'Site work Details',
               depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+            ),
+             dict(
+              fieldname = 'total_advance_amount',
+              fieldtype = 'Currency',
+              label = 'Emplyee Advance Amount',
+              insert_after = 'site_work_details',
+              read_only = 1,
+              description = "Employee Advance Created from <a href = /app/employee-advance-tool>Employee Advance Tool<a>"
+              ),
+              dict(
+              fieldname = 'column_break_37',
+              fieldtype = 'Column Break',
+              insert_after = 'total_advance_amount',
             ),
               dict(
               fieldname = 'payment_account',

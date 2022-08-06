@@ -178,11 +178,9 @@ def site_work_details(employee,start_date,end_date,designation):
                     del job_table[i]['parent']
         return job_table
     elif(designation == 'Loader'):
-        frappe.errprint(designation)
         delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',{start_date, end_date}], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
         dn_names = [i['name'] for i in delivery_note]
         loadman_cost = frappe.db.get_all('TS Loadman Cost', filters={'parent':['in', dn_names], 'employee':employee},  fields=['amount', 'rate', 'parent'])
-        frappe.errprint(loadman_cost)
         for i in range(len(loadman_cost)):
             for j in delivery_note:
                 if(loadman_cost[i].parent == j.name):
@@ -193,7 +191,10 @@ def site_work_details(employee,start_date,end_date,designation):
 
 def employee_update(doc,action):
     employee_doc = frappe.get_doc('Employee',doc.employee)
-    employee_doc.salary_balance=doc.total_unpaid_amount
+    if(doc.get('pay_the_balance')):
+        employee_doc.salary_balance=doc.total_unpaid_amount
+    else:
+        employee_doc.salary_balance+=doc.total_unpaid_amount
     employee_doc.save()
 
 def set_net_pay(self):
@@ -255,9 +256,9 @@ def create_journal_entry(doc,action):
     for data in range(0,len(component_list),1):
         new_jv_doc.append('accounts',{'account':component_list[data],'debit_in_account_currency':amount[data]})
     if(frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
-        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.net_pay})
+        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.gross_pay})
     else:
-        frappe.msgprint(_("Set Default Payable Account in {0}").format(doc.company), alert=True)
+        frappe.msgprint(_("Set Default Payroll Payable Account in {0}").format(doc.company), alert=True)
     new_jv_doc.ts_salary_slip = doc.name
     new_jv_doc.insert()
     new_jv_doc.submit()
@@ -286,8 +287,17 @@ def make_bank_entry(doc):
     new_journel.posting_date = doc.get("posting_date")
     new_journel.accounts =  [] 
     account = doc.payment_account
-    new_journel.append("accounts",{"account":account,"credit_in_account_currency":doc.net_pay})
-    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay})
+    new_journel.append("accounts",{"account":account,"credit_in_account_currency":doc.gross_pay})
+    new_journel.ts_salary_slip = doc.name
+    if(not frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
+        frappe.throw("Set Default Payroll Payable Account in {0}").format(doc.company)
+    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.gross_pay})
     new_journel.insert()
     new_journel.submit()
     frappe.msgprint("Journel Entry Submitted")
+    
+@frappe.whitelist()
+def get_employee_advance_amount(name, start_date, end_date):
+    deduct = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Deduct from Salary'}, pluck='advance_amount')) or 0
+    return_ = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Return Advance'}, pluck='advance_amount')) or 0
+    return deduct-return_
