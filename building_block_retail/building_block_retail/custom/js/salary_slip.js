@@ -1,7 +1,26 @@
 var salary_balance,standard_hrs=0;
 frappe.ui.form.on('Salary Slip',{
+    refresh: function(frm){
+        frm.set_query("payment_account", function () {
+			var account_types = ["Bank", "Cash"];
+			return {
+				filters: {
+					"account_type": ["in", account_types],
+					"is_group": 0,
+					"company": frm.doc.company
+				}
+			};
+		});
+    },
+    validate:function(frm,cdt,cdn){
+        if(frm.doc.total_unpaid_amount<0){
+            cur_frm.scroll_to_field('total_paid_amount')
+            frappe.throw("Total Paid Amount cannot be greater than Total Amount")
+
+        }
+    },
     employee:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker'){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
@@ -11,22 +30,19 @@ frappe.ui.form.on('Salary Slip',{
                 args:{
                     employee:frm.doc.employee,
                     start_date:frm.doc.start_date,
-                    end_date:frm.doc.end_date
+                    end_date:frm.doc.end_date,
+                    designation: frm.doc.designation
                 },
                 callback:function(r){
                     let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
                     frm.clear_table('site_work_details');
+                    cur_frm.set_value('site_work_details',r.message)
                     for (let data in r.message){
-                        total_amount = total_amount+r.message[data][1]
-                        total_unpaid_amount=total_unpaid_amount+r.message[data][1]
-                        var child = cur_frm.add_child("site_work_details");
-                        frappe.model.set_value(child.doctype, child.name, "site_work_name", r.message[data][0])     
-                        frappe.model.set_value(child.doctype, child.name, "amount",r.message[data][1] )
-                        frappe.model.set_value(child.doctype, child.name, "balance_amount",r.message[data][1] ) 
-                        frappe.model.set_value(child.doctype, child.name, "rate",r.message[data][2] ) 
-                        frappe.model.set_value(child.doctype, child.name, "sqft_allocated",r.message[data][3] ) 
+                        total_amount = total_amount+r.message[data].amount
+                        total_unpaid_amount=total_unpaid_amount+r.message[data].amount
+                       
                     }
-                    cur_frm.refresh_field("site_work_details")
+                    cur_frm.refresh()
                     cur_frm.set_value("total_paid_amount",paid_amount);
                     cur_frm.set_value("total_amount",total_amount);
                     cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
@@ -37,7 +53,7 @@ frappe.ui.form.on('Salary Slip',{
         
     },
     end_date:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker'){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
@@ -47,18 +63,17 @@ frappe.ui.form.on('Salary Slip',{
                 args:{
                     employee:frm.doc.employee,
                     start_date:frm.doc.start_date,
-                    end_date:frm.doc.end_date
+                    end_date:frm.doc.end_date,
+                    designation: frm.doc.designation
                 },
                 callback:function(r){
                     let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
                     frm.clear_table('site_work_details');
+                    cur_frm.set_value('site_work_details',r.message)
                     for (let data in r.message){
-                        total_amount = total_amount+r.message[data][1]
-                        total_unpaid_amount=total_unpaid_amount+r.message[data][1]
-                        var child = cur_frm.add_child("site_work_details");
-                        frappe.model.set_value(child.doctype, child.name, "site_work_name", r.message[data][0])     
-                        frappe.model.set_value(child.doctype, child.name, "amount",r.message[data][1] )
-                        frappe.model.set_value(child.doctype, child.name, "balance_amount",r.message[data][1] )   
+                        total_amount = total_amount+r.message[data].amount
+                        total_unpaid_amount=total_unpaid_amount+r.message[data].amount
+                       
                     }
                     cur_frm.refresh_field("site_work_details")
                     cur_frm.set_value("total_paid_amount",paid_amount);
@@ -71,7 +86,7 @@ frappe.ui.form.on('Salary Slip',{
         
     },
     start_date:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker'){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
@@ -81,18 +96,17 @@ frappe.ui.form.on('Salary Slip',{
                 args:{
                     employee:frm.doc.employee,
                     start_date:frm.doc.start_date,
-                    end_date:frm.doc.end_date
+                    end_date:frm.doc.end_date,
+                    designation: frm.doc.designation
                 },
                 callback:function(r){
                     let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
                     frm.clear_table('site_work_details');
+                    cur_frm.set_value('site_work_details',r.message)
                     for (let data in r.message){
-                        total_amount = total_amount+r.message[data][1]
-                        total_unpaid_amount=total_unpaid_amount+r.message[data][1]
-                        var child = cur_frm.add_child("site_work_details");
-                        frappe.model.set_value(child.doctype, child.name, "site_work_name", r.message[data][0])     
-                        frappe.model.set_value(child.doctype, child.name, "amount",r.message[data][1] )
-                        frappe.model.set_value(child.doctype, child.name, "balance_amount",r.message[data][1] )   
+                        total_amount = total_amount+r.message[data].amount
+                        total_unpaid_amount=total_unpaid_amount+r.message[data].amount
+                       
                     }
                     cur_frm.refresh_field("site_work_details")
                     cur_frm.set_value("total_paid_amount",paid_amount);
@@ -124,6 +138,7 @@ frappe.ui.form.on('Salary Slip',{
     total_paid_amount:function(frm){
         frm.set_value('total_unpaid_amount',(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance) 
         let earnings = frm.doc.earnings
+        
         var exit=0
         for (let data in earnings){
             if(earnings[data].salary_component=='Basic'){
@@ -145,11 +160,12 @@ frappe.ui.form.on('Salary Slip',{
 
 frappe.ui.form.on('Site work Details',{
     paid_amount:function(frm,cdt,cdn){
-        let row = locals[cdt][cdn];
-        let amount_to_pay = 0
-        let paid_data = frm.doc.site_work_details
-        for (let value in paid_data){
+        var row = locals[cdt][cdn];
+        var amount_to_pay = 0
+        var paid_data = frm.doc.site_work_details
+        for (var value in paid_data){
             amount_to_pay+=paid_data[value].paid_amount
+            
         }
         frappe.model.set_value(row.doctype,row.name, "balance_amount",row.amount - row.paid_amount)
         if(frm.doc.pay_the_balance){
@@ -158,7 +174,7 @@ frappe.ui.form.on('Site work Details',{
         }  
         else{
             frm.set_value('total_paid_amount',amount_to_pay)
-        } 
-        
-}
+        }     
+    }
 })
+

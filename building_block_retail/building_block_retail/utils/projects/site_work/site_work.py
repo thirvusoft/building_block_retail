@@ -1,10 +1,3 @@
-from email.policy import default
-from ipaddress import collapse_addresses
-from optparse import Option
-from os import link
-from pydoc import describe
-from ssl import Options
-from requests import options
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
@@ -24,6 +17,9 @@ def customize_field():
               ),
           dict(fieldname='actual_site_cost_calculation', label='Actual Costing of this Site',
               fieldtype='Currency', insert_after='total_expense_amount', read_only=1, description= 'It includes Items Valuation rate, Raw Materials Buying Rate, Job Workers cost and Additional Cost except Site Advance.'
+              ),
+          dict(fieldname='site_profit', label='Site Profit',
+              fieldtype='Currency', insert_after='actual_site_cost_calculation', read_only=1
               ),
          dict(fieldname='job__work', label='Job worker',
               fieldtype='Link', insert_after='completed', options="Employee", hidden=1

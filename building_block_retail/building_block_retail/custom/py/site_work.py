@@ -61,6 +61,7 @@ def before_save(doc, action=None):
             rm_cost+=(doc1[0] or 0)
 
     doc.actual_site_cost_calculation=(item_cost or 0)+(doc.total or 0)+(doc.total_job_worker_cost or 0)+ (rm_cost or 0)
+    doc.site_profit = doc.total_expense_amount - doc.actual_site_cost_calculation  
     return doc
 
 @frappe.whitelist()
@@ -178,13 +179,3 @@ def validate_jw_qty(self):
             wrong_items.append(frappe.bold(item))
     if(wrong_items):
         frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
-    
-
-def update_site_work(doc, action):
-    sw_list=frappe.get_all('Project', pluck="name")
-    for sw in sw_list:
-        doc=frappe.get_doc('Project', sw)
-        doc=before_save(doc)
-        doc.flags.ignore_mandatory=True
-        doc.flags.ignore_permissions=True
-        doc.save()

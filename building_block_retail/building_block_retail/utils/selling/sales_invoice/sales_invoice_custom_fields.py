@@ -1,3 +1,4 @@
+from requests import options
 import frappe
 from building_block_retail.building_block_retail.utils.selling.sales_invoice.sales_taxes_and_charges.sales_taxes_and_charges_custom_fields import sales_taxes_and_charges_custom_fields,sales_taxes_and_charges_property_setter
 from building_block_retail.building_block_retail.utils.selling.sales_invoice.sales_invoice_item.sales_invoice_item_custom_fields import sales_invoice_item_custom_fields,sales_invoice_item_property_setter
@@ -136,6 +137,41 @@ def sales_invoice_custom_field():
 				label= "Remarks",
                 no_copy = 1
             ),
+            dict(
+                fieldname= "jobworker_salary",
+				fieldtype= "Section Break",
+				insert_after= "accounting_dimensions_section",
+				label= "Job Worker Salary",
+                collapsible = 1
+            ),
+             dict(
+                fieldname= "jobworker_name",
+				fieldtype= "Link",
+				insert_after= "jobworker_salary",
+				label= "Job Worker Name",
+                options = 'Employee',
+                mandatory_depends_on = 'eval:doc.work == "Supply and Laying"',
+            ),
+            dict(
+                fieldname= "job_worker_table",
+				fieldtype= "Table",
+				insert_after= "jobworker_name",
+				label= "Job Worker Salary",
+                options = 'TS Job Worker Salary'
+            ),
+            dict(
+                fieldname= "total_amount_job_worker",
+				fieldtype= "Float",
+				insert_after= "job_worker_table",
+				label= "Total Amount",
+            ),
+            dict(
+                fieldname= "section_break1",
+				fieldtype= "Section Break",
+				insert_after= "total_amount_job_worker",
+
+            ),
+            
         
         ],
     }

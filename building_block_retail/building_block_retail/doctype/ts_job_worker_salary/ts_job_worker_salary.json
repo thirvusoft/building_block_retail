@@ -1,0 +1,54 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-08-03 15:47:44.018662",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "ratesqft",
+  "sqft",
+  "ts_amount"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "ratesqft",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate/sq.ft",
+   "reqd": 1
+  },
+  {
+   "fieldname": "sqft",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Sq.ft",
+   "reqd": 1
+  },
+  {
+   "fieldname": "ts_amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-08-04 16:49:13.332861",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "TS Job Worker Salary",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

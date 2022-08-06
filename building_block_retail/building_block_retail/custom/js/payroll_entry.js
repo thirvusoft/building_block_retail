@@ -6,6 +6,7 @@ frappe.ui.form.on('Payroll Entry', {
                 method: "building_block_retail.building_block_retail.utils.hr.journel_entry.journel_entry.create_journal_entry",
                 args: {
                     'self': frm.doc
+                    
                 },
                 
             })
