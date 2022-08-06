@@ -201,6 +201,21 @@ def delivery_note_custom_field():
                 fieldtype= "Currency",
                 insert_after= "ts_loadman_info",
                 label= "Total Cost For Loading/Unloading",
+            ),
+            dict(
+                fieldname= "ts_map_link",
+                fieldtype= "Data",
+                insert_after= "return_against",
+                label= "Enter Delivery Location Map Link",
+                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here',
+                allow_on_submit = 1,
+                length=1000,
+            ),
+            dict(
+                fieldname= "ts_open_link",
+                fieldtype= "Button",
+                insert_after= "ts_map_link",
+                label= "Open Delivery Location",
             )
         ],
 
