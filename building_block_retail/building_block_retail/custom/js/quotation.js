@@ -10,15 +10,17 @@ frappe.ui.form.on('Quotation', {
         if(frm.doc.workflow_state == "Rejected" ){
             frm.this.grid_buttons.find('.btn-custom').addClass('hidden');;
         }
+        console.log(frappe.session.user)
         frappe.call({
             method: "building_block_retail.building_block_retail.custom.py.quotation.get_permission_for_attachment",
             args:{user: frappe.session.user},
             callback(r){
+                console.log(window.navigator.mediaDevices)
                 if(r.message){
-                    window.navigator.mediaDevices = true
+                    // window.navigator.mediaDevices = true
                 }
                 else{
-                    window.navigator.mediaDevices = false
+                    // window.navigator.mediaDevices = false
                 }
             }
         })
