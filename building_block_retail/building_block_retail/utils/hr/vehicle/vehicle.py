@@ -69,12 +69,14 @@ def vehicle_custom_field():
                 fieldtype= "Float",
                 insert_after= "costing_details",
                 label= "Maintenance Cost Per Km",
+                precision=2
             ),
             dict(
                 fieldname= "driver_cost",
                 fieldtype= "Float",
                 insert_after= "maintenance_cost",
                 label= "Driver Cost",
+                precision=2
             ),
             dict(
                 insert_after= "driver_cost",
@@ -86,6 +88,7 @@ def vehicle_custom_field():
                 fieldtype= "Float",
                 insert_after= "column_break_18",
                 label= "Mileage",
+                precision=2
             ),
             dict(
                 fieldname= "service_details",
