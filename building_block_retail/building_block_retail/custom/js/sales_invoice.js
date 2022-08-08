@@ -177,7 +177,7 @@ frappe.ui.form.on('Sales Invoice', {
                                         if(work.message.work === "Supply and Laying")
                                         {
                                             frappe.db.get_value('Item', {'item_code':item.item_code}, 'laying_cost').then((data)=>{
-                                       
+                                                if(item.item_group != "Raw Material"){
                                                 var new_row = cur_frm.add_child("job_worker_table");
                                                 frappe.model.set_value(new_row.doctype,new_row.name,"item_code",item.item_code)
                                                 frappe.model.set_value(new_row.doctype,new_row.name,"sqft",item.qty)
@@ -185,7 +185,7 @@ frappe.ui.form.on('Sales Invoice', {
                                                 frappe.model.set_value(new_row.doctype,new_row.name,"ts_amount",item.qty * data.message.laying_cost)
                                                 t_amt+=(item.qty * data.message.laying_cost)
                                                 cur_frm.set_value("total_amount_job_worker",t_amt)
-                                
+                                                }
                                             })
                                         }
                                     })

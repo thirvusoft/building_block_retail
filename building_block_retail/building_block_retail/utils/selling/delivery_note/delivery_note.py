@@ -207,7 +207,7 @@ def delivery_note_custom_field():
                 fieldtype= "Data",
                 insert_after= "return_against",
                 label= "Enter Delivery Location Map Link",
-                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here',
+                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
                 allow_on_submit = 1,
                 length=1000,
             ),
