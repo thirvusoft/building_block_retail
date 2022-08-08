@@ -257,5 +257,5 @@ def get_item_loading_cost(items, len, work=None):
     loading_cost=0
     for i in items:
         if(i.get('dont_include_in_loadman_cost') == 1):continue
-        loading_cost += (frappe.get_value('Item', i.get('item_code'), 'loading_cost') or 0)*i.get('qty')
+        loading_cost += (frappe.get_value('Item', i.get('item_code'), 'loading_cost') or 0)*i.get('stock_qty')
     return (loading_cost*multiply)/flt(len)

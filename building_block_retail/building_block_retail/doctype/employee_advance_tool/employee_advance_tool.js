@@ -23,15 +23,28 @@ frappe.ui.form.on("Employee Advance Tool",{
 
 	},
 	
-	on_submit:function(frm,cdt,cdn){
+	before_submit:function(frm,cdt,cdn){
 		var advance=locals[cdt][cdn]
 		for(var i=0;i<advance.employee_advance_details.length;i++){
 			frappe.call({
+				async:false,
+				freeze: true,
+				freeze_message: "Creating Employee Advance .... ",
 				method:"building_block_retail.building_block_retail.doctype.employee_advance_tool.employee_advance_tool.create_employee_advance",
 				args:{amount:advance.employee_advance_details[i].current_advance,
 					name:advance.employee_advance_details[i].employee,
 					date:frm.doc.date,
-					payment_type:advance.employee_advance_details[i].payment_method},
+					payment_type:advance.employee_advance_details[i].payment_method,
+					doc_name: frm.doc.name},
+				callback(r){
+					if(r.message){
+						frappe.validated=false
+						frappe.throw(r.message)
+					}
+					else{
+						frappe.validated=true
+					}
+				}
 			})
 		}
 	},

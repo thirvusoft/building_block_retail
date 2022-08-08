@@ -15,10 +15,10 @@ frappe.ui.form.on('Quotation', {
             args:{user: frappe.session.user},
             callback(r){
                 if(r.message){
-                    window.navigator.mediaDevices = true
+                    // window.navigator.mediaDevices = true
                 }
                 else{
-                    window.navigator.mediaDevices = false
+                    // window.navigator.mediaDevices = false
                 }
             }
         })
