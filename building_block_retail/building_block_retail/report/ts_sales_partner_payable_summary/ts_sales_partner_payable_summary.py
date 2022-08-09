@@ -50,9 +50,7 @@ def get_data(filters=None):
     for i in sales_partner:
         filter={}
         filter['sales_partner'] = i['name']
-        sales_data = frappe.get_all('Sales Invoice', filters=filter, fields=['sales_partner', 'total_commission'])
-        sales_partner = [j['sales_partner'] for j in sales_data]
-        commission_amount = sum([k['total_commission'] for k in sales_data]) or 0
-        payment_data = sum(frappe.get_all('Payment Entry', filters={'party_type':'Supplier', 'party':['in', sales_partner]}, pluck='paid_amount')) or 0
-        report_data.append({'sales_partner':i['name'], 'amount_pending':commission_amount-payment_data, 'partner_type':i.get('partner_type'), 'territory':i.get('territory')})
+        total_commission = sum(frappe.get_all('Sales Invoice', filters=filter, pluck='total_commission')) or 0
+        payment_data = sum(frappe.get_all('Payment Entry', filters={'party_type':'Supplier', 'party': i['name'], 'docstatus':1}, pluck='paid_amount')) or 0
+        report_data.append({'sales_partner':i['name'], 'amount_pending':total_commission-payment_data, 'partner_type':i.get('partner_type'), 'territory':i.get('territory')})
     return report_data
