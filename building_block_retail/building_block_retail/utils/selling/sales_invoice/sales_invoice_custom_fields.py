@@ -151,19 +151,22 @@ def sales_invoice_custom_field():
 				label= "Job Worker Name",
                 options = 'Employee',
                 mandatory_depends_on = 'eval:doc.work == "Supply and Laying"',
+                no_copy=1
             ),
             dict(
                 fieldname= "job_worker_table",
 				fieldtype= "Table",
 				insert_after= "jobworker_name",
 				label= "Job Worker Salary",
-                options = 'TS Job Worker Salary'
+                options = 'TS Job Worker Salary',
+                no_copy=1
             ),
             dict(
                 fieldname= "total_amount_job_worker",
 				fieldtype= "Float",
 				insert_after= "job_worker_table",
 				label= "Total Amount",
+                no_copy=1
             ),
             dict(
                 fieldname= "section_break1",
@@ -218,6 +221,5 @@ def sales_invoice_property_setter():
     make_property_setter("Sales Invoice", "more_info", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "c_form_applicable", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "c_form_no", "hidden", "1", "Check")
-    make_property_setter("Sales Invoice", "sales_team_section_break", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "section_break2", "hidden", "1", "Check")
     make_property_setter("Sales Invoice", "subscription_section", "hidden", "1", "Check")
