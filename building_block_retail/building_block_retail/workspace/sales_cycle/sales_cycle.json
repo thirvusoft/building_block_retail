@@ -13,14 +13,20 @@
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-07-28 09:37:38.381022",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-08-10 10:26:56.950040",
+ "modified_by": "shankarv292002@gmail.com",
  "module": "Building Block Retail",
  "name": "Sales Cycle",
  "owner": "parameshwari@gmail.com",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Sales Partner",
+   "link_to": "Sales Partner",
+   "type": "DocType"
+  },
   {
    "doc_view": "List",
    "label": "Quotation",

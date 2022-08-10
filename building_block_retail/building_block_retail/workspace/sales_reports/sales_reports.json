@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Sales Reports",
  "links": [],
- "modified": "2022-07-28 09:38:57.870670",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-08-10 10:25:41.781234",
+ "modified_by": "shankarv292002@gmail.com",
  "module": "Building Block Retail",
  "name": "Sales Reports",
  "owner": "parameshwari@gmail.com",
@@ -97,6 +97,12 @@
    "doc_view": "Report Builder",
    "label": "Sales Register",
    "link_to": "Sales Register",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Sales Partner Payable Summary",
+   "link_to": "TS Sales Partner Payable Summary",
    "type": "Report"
   }
  ]

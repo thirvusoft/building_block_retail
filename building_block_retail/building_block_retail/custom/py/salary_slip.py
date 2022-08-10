@@ -178,7 +178,7 @@ def site_work_details(employee,start_date,end_date,designation):
                     del job_table[i]['parent']
         return job_table
     elif(designation == 'Loader'):
-        delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',{start_date, end_date}], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
+        delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',(start_date, end_date)], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
         dn_names = [i['name'] for i in delivery_note]
         loadman_cost = frappe.db.get_all('TS Loadman Cost', filters={'parent':['in', dn_names], 'employee':employee},  fields=['amount', 'rate', 'parent'])
         for i in range(len(loadman_cost)):

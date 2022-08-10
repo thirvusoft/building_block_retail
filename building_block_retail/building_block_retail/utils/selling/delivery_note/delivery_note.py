@@ -209,6 +209,7 @@ def delivery_note_custom_field():
                 label= "Enter Delivery Location Map Link",
                 description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
                 allow_on_submit = 1,
+                fetch_from = "site_work.ts_map_link",
                 length=1000,
             ),
             dict(

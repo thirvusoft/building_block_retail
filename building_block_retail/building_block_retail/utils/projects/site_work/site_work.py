@@ -69,8 +69,23 @@ def customize_field():
          dict(fieldname='additional_cost', label='Additional Cost',
               fieldtype='Table', insert_after='additional_costs', options="Additional Costs"
               ),
+         dict(
+                fieldname= "ts_map_link",
+                fieldtype= "Data",
+                insert_after= "sales_order",
+                label= "Enter Delivery Location Map Link",
+                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
+                allow_on_submit = 1,
+                length=1000,
+            ),
+            dict(
+                fieldname= "ts_open_link",
+                fieldtype= "Button",
+                insert_after= "ts_map_link",
+                label= "Open Delivery Location",
+            ),
          dict(fieldname='section_break_19', label="Item Details",
-              fieldtype='Section Break', insert_after='sales_order'
+              fieldtype='Section Break', insert_after='ts_open_link'
               ),
          dict(fieldname='item_details', options= "Pavers", label="Item Details Pavers",
               fieldtype='Table', insert_after='section_break_19', read_only=1
