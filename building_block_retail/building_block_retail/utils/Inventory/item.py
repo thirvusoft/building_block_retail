@@ -564,7 +564,13 @@ def item_customization():
             "employee_rate",
             "laying_cost",
             "plates_per_rack",
-            "pavers_per_plate"
+            "pavers_per_plate",
+            "parent_item_group",
+            "loading_cost",
+            "over_production_allowance",
+            "item_tax",
+            "cannot_be_bundle",
+            "gst_hsn_code"
         ])]
     })
     variant_doc.save()
