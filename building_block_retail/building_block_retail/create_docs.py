@@ -24,11 +24,13 @@ def create_docs():
             }
         )
         create_docs.insert()
+    frappe.db.set_value("Item Group", "Products", "is_group", 1)
     if(not frappe.db.exists("Item Group","Pavers")):
         create_docs = frappe.get_doc(
             {
                 "doctype": "Item Group",
-                "item_group_name": "Pavers"
+                "item_group_name": "Pavers",
+                "parent_item_group": "Products"
             }
         )
         create_docs.insert()
@@ -36,7 +38,8 @@ def create_docs():
         create_docs = frappe.get_doc(
             {
                 "doctype": "Item Group",
-                "item_group_name": "Compound Walls"
+                "item_group_name": "Compound Walls",
+                "parent_item_group": "Products"
             }
         )
         create_docs.insert()
