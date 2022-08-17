@@ -185,7 +185,7 @@ doc_events = {
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     "Vehicle Log":{
-		"on_update_after_submit": "ganapathy_pavers.custom.py.vehicle_log.onsubmit",
+		"on_update_after_submit": "building_block_retail.building_block_retail.custom.py.vehicle_log.onsubmit",
 		"on_submit": ["building_block_retail.building_block_retail.custom.py.vehicle_log.onsubmit",
 					  "building_block_retail.building_block_retail.custom.py.vehicle_log.update_transport_cost",
 					  "building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_draft"],
