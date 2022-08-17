@@ -11,7 +11,6 @@ def item_customization():
                 label='Parent Item Group',
                 fieldtype='Data',
                 insert_after='compound_wall_type',
-                fetch_from = 'item_group.parent_item_group',
                 hidden = 1
             ),
             dict(

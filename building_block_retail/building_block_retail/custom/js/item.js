@@ -50,6 +50,17 @@ function bundle(frm,cdt,cdn) {
 frappe.ui.form.on("Item",
 { item_group: function(frm) {
     uom(frm);
+    if(!frm.doc.item_group)return
+    frappe.call({
+        method: "building_block_retail.building_block_retail.custom.py.item.get_parent_item_group",
+        args: {
+            item_group: frm.doc.item_group
+        },
+        callback(r){
+            frm.set_value('parent_item_group', r.message)
+            console.log(r.message)
+        }
+    })
     },
  pavers_per_sqft: function(frm) {
     uom(frm);
