@@ -50,7 +50,7 @@ async function bundle_calc(frm, cdt, cdn){
         conv2=nos_conv/other_conv
     })
 
-    if(row.item_group=='Pavers'){
+    if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
         frappe.model.set_value(cdt, cdn, 'qty', row.ts_qty*conv1 + row.pieces*conv2)
         let rate=row.rate
         frappe.model.set_value(cdt, cdn, 'rate', 0)
@@ -94,7 +94,7 @@ frappe.ui.form.on('Sales Invoice', {
             
                 
                
-                if(row.item_group=='Pavers'){
+                if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
                     let total_qty=row.qty
                     await frappe.model.set_value(cdt, cdn, 'ts_qty', parseInt(row.qty/conv1))
                     await frappe.model.set_value(cdt, cdn, 'pieces', 0)
