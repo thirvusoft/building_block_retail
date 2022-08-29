@@ -12,9 +12,19 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "CRM User",
- "links": [],
- "modified": "2022-07-27 11:07:02.684588",
- "modified_by": "parameshwari@gmail.com",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-08-29 14:11:34.470406",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "CRM User",
  "owner": "Administrator",
@@ -25,6 +35,12 @@
    "doc_view": "List",
    "label": "Lead",
    "link_to": "Lead",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Opportunity",
+   "link_to": "Opportunity",
    "type": "DocType"
   },
   {
