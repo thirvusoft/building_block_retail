@@ -40,4 +40,4 @@ def sales_invoice_item_custom_fields():
 
 
 def sales_invoice_item_property_setter():
-    pass
+    make_property_setter('Sales Invoice Item', 'conversion_factor', 'precision', '5', 'Select')

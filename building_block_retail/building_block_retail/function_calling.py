@@ -8,6 +8,8 @@ from building_block_retail.building_block_retail.utils.buying.purchase_order imp
 from building_block_retail.building_block_retail.utils.buying.purchase_receipt import purchase_receipt
 from building_block_retail.building_block_retail.utils.buying.request_for_quotation import request_for_quotation
 from building_block_retail.building_block_retail.utils.buying.supplier_quotation import supplier_quotation
+from building_block_retail.building_block_retail.utils.crm.customer.customer import customer_customizations
+from building_block_retail.building_block_retail.utils.crm.lead.lead import lead_customisation
 from building_block_retail.building_block_retail.utils.hr.employee.employee import create_contracter_expense_account
 from building_block_retail.building_block_retail.utils.hr.role.roles import create_role
 from building_block_retail.building_block_retail.utils.hr.salary_slip.salary_slip import create_salary_custom_field
@@ -33,6 +35,8 @@ from building_block_retail.building_block_retail.utils.hr.vehicle_log.vehicle_lo
 from building_block_retail.building_block_retail.utils.selling.sales_order.sales_order import item_details_pavers_customization
 def function_calling():
     create_docs()
+    customer_customizations()
+    lead_customisation()
     purchase_order()
     purchase_invoice()
     purchase_receipt()

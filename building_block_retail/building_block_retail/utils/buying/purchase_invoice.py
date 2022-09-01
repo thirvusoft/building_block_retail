@@ -193,4 +193,5 @@ def purchase_invoice():
         "value": 1
     })
     Purchase_Invoice.save()
+    make_property_setter('Purchase Invoice Item', 'conversion_factor', 'precision', '5', 'Select')
     create_custom_fields(custom_fields)

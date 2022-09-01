@@ -132,5 +132,6 @@ def purchase_receipt():
         "value": "Driver Name"
     })
     Purchase_Receipt.save()
+    make_property_setter('Purchase Receipt Item', 'conversion_factor', 'precision', '5', 'Select')
 
     create_custom_fields(custom_fields)

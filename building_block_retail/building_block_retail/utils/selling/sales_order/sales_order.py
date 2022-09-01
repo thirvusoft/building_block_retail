@@ -1,4 +1,5 @@
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 import frappe
 
 
@@ -105,6 +106,7 @@ def sales_order_customization():
             "value":prop[3]
         })
         so.save()
+    make_property_setter('Sales Order Item', 'conversion_factor', 'precision', '5', 'Select')
         
 def item_details_pavers_customization():
     item_details_custom_fields = {

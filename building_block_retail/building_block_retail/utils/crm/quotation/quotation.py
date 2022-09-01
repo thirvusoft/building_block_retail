@@ -43,7 +43,15 @@ def quotation_custom_field():
                 insert_after= "order_type",
                 label= "Work",
                 options= "Supply Only\nSupply and Laying"
-            )
+            ),
+            dict(
+                fieldname= "ts_map_link",
+                fieldtype= "Data",
+                insert_after= "site_work",
+                label= "Enter Delivery Location Map Link",
+                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
+                length=1000,
+            ),
         ],
         'Quotation Item':[
             dict(
@@ -59,3 +67,4 @@ def quotation_custom_field():
 
 def quotation_property_setter():
     make_property_setter('Quotation', 'items', 'reqd', '0', 'Check')
+    make_property_setter('Quotation Item', 'conversion_factor', 'precision', '5', 'Select')
