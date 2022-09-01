@@ -24,14 +24,14 @@ def item_customization():
                 label='Plates Per Rack',
                 fieldtype='Int',
                 insert_after='section_break_inventory',
-                depends_on='eval:doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0'
+                depends_on="eval: doc.parent_item_group == 'Products' && doc.item_group != 'Compound Walls'"
                 ),
 
             dict(fieldname='pavers_per_plate',
                 label="Pavers Per Plate",
                 fieldtype="Int",
                 insert_after="plates_per_rack",
-                depends_on='eval:doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0'),
+                depends_on="eval: doc.parent_item_group == 'Products'  && doc.item_group != 'Compound Walls'"),
 
             dict(fieldname='length',
                 label='Length',
@@ -61,13 +61,13 @@ def item_customization():
                 label='Pavers Per Sqft',
                 fieldtype='Float',
                 insert_after='per_sqr_ft',
-                depends_on='eval:doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0'),
+                depends_on="eval: doc.parent_item_group == 'Products' && doc.item_group != 'Compound Walls';"),
             
             dict(fieldname='weight_per_paver',
                 label='Weight Per Paver',
                 fieldtype="Float",
                 insert_after='pavers_per_sqft',
-                depends_on='eval:doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0',
+                depends_on="eval: doc.parent_item_group == 'Products'  && doc.item_group != 'Compound Walls';",
                 hidden=0),
             
             dict(fieldname='sqft_per_slab',
@@ -86,13 +86,13 @@ def item_customization():
                 label='No of Layers Per Bundle',
                 fieldtype='Int',
                 insert_after='colum_break_item',
-                depends_on='eval:(doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0) && !doc.cannot_be_bundle'),
+                depends_on="eval: doc.parent_item_group == 'Products' && !doc.cannot_be_bundle && doc.item_group != 'Compound Walls';"),
             
             dict(fieldname='pavers_per_layer',
                 label='Pavers Per Layer',
                 fieldtype='Float',
                 insert_after='no_of_layers_per_bundle',
-                depends_on='eval:doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0'),
+                depends_on="eval: doc.parent_item_group == 'Products'  && doc.item_group != 'Compound Walls';"),
             
             dict(fieldname='weight_per_slab',
                 label='Weight Per Slab',
@@ -104,7 +104,7 @@ def item_customization():
                 label='Pavers Per Bundle',
                 fieldtype='Int',
                 insert_after='weight_per_slab',
-                depends_on='eval:(doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0) && !doc.cannot_be_bundle'),
+                depends_on="eval: doc.parent_item_group == 'Products' && !doc.cannot_be_bundle && doc.item_group != 'Compound Walls';"),
             
             dict(fieldname="weight_per_bundle",
                 label='Weight Per Bundle',
@@ -118,7 +118,7 @@ def item_customization():
                 label='Sqft Per Bundle',
                 fieldtype='Data',
                 insert_after='weight_per_bundle',
-                depends_on='eval:(doc.item_group.indexOf("paver") >=0 || doc.item_group.indexOf("Paver") >=0) && !doc.cannot_be_bundle'),
+                depends_on="eval: doc.parent_item_group == 'Products' && !doc.cannot_be_bundle && doc.item_group != 'Compound Walls'"),
 
             dict(fieldname='compound_wall_type',
                 label='Compound Wall Type',
