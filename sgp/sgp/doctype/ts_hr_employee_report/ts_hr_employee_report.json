@@ -1,0 +1,72 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-07-21 12:48:19.563771",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "date",
+  "workstation",
+  "production_item",
+  "qty_produced",
+  "expense",
+  "rate_per_piece",
+  "manufactured_stock_value"
+ ],
+ "fields": [
+  {
+   "fieldname": "date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Date"
+  },
+  {
+   "fieldname": "workstation",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Workstation",
+   "options": "Workstation"
+  },
+  {
+   "fieldname": "production_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Production Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "qty_produced",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty Produced"
+  },
+  {
+   "fieldname": "expense",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Expense"
+  },
+  {
+   "fieldname": "rate_per_piece",
+   "fieldtype": "Currency",
+   "label": "Rate Per Piece"
+  },
+  {
+   "fieldname": "manufactured_stock_value",
+   "fieldtype": "Currency",
+   "label": "Manufactured Stock Value"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2022-07-25 18:06:58.200203",
+ "modified_by": "Administrator",
+ "module": "Sgp",
+ "name": "TS HR Employee Report",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
