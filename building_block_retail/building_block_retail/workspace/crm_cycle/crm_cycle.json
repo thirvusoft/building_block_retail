@@ -1,4 +1,5 @@
 {
+ "cards_label": "",
  "category": "Modules",
  "charts": [],
  "creation": "2022-06-30 14:12:28.723238",
@@ -12,9 +13,19 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "CRM Cycle",
- "links": [],
- "modified": "2022-07-28 09:47:12.703334",
- "modified_by": "parameshwari@gmail.com",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-08-29 14:11:10.887577",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "CRM Cycle",
  "owner": "administrator",
@@ -25,6 +36,12 @@
    "doc_view": "List",
    "label": "Lead",
    "link_to": "Lead",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Opportunity",
+   "link_to": "Opportunity",
    "type": "DocType"
   },
   {

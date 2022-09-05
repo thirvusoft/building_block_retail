@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-08-10 10:26:56.950040",
- "modified_by": "shankarv292002@gmail.com",
+ "modified": "2022-08-29 14:08:57.385455",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Sales Cycle",
  "owner": "parameshwari@gmail.com",
@@ -25,12 +25,6 @@
    "doc_view": "List",
    "label": "Sales Partner",
    "link_to": "Sales Partner",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Quotation",
-   "link_to": "Quotation",
    "type": "DocType"
   },
   {
