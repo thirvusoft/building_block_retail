@@ -102,7 +102,54 @@ def vehicle_custom_field():
                 insert_after= "service_details",
                 label= "Service Details",
                 options= "TS Vehicle Service"
-            )
+            ),
+            dict(
+                fieldname= "expiration_dates",
+                fieldtype= "Section Break",
+                insert_after= "maintanence_details_",
+                label= "Expiration Dates",
+            ),
+            dict(
+                fieldname= "insurance_expired_date",
+                fieldtype= "Date",
+                insert_after= "expiration_dates",
+                label= "Insurance Expired Date",
+            ),
+            dict(
+                fieldname= "fc_details_expired_date",
+                fieldtype= "Date",
+                insert_after= "insurance_expired_date",
+                label= "FC Details Expired Date",
+            ),
+            dict(
+                fieldname= "road_tax_expired_date",
+                fieldtype= "Date",
+                insert_after= "fc_details_expired_date",
+                label= "Road Tax Expired Date",
+            ),
+            dict(
+                fieldname= "column_break_32",
+                fieldtype= "Column Break",
+                insert_after= "road_tax_expired_date",
+            ),
+            dict(
+                fieldname= "permit_expired_date",
+                fieldtype= "Date",
+                insert_after= "column_break_32",
+                label= "Permit Expired Date"
+            ),
+            dict(
+                fieldname= "pollution_certificate_expired_date",
+                fieldtype= "Date",
+                insert_after= "permit_expired_date",
+                label= "Pollution Certificate Expired Date"
+            ),
+            dict(
+                fieldname= "green_tax_expired_date",
+                fieldtype= "Date",
+                insert_after= "pollution_certificate_expired_date",
+                label= "Green Tax Expired Date"
+            ),                             
         ]
     }
     create_custom_fields(custom_fields)
