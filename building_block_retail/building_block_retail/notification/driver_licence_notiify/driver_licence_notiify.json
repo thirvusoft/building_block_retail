@@ -1,0 +1,32 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.status==\"Active\"",
+ "creation": "2022-09-05 13:40:55.884422",
+ "date_changed": "expiry_date",
+ "days_in_advance": 30,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Driver",
+ "enabled": 1,
+ "event": "Days Before",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "{{doc.full_name}} licence will be expire in {{doc.expiry_date}}",
+ "modified": "2022-09-05 13:40:55.884422",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Driver Licence Notiify",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "owner",
+   "receiver_by_role": "Admin"
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Shankarv292002",
+ "sender_email": "shankarv292002@gmail.com",
+ "subject": "{{doc.full_name}} "
+}

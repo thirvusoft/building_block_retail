@@ -1,6 +1,8 @@
+from datetime import date
 import frappe
 from frappe.utils import (add_days,nowdate,)
 from frappe.utils import getdate
+
 def note_alert():
     from_date = nowdate()
     to_date = add_days(nowdate(),7)
@@ -21,7 +23,7 @@ def note_alert():
                              insurance_expired_date = '{2}' or insurance_expired_date = '{3}' or
                              fc_details_expired_date  = '{2}' or fc_details_expired_date  = '{3}' or
                              road_tax_expired_date  = '{2}' or road_tax_expired_date  = '{3}' or
-                             permit_expired_date  = '{2}' or permit_expired_date  = '{3}' or
+                             permit_expired_date  = '{2}' or permit_expired_date  = '{3}' or 
                              pollution_certificate_expired_date = '{2}' or pollution_certificate_expired_date = '{3}' or
                              green_tax_expired_date  = '{2}' or green_tax_expired_date  = '{3}'
                              """.format(from_date, to_date,day_30,day_15),as_dict=1)
@@ -40,10 +42,10 @@ def note_alert():
         content+=f'<br>\n\n<b style="color:green;">{title}</b><br>'
 
         insurance = frappe.get_value("Vehicle",d, "insurance_expired_date")
-        
+
         if (insurance >= start_date and insurance <= end_date or insurance == day_15_ or insurance == day_30_):
             content += f'\nInsurance End on <b style="color:red;">-> {insurance.strftime("%d-%m-%y"+ "<br>")}</b>'
-           
+    
             last_date.append(insurance)
 
         fc = frappe.get_value("Vehicle",d, "fc_details_expired_date")
@@ -79,3 +81,19 @@ def note_alert():
     notes.expire_notification_on = final_date
     notes.save(ignore_permissions=True)
     frappe.db.commit()
+
+
+def email_notify():
+    today = date.today()
+    emi= frappe.get_all("Vehicle",filters={'emi_date':['<',today]},pluck = "Name")
+    content = f'\nEMI Remainder for <b style="color:red;">-> {",".join(emi)}</b>'
+    if(frappe.db.exists("Note",'EMI Remainder')):
+        frappe.delete_doc('Note','EMI Remainder')
+    remainder=frappe.new_doc("Note")
+    remainder.title="EMI Remainder"
+    remainder.content = content
+    remainder.public = 1
+    remainder.notify_on_login = 1
+    remainder.expire_notification_on = add_days(today,1)
+    remainder.save(ignore_permissions=True)
+

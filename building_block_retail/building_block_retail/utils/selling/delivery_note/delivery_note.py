@@ -229,12 +229,6 @@ def delivery_note_custom_field():
                 options= "Supply Only\nSupply and Laying"
             ),
             dict(
-                fieldname= "ts_required_area_qty",
-				fieldtype= "Int",
-				insert_after= "item_name",
-				label= "TS Required Area Qty"
-            ),
-            dict(
                 fieldname= "ts_qty",
 				fieldtype= "Float",
 				insert_after= "qty",
@@ -299,7 +293,7 @@ def delivery_note_custom_field():
             dict(
                  fieldname  = "dont_include_in_loadman_cost",
                  fieldtype  = "Check",
-                 insert_after  = "ts_required_area_qty",
+                 insert_after  = "item_name",
                  label = "Don't Include in Loadman Cost",
                  description = 'If this is checked this item\'s loading cost will not be added in Total Loading/Unloading cost'
             )
