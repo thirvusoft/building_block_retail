@@ -155,11 +155,7 @@ def vehicle_custom_field():
                 fieldtype= "Date",
                 insert_after= "pollution_certificate_expired_date",
                 label= "Green Tax Expired Date"
-<<<<<<< HEAD
             ),
-=======
-            ),                             
->>>>>>> 37f38f5b261dae0de3336c2036a77859ee042332
         ]
     }
     create_custom_fields(custom_fields)
