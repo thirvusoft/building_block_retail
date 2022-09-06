@@ -119,6 +119,8 @@ frappe.ui.form.on('Sales Invoice', {
             cur_frm.refresh();
             var t_amt = 0;
             if(frm.doc.items){
+                if(frm.doc.job_worker_table){
+                    if(!frm.doc.job_worker_table.length){
                 frm.doc.items.forEach((item)=>{
                     if(item.sales_order){
                         frappe.db.get_value("Sales Order",{'name':item.sales_order},"work").then((work)=>{
@@ -141,7 +143,7 @@ frappe.ui.form.on('Sales Invoice', {
                         
                     }
                 })       
-                
+            }}
             }
 
          
