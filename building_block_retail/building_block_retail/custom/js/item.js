@@ -58,7 +58,6 @@ frappe.ui.form.on("Item",
         },
         callback(r){
             frm.set_value('parent_item_group', r.message)
-            console.log(r.message)
         }
     })
     },
