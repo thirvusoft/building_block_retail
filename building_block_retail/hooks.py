@@ -151,7 +151,6 @@ doc_events = {
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
-					"building_block_retail.building_block_retail.custom.py.sales_invoice.on_submit",
 					],
 		"on_cancel":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",

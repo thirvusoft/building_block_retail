@@ -17,7 +17,6 @@ def create_contracter_expense_account():
                 fieldtype = 'Currency',
                 insert_after = 'date_of_joining',
                 read_only = 1,
-                depends_on = "eval:doc.designation == 'Job Worker'",
                 description = "Pending Salary For Job Worker From Salary Slip."
             )
         ]
