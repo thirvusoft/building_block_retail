@@ -179,7 +179,6 @@ frappe.ui.form.on('Sales Order',{
                 new_row.area_per_bundle=cur_frm.doc.pavers[row].area_per_bundle
                 new_row.rate=cur_frm.doc.pavers[row].rate
                 new_row.amount=cur_frm.doc.pavers[row].amount
-                new_row.ts_required_area_qty=cur_frm.doc.pavers[row].required_area
                 await frappe.call({
                     method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
                     args:{

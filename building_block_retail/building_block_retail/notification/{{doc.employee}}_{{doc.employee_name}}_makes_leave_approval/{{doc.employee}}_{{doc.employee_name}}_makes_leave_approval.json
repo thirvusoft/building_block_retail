@@ -1,0 +1,31 @@
+{
+ "attach_print": 0,
+ "channel": "Email",
+ "condition": "doc.status==\"Open\"",
+ "creation": "2022-09-03 17:16:21.604648",
+ "days_in_advance": 0,
+ "docstatus": 0,
+ "doctype": "Notification",
+ "document_type": "Leave Application",
+ "enabled": 1,
+ "event": "Save",
+ "idx": 0,
+ "is_standard": 1,
+ "message": "",
+ "modified": "2022-09-03 17:16:21.604648",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "{{doc.employee}} {{doc.employee_name}} Makes Leave Approval",
+ "owner": "Administrator",
+ "recipients": [
+  {
+   "receiver_by_document_field": "leave_approver",
+   "receiver_by_role": ""
+  }
+ ],
+ "send_system_notification": 1,
+ "send_to_all_assignees": 0,
+ "sender": "Shankarv292002",
+ "sender_email": "shankarv292002@gmail.com",
+ "subject": "{{doc.employee}} {{doc.employee_name}} Makes Leave Approval"
+}

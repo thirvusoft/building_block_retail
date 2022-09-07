@@ -112,7 +112,8 @@ doc_events = {
 		'validate': 'building_block_retail.building_block_retail.custom.py.item_price.validate'	
 	},
     "Quotation" :{
-		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'	
+		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation"	
 	},
 	"Driver":{
 		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
@@ -158,7 +159,8 @@ doc_events = {
 					 ]
   	},
 	"Vehicle":{
-        "validate":"building_block_retail.building_block_retail.custom.py.vehicle.reference_date",
+        "validate":["building_block_retail.building_block_retail.custom.py.vehicle.reference_date",
+					]
     },
 	"Job Card":{
 		'before_submit': "building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card.before_submit",
@@ -219,29 +221,29 @@ doctype_js = {
 				"Payroll Entry": "/building_block_retail/custom/js/payroll_entry.js",
 				"Employee": "/building_block_retail/custom/js/employee.js",
 				"Supplier": "/building_block_retail/custom/js/supplier.js",
-				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js"
+				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" 
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"building_block_retail.tasks.all"
-# 	],
-# 	"daily": [
-# 		"building_block_retail.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"building_block_retail.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"building_block_retail.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"building_block_retail.tasks.monthly"
-# 	]
-# }
+scheduler_events = {
+	# "all": [
+	# 	"building_block_retail.tasks.all"
+	# ],
+	# "daily": [
+	# 	"building_block_retail.tasks.daily"
+	# ],
+	# "hourly": [
+	# 	"building_block_retail.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"building_block_retail.tasks.weekly"
+	# ]
+	"monthly": [
+		"building_block_retail.building_block_retail.custom.py.note.email_notify"
+	]
+}
 
 # Testing
 # -------
