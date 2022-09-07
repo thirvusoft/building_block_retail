@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "HR Cycle",
  "links": [],
- "modified": "2022-07-28 09:39:14.114130",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-09-07 12:59:39.649358",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "HR Cycle",
  "owner": "parameshwari@gmail.com",
@@ -25,18 +25,6 @@
    "doc_view": "List",
    "label": "Employee",
    "link_to": "Employee",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Journal Payment",
-   "link_to": "Journal Payment",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Journal Receipt",
-   "link_to": "Journal Receipt",
    "type": "DocType"
   },
   {
