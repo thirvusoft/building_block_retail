@@ -1,4 +1,6 @@
+import json
 from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_month_details
+from frappe.utils.data import get_link_to_form
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
 from frappe import _
@@ -99,7 +101,15 @@ def salary_slip_add_gross_pay(doc, event):
     if "Basic" not in com:
         doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
     doc.gross_pay =(sum([(i.amount or 0) for i in doc.earnings]) or 0)
-    
+    adv = get_employee_advance_amount(doc.employee, doc.start_date, doc.end_date)
+    doc.total_advance_amount = adv
+    adv_acc = frappe.db.get_value('Company', doc.company, 'default_employee_advance_account')
+    if(not adv_acc):
+        url = get_link_to_form('Company', doc.company)
+        frappe.throw(f'Please fill the <b>Employee Advance Account</b> in {url}')
+    com = [i.salary_component for i in doc.deductions]
+    # if(adv_acc not in com):
+    #     doc.append('deductions',{'salary_component':adv_acc, 'amount':adv})
     doc.net_pay = doc.gross_pay - doc.total_deduction
     doc.rounded_total = round(doc.net_pay)
     doc.compute_year_to_date()
@@ -297,3 +307,35 @@ def get_employee_advance_amount(name, start_date, end_date):
     deduct = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Deduct from Salary'}, pluck='advance_amount')) or 0
     return_ = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Return Advance'}, pluck='advance_amount')) or 0
     return deduct-return_
+
+@frappe.whitelist()
+def get_advance_amounts(employee):
+    adv = frappe.get_all(
+            "Employee Advance",
+            filters=
+                {'employee':employee, 'purpose':'Deduct from Salary', 'remaining_amount': ['>', 0]}, 
+            fields=['name', 'remaining_amount'])
+    fields = []
+    for i in range(len(adv)):
+        fields.append({'label':'Name','fieldname':f'name{i}', 'fieldtype':'Link', 'options':'Employee Advance', 'default':adv[i]['name'], 'read_only':1})
+        fields.append({'fieldname':f'col_brk1{i}', 'fieldtype':'Column Break'})
+        fields.append({'fieldname':f'adv_amt{i}', 'label':'Advance Amount', 'fieldtype':'Currency', 'default':adv[i]['remaining_amount'], 'read_only':1})
+        fields.append({'fieldname':f'col_brk2{i}', 'fieldtype':'Column Break'})
+        fields.append({'fieldname':f'amt_take{i}', 'label':'Amount Taken', 'fieldtype':'Currency'})
+        fields.append({'fieldname':f'sec_brk1{i}', 'fieldtype':'Section Break'})
+    
+    fields.append({'fieldname':'dataaa', 'fieldtype':'Data', 'hidden':1})   
+    fields.append({'fieldname':'col_brk', 'fieldtype':'Column Break'})
+    fields.append({'fieldname':'total_amount', 'label':'Total Amount', 'fieldtype':'Currency', 'read_only':1})
+    return fields, len(adv)
+
+@frappe.whitelist()
+def change_remaining_amount(data, length):
+    from building_block_retail.building_block_retail.custom.py.defaults import create_defaults
+    create_defaults()
+    data = json.loads(data)
+    amount = 0 
+    for i in range(int(length)):
+        amount += data[f'amt_take{i}']
+        frappe.db.set_value('Employee Advance', data[f'name{i}'], 'remaining_amount', data[f'adv_amt{i}'] - data[f'amt_take{i}'])
+    return amount

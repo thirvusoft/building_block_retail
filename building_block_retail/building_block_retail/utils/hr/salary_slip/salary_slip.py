@@ -97,6 +97,12 @@ def create_salary_custom_field():
               depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'",
               mandatory_depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
             ),
+            dict(
+              label = 'Get Employee Advance',
+              fieldname = 'get_emp_advance',
+              fieldtype = 'Button',
+              insert_after = 'earnings',
+            ),
         ]
     }
     create_custom_fields(custom_field)

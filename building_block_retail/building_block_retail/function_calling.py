@@ -1,4 +1,4 @@
-from building_block_retail.building_block_retail.custom.py.defaults import create_designation
+from building_block_retail.building_block_retail.custom.py.defaults import create_defaults
 from building_block_retail.building_block_retail.utils.Inventory.item import item_customization
 from building_block_retail.building_block_retail.utils.accounting.accounts.accounts import account_customization
 from building_block_retail.building_block_retail.utils.accounting.accounts.bank_account import bank_account_customization
@@ -11,6 +11,7 @@ from building_block_retail.building_block_retail.utils.buying.supplier_quotation
 from building_block_retail.building_block_retail.utils.crm.customer.customer import customer_customizations
 from building_block_retail.building_block_retail.utils.crm.lead.lead import lead_customisation
 from building_block_retail.building_block_retail.utils.hr.employee.employee import create_contracter_expense_account
+from building_block_retail.building_block_retail.utils.hr.employee.employee_advance import employee_advance_customization
 from building_block_retail.building_block_retail.utils.hr.role.roles import create_role
 from building_block_retail.building_block_retail.utils.hr.salary_slip.salary_slip import create_salary_custom_field
 from building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card import create_job_card_custom_fields
@@ -34,6 +35,9 @@ from building_block_retail.building_block_retail.utils.hr.driver.driver import d
 from building_block_retail.building_block_retail.utils.hr.vehicle_log.vehicle_log import vehicle_log_customization
 from building_block_retail.building_block_retail.utils.selling.sales_order.sales_order import item_details_pavers_customization
 def function_calling():
+    create_defaults()
+    create_salary_custom_field()
+    employee_advance_customization()
     create_docs()
     customer_customizations()
     lead_customisation()
@@ -61,9 +65,7 @@ def function_calling():
     journal_entry_customization()
     company_customization()
     account_customization()
-    create_designation()
     stock_entry_custom()
-    create_salary_custom_field()
     create_property_setter()
     driver_customization()
     vehicle_log_customization()

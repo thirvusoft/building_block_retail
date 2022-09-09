@@ -1,7 +1,7 @@
 import frappe
 
 @frappe.whitelist()
-def create_designation():
+def create_defaults():
     if(not frappe.db.exists('Designation', 'Job Worker')):
         doc=frappe.new_doc('Designation')
         doc.update({
@@ -43,5 +43,16 @@ def create_designation():
     if(not frappe.db.exists("Designation", "Loader")):
         doc = frappe.new_doc("Designation")
         doc.designation_name = "Loader"
+        doc.save(ignore_permissions=True)
+    if(not frappe.db.exists("Designation", "Driver")):
+        doc = frappe.new_doc("Designation")
+        doc.designation_name = "Driver"
+        doc.save(ignore_permissions=True)
+        
+    if(not frappe.db.exists("Salary Component", "Advance")):
+        doc = frappe.new_doc("Salary Component")
+        doc.salary_component = "Advance"
+        doc.salary_component_abbr = 'ADV'
+        doc.type = 'Deduction'
         doc.save(ignore_permissions=True)
     frappe.db.commit()

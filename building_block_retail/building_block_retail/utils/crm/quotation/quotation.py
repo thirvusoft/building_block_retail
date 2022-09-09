@@ -67,4 +67,5 @@ def quotation_custom_field():
 
 def quotation_property_setter():
     make_property_setter('Quotation', 'items', 'reqd', '0', 'Check')
+    make_property_setter('Quotation', 'rounding_adjustment', 'read_only', '0', 'Check')
     make_property_setter('Quotation Item', 'conversion_factor', 'precision', '5', 'Select')

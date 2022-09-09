@@ -8,7 +8,7 @@ frappe.ui.form.on('Quotation', {
     },
     refresh:function(frm){
         if(frm.doc.workflow_state == "Rejected" ){
-            frm.this.grid_buttons.find('.btn-custom').addClass('hidden');;
+            frm.grid_buttons.find('.btn-custom').addClass('hidden');
         }
         frappe.call({
             method: "building_block_retail.building_block_retail.custom.py.quotation.get_permission_for_attachment",
@@ -38,5 +38,9 @@ frappe.ui.form.on("Quotation", {
         for(let row=0; row<(frm.doc.items?frm.doc.items.length:0);row++){
             frappe.model.set_value(frm.doc.items[row].doctype, frm.doc.items[row].name, 'work', frm.doc.work)
         }
+    },
+    rounding_adjustment: function(frm){
+            cur_frm.set_value('rounded_total', (frm.doc.rounding_adjustment + frm.doc.grand_total))
+            cur_frm.refresh()
     }
 })

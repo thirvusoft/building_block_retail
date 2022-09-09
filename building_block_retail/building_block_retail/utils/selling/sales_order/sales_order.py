@@ -48,7 +48,15 @@ def sales_order_customization():
             dict(fieldname='raw_materials', label='Raw Materials', 
                     fieldtype='Table',insert_after='raw_materials_', options='TS Raw Materials'),
             dict(fieldname='branch', label='Branch', 
-                    fieldtype='Link',insert_after='update_auto_repeat_reference', options='Branch')
+                    fieldtype='Link',insert_after='update_auto_repeat_reference', options='Branch'),
+            dict(
+                fieldname= "ts_map_link",
+                fieldtype= "Data",
+                insert_after= "po_no",
+                label= "Enter Delivery Location Map Link",
+                description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
+                length=1000,
+            ),
         ]
     }
     create_custom_fields(custom_fields)
