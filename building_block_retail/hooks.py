@@ -1,3 +1,4 @@
+from re import M
 from . import __version__ as app_version
 
 app_name = "building_block_retail"
@@ -197,6 +198,9 @@ doc_events = {
 	},
     'BOM': {
 		'validate':"building_block_retail.building_block_retail.custom.py.bom.validate"
+	},
+    'Employee Advance':{
+		'on_submit':  'building_block_retail.building_block_retail.custom.py.employee_advance.after_insert'
 	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]

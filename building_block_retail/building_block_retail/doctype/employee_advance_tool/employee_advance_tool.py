@@ -2,10 +2,11 @@ import frappe
 
 from frappe.model.document import Document
 from frappe.utils.data import get_link_to_form
-
+from erpnext.accounts.doctype.payment_entry.payment_entry import get_payment_entry
+from erpnext.accounts.doctype.sales_invoice.sales_invoice import get_bank_cash_account
 
 class EmployeeAdvanceTool(Document):
-	pass
+    pass
 @frappe.whitelist()
 def employee_finder(advance1):
 	employee_names=[]
@@ -13,6 +14,15 @@ def employee_finder(advance1):
 	for name in a:
 		employee_names.append(name)
 	return employee_names
+
+def on_submit(dt, dn):
+	pe = get_payment_entry(dt, dn)
+	pe.mode_of_payment = 'Cash'
+	paid_from = get_bank_cash_account(pe.mode_of_payment, pe.company)
+	pe.paid_from = paid_from['account']
+	pe.save()
+	pe.submit()
+	
 @frappe.whitelist()
 def create_employee_advance(name,amount,date,payment_type, doc_name=None):
 		company = frappe.db.get_value("Employee", name, 'company')
@@ -27,9 +37,11 @@ def create_employee_advance(name,amount,date,payment_type, doc_name=None):
 		advance_doc.exchange_rate = 1.0
 		advance_doc.purpose = payment_type or f"Created From Employee Advance Tool: {doc_name}"
 		advance_doc.advance_account = advance_account
+		advance_doc.remaining_amount = amount
 		if payment_type=="Deduct from Salary":
 			advance_doc.repay_unclaimed_amount_from_salary=1
 		advance_doc.insert()
 		advance_doc.save()
 		advance_doc.submit()
+		on_submit(advance_doc.doctype, advance_doc.name)
 		frappe.db.commit()

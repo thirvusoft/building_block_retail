@@ -123,4 +123,5 @@ def purchase_order():
         "value":1
     })
     Purchase_Order.save()
+    make_property_setter('Purchase Order Item', 'conversion_factor', 'precision', '5', 'Select')
     create_custom_fields(custom_fields)

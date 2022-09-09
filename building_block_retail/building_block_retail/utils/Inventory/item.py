@@ -470,6 +470,8 @@ def item_customization():
         "value":1
     })
     item.save()
+    make_property_setter('Item', 'opening_stock', 'fieldtype', 'Int', 'Data')
+    make_property_setter('UOM Conversion Detail', 'conversion_factor', 'precision', '5', 'Select')
 
     create_custom_fields(custom_fields)
 

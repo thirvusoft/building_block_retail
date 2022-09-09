@@ -340,3 +340,4 @@ def delivery_note_property_setter():
     make_property_setter("Delivery Note", "value_bundle", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "employee", "label", "Employee", "Data")
     make_property_setter("Delivery Note", "driver_name_2", "hidden", "1", "Check")
+    make_property_setter('Delivery Note Item', 'conversion_factor', 'precision', '5', 'Select')

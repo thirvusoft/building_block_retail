@@ -161,6 +161,50 @@ frappe.ui.form.on('Salary Slip',{
                 frappe.model.set_value(child.doctype, child.name, "amount",frm.doc.total_paid_amount)
                 cur_frm.refresh_field("earnings")            }, 100);
         }   
+    },
+    get_emp_advance: function(frm){
+        frappe.call({
+            method: 'building_block_retail.building_block_retail.custom.py.salary_slip.get_advance_amounts',
+            args:{employee:frm.doc.employee},
+            callback(r){
+                if (r.message[0]) {
+                    let count = 0
+                    var func = function () {
+                        var tot_amt = 0;
+                        for (let i = 0; i < r.message[1]; i++) {
+                            tot_amt += d.fields_dict['amt_take' + i].value
+                        }
+                        d.fields_dict['total_amount'].value = tot_amt
+                        d.fields_dict['total_amount'].refresh()
+
+                    }
+                    r.message[0].forEach((data) => {
+                        if (data['fieldname'].indexOf('amt_take') >= 0) {
+                            r.message[0][count]['onchange'] = func
+                        }
+                        count += 1
+                    })
+                var d = new frappe.ui.Dialog({
+                    title:'Employee Advance',
+                    fields:r.message[0],
+                    primary_action(data){
+                        frappe.call({
+                            method: 'building_block_retail.building_block_retail.custom.py.salary_slip.change_remaining_amount',
+                            args: {data: data, length: r.message[1]},
+                            callback(r1){
+                                var adv = frm.add_child('deductions')
+                                adv.salary_component = 'Advance'
+                                adv.amount = r1.message
+                                frm.refresh_field('deductions')
+                                d.hide()
+                            }
+                        })
+                    }
+                })
+                d.show()
+            }
+        }
+        })
     }
 })
 
@@ -186,6 +230,7 @@ frappe.ui.form.on('Site work Details',{
 })
 
 function get_employee_advance(frm){
+    console.log("DDDDDDDDDDDDDDDDD")
     frappe.call({
         method:"building_block_retail.building_block_retail.custom.py.salary_slip.get_employee_advance_amount",
         args:{
@@ -194,6 +239,7 @@ function get_employee_advance(frm){
             end_date: frm.doc.end_date
         },
         callback(r){
+            console.log(r.message)
             frm.set_value('total_advance_amount', r.message)
             frm.refresh_field('total_advance_amount')
         }
