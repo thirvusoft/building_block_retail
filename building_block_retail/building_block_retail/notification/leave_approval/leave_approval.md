@@ -1,0 +1,1 @@
+{{doc.employee_name}} requested a Leave from {{doc.start_date}} to {{doc.end_date}} as {{doc.leave_type}}.

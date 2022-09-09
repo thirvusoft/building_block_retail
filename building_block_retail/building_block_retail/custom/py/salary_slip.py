@@ -3,6 +3,7 @@ from erpnext.payroll.doctype.payroll_entry.payroll_entry import get_month_detail
 from frappe.utils.data import get_link_to_form
 import frappe
 from erpnext.accounts.utils import get_fiscal_year
+from frappe.utils.data import get_link_to_form
 from frappe import _
 from frappe.utils import (
 	add_days,
@@ -172,17 +173,12 @@ def get_expense_from_stock_entry(job_card, employee, item):
 @frappe.whitelist(allow_guest=True)
 def site_work_details(employee,start_date,end_date,designation):
     if(designation == 'Job Worker'):
-        sales_invoice = frappe.db.get_all('Sales Invoice',filters={'jobworker_name':employee,'posting_date':["between",  (start_date, end_date)],"docstatus":1},fields=["site_work","name"])
-        sales_name = []
-        for sales in sales_invoice:
-            sales_name.append(sales.name)
-        job_table = frappe.db.get_all("TS Job Worker Salary",filters={'parent': ["in",sales_name]},fields=['ts_amount as amount','ratesqft as rate','sqft as sqft_allocated','parent'])
-        for i in range(len(job_table)):
-            for j in range(len(sales_invoice)):
-                if(job_table[i].parent == sales_invoice[j].name):
-                    job_table[i].site_work_name = sales_invoice[j].site_work
-                    del job_table[i]['parent']
-        return job_table
+        job_worker = frappe.db.get_all(
+                'TS Job Worker Details',
+                fields=['parent as site_work_name','amount','start_date','end_date', 'rate', 'sqft_allocated'],
+                filters={'start_date':['>=', start_date], 'end_date':['<=', end_date], 'name1':employee})
+        return job_worker
+
     elif(designation == 'Loader'):
         delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',(start_date, end_date)], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
         dn_names = [i['name'] for i in delivery_note]
@@ -235,22 +231,31 @@ def set_net_pay(self):
         self.set_net_total_in_words()
         
 def create_journal_entry(doc,action):
-    component_list=[]
-    
-    amount=[]
+    earn_component_list=[]
+    earn_amount=[]
+    ded_component_list=[]
+    ded_amount=[]
     if doc.earnings:
         for data in doc.earnings:
             account = frappe.get_doc('Salary Component',data.salary_component)
-            for account in account.accounts:
-                component_list.append(account.account)
-            amount.append(data.amount)
+            url = get_link_to_form('Salary Component',data.salary_component)
+            if(not len(account.accounts)):frappe.throw(f"Please Fill the Account for Salary Component <b>{url}<b>.")
+            for row in account.accounts:
+                if(row.company == doc.company):
+                    if(not row.account):frappe.throw(f"Please Fill the Account for Salary Component <b>{url}<b>.")
+                    earn_component_list.append(row.account)
+            earn_amount.append(data.amount)
 
     if doc.deductions:
         for data in doc.deductions:
             account = frappe.get_doc('Salary Component',data.salary_component)
-            for account in account.accounts:
-                component_list.append(account.account)
-            amount.append(data.amount)
+            url = get_link_to_form('Salary Component',data.salary_component)
+            if(not len(account.accounts)):frappe.throw(f"Please Fill the Account for Salary Component <b>{url}<b>.")
+            for row in account.accounts:
+                if(row.company == doc.company):
+                    if(not row.account):frappe.throw(f"Please Fill the Account for Salary Component <b>{url}<b>.")
+                    ded_component_list.append(row.account)
+            ded_amount.append(data.amount)
 
     new_jv_doc=frappe.new_doc('Journal Entry')
     new_jv_doc.voucher_type='Journal Entry'
@@ -259,12 +264,14 @@ def create_journal_entry(doc,action):
     new_jv_doc.user_remark = _("Accrual Journal Entry for salaries from {0} to {1}").format(
 				doc.start_date, doc.end_date
 			)
-    for data in range(0,len(component_list),1):
-        new_jv_doc.append('accounts',{'account':component_list[data],'debit_in_account_currency':amount[data]})
+    for data in range(0,len(earn_component_list),1):
+        new_jv_doc.append('accounts',{'account':earn_component_list[data],'debit_in_account_currency':earn_amount[data]})
+    for data in range(0,len(ded_component_list),1):
+        new_jv_doc.append('accounts',{'account':ded_component_list[data],'credit_in_account_currency':ded_amount[data]})
     if(frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
-        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.gross_pay})
+        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.net_pay})
     else:
-        frappe.msgprint(_("Set Default Payroll Payable Account in {0}").format(doc.company), alert=True)
+        frappe.msgprint(_("Set Default Payable Account in {0}").format(doc.company), alert=True)
     new_jv_doc.ts_salary_slip = doc.name
     new_jv_doc.insert()
     new_jv_doc.submit()
@@ -339,3 +346,6 @@ def change_remaining_amount(data, length):
         amount += data[f'amt_take{i}']
         frappe.db.set_value('Employee Advance', data[f'name{i}'], 'remaining_amount', data[f'adv_amt{i}'] - data[f'amt_take{i}'])
     return amount
+def on_cancel(doc, action):
+    balance = frappe.db.get_value('Employee', doc.employee, 'salary_balance') or 0
+    frappe.db.set_value('Employee', doc.employee, 'salary_balance', balance - (doc.total_unpaid_amount or 0))

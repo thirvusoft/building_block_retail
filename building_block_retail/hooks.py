@@ -113,7 +113,8 @@ doc_events = {
 		'validate': 'building_block_retail.building_block_retail.custom.py.item_price.validate'	
 	},
     "Quotation" :{
-		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation"	
 	},
 	"Driver":{
 		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
@@ -151,7 +152,6 @@ doc_events = {
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
-					"building_block_retail.building_block_retail.custom.py.sales_invoice.on_submit",
 					],
 		"on_cancel":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
@@ -159,7 +159,8 @@ doc_events = {
 					 ]
   	},
 	"Vehicle":{
-        "validate":"building_block_retail.building_block_retail.custom.py.vehicle.reference_date",
+        "validate":["building_block_retail.building_block_retail.custom.py.vehicle.reference_date",
+					]
     },
 	"Job Card":{
 		'before_submit': "building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card.before_submit",
@@ -174,7 +175,8 @@ doc_events = {
     'Salary Slip':{
 		'validate': 'building_block_retail.building_block_retail.custom.py.salary_slip.salary_slip_add_gross_pay',
 		'on_submit':['building_block_retail.building_block_retail.custom.py.salary_slip.employee_update',
-					 'building_block_retail.building_block_retail.custom.py.salary_slip.create_journal_entry']
+					 'building_block_retail.building_block_retail.custom.py.salary_slip.create_journal_entry'],
+		'on_cancel': ['building_block_retail.building_block_retail.custom.py.salary_slip.on_cancel']
 	},
     'Purchase Invoice':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
@@ -223,29 +225,29 @@ doctype_js = {
 				"Payroll Entry": "/building_block_retail/custom/js/payroll_entry.js",
 				"Employee": "/building_block_retail/custom/js/employee.js",
 				"Supplier": "/building_block_retail/custom/js/supplier.js",
-				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js"
+				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" 
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"building_block_retail.tasks.all"
-# 	],
-# 	"daily": [
-# 		"building_block_retail.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"building_block_retail.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"building_block_retail.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"building_block_retail.tasks.monthly"
-# 	]
-# }
+scheduler_events = {
+	# "all": [
+	# 	"building_block_retail.tasks.all"
+	# ],
+	# "daily": [
+	# 	"building_block_retail.tasks.daily"
+	# ],
+	# "hourly": [
+	# 	"building_block_retail.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"building_block_retail.tasks.weekly"
+	# ]
+	"monthly": [
+		"building_block_retail.building_block_retail.custom.py.note.email_notify"
+	]
+}
 
 # Testing
 # -------

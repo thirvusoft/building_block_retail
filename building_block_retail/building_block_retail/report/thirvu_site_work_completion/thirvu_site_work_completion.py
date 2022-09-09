@@ -30,7 +30,6 @@ def execute(filters=None):
 									""".format(conditions))
 
 	data = [list(i) for i in report_data]
-	frappe.errprint(data)
 	final_data = []
 	if(len(data)):
 		start = 0

@@ -1,0 +1,32 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-09-07 15:40:00.960391",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Employee Todo",
+ "links": [],
+ "modified": "2022-09-07 15:43:23.594290",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Employee Todo",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Assigned Delivery Notes",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Delivery Note', 'date':frappe.datetime.nowdate()}",
+   "type": "DocType"
+  }
+ ]
+}
