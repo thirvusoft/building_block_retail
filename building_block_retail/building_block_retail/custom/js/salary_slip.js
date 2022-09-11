@@ -21,13 +21,12 @@ frappe.ui.form.on('Salary Slip',{
         }
     },
     employee:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader" || frm.doc.designation == "Contractor"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
                 frm.set_value('salary_balance',salary_balance)
             });
             if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
-            get_employee_advance(frm)
             frappe.call({
                 method:"building_block_retail.building_block_retail.custom.py.salary_slip.site_work_details",
                 args:{
@@ -47,7 +46,7 @@ frappe.ui.form.on('Salary Slip',{
                     }
                     cur_frm.refresh()
                     cur_frm.set_value("total_paid_amount",paid_amount);
-                    cur_frm.set_value("total_amount",total_amount - frm.doc.total_advance_amount);
+                    cur_frm.set_value("total_amount",total_amount);
                     cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
                 }
         })
@@ -56,12 +55,11 @@ frappe.ui.form.on('Salary Slip',{
         
     },
     end_date:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader" || frm.doc.designation == "Contractor"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
             if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
-            get_employee_advance(frm)
             frappe.call({
                 method:"building_block_retail.building_block_retail.custom.py.salary_slip.site_work_details",
                 args:{
@@ -81,7 +79,7 @@ frappe.ui.form.on('Salary Slip',{
                     }
                     cur_frm.refresh_field("site_work_details")
                     cur_frm.set_value("total_paid_amount",paid_amount);
-                    cur_frm.set_value("total_amount",total_amount-frm.doc.total_advance_amount);
+                    cur_frm.set_value("total_amount",total_amount);
                     cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
                 }
         })
@@ -90,12 +88,11 @@ frappe.ui.form.on('Salary Slip',{
         
     },
     start_date:function(frm,cdt,cdn){
-        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader"){
+        if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader" || frm.doc.designation == "Contractor"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
             });
             if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
-            get_employee_advance(frm)
             frappe.call({
                 method:"building_block_retail.building_block_retail.custom.py.salary_slip.site_work_details",
                 args:{
@@ -115,7 +112,7 @@ frappe.ui.form.on('Salary Slip',{
                     }
                     cur_frm.refresh_field("site_work_details")
                     cur_frm.set_value("total_paid_amount",paid_amount);
-                    cur_frm.set_value("total_amount",total_amount-frm.doc.total_advance_amount);
+                    cur_frm.set_value("total_amount",total_amount);
                     cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
                 }
         })
@@ -125,19 +122,37 @@ frappe.ui.form.on('Salary Slip',{
     },
     pay_the_balance:function(frm){
         if(frm.doc.pay_the_balance==1){
-            frm.set_value('total_paid_amount',frm.doc.total_paid_amount+frm.doc.salary_balance)
+            if(frm.doc.designation != "Contractor")
+            {frm.set_value('total_paid_amount',frm.doc.total_paid_amount+frm.doc.salary_balance)
             frm.set_value('total_amount',frm.doc.total_amount+frm.doc.salary_balance)
+            }
+            else{
+                frm.doc.earnings.forEach( (row)=>{
+                    if(row.salary_component == 'Basic'){
+                        row.amount += frm.doc.salary_balance
+                    }
+                })
+            }
             frm.set_value('salary_balance',0)
         }
         else{
                 frappe.db.get_value("Employee", {"name": frm.doc.employee}, "salary_balance", (r) => {
-                    salary_balance=r.salary_balance                    
+                    salary_balance=r.salary_balance    
+                    frm.set_value('salary_balance',salary_balance)
+                    if(frm.doc.designation != "Contractor"){
+                    frm.set_value('total_amount',frm.doc.total_amount-frm.doc.salary_balance)
+                    frm.set_value('total_paid_amount',frm.doc.total_paid_amount-frm.doc.salary_balance)
+                    }
+                    else{
+                        frm.doc.earnings.forEach( (row)=>{
+                            if(row.salary_component == 'Basic'){
+                                row.amount -= frm.doc.salary_balance
+                            }
+                        })
+                    }                
                 });
-                frm.set_value('salary_balance',salary_balance)
-                frm.set_value('total_amount',frm.doc.total_amount-frm.doc.salary_balance)
-                frm.set_value('total_paid_amount',frm.doc.total_paid_amount-frm.doc.salary_balance)
         }
-
+        frm.refresh()
     },
     
     total_paid_amount:function(frm){
@@ -163,6 +178,7 @@ frappe.ui.form.on('Salary Slip',{
         }   
     },
     get_emp_advance: function(frm){
+        
         frappe.call({
             method: 'building_block_retail.building_block_retail.custom.py.salary_slip.get_advance_amounts',
             args:{employee:frm.doc.employee},
@@ -192,19 +208,37 @@ frappe.ui.form.on('Salary Slip',{
                             method: 'building_block_retail.building_block_retail.custom.py.salary_slip.change_remaining_amount',
                             args: {data: data, length: r.message[1]},
                             callback(r1){
-                                var adv = frm.add_child('deductions')
-                                adv.salary_component = 'Advance'
-                                adv.amount = r1.message
+                                r1.message.forEach((data)=>{
+                                    var adv = frm.add_child('deductions')
+                                    adv.salary_component = data.salary_component
+                                    adv.amount = data.amount
+                                    adv.employee_advance = data.employee_advance
+                                })
+                                
                                 frm.refresh_field('deductions')
                                 d.hide()
                             }
                         })
                     }
                 })
+                if(r.message[1]>1)
                 d.show()
+                else
+                frappe.msgprint("No Employee Advances found.")
             }
         }
         })
+    },
+    contractor_to_pay: function(frm){
+        frm.doc.earnings.forEach( (row)=>{
+            if(row.salary_component == 'Basic'){
+                row.amount = frm.doc.contractor_to_pay
+                if(frm.doc.pay_the_balance == 1){
+                    row.amount += salary_balance
+                }
+            }
+        })
+        frm.refresh()
     }
 })
 
@@ -228,20 +262,3 @@ frappe.ui.form.on('Site work Details',{
         }     
     }
 })
-
-function get_employee_advance(frm){
-    console.log("DDDDDDDDDDDDDDDDD")
-    frappe.call({
-        method:"building_block_retail.building_block_retail.custom.py.salary_slip.get_employee_advance_amount",
-        args:{
-            name: frm.doc.employee,
-            start_date:frm.doc.start_date,
-            end_date: frm.doc.end_date
-        },
-        callback(r){
-            console.log(r.message)
-            frm.set_value('total_advance_amount', r.message)
-            frm.refresh_field('total_advance_amount')
-        }
-    })
-}

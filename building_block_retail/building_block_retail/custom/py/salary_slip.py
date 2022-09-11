@@ -98,19 +98,18 @@ def salary_slip_add_gross_pay(doc, event):
     je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
     emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
     doc.total_expense = emp_amount
+    if(not doc.contractor_to_pay):
+        doc.contractor_to_pay = emp_amount
     com = [i.salary_component for i in doc.earnings]
     if "Basic" not in com:
         doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
-    doc.gross_pay =(sum([(i.amount or 0) for i in doc.earnings]) or 0)
-    adv = get_employee_advance_amount(doc.employee, doc.start_date, doc.end_date)
-    doc.total_advance_amount = adv
+    doc.gross_pay =sum([(i.amount or 0) for i in doc.earnings]) or 0
     adv_acc = frappe.db.get_value('Company', doc.company, 'default_employee_advance_account')
     if(not adv_acc):
         url = get_link_to_form('Company', doc.company)
         frappe.throw(f'Please fill the <b>Employee Advance Account</b> in {url}')
     com = [i.salary_component for i in doc.deductions]
-    # if(adv_acc not in com):
-    #     doc.append('deductions',{'salary_component':adv_acc, 'amount':adv})
+
     doc.net_pay = doc.gross_pay - doc.total_deduction
     doc.rounded_total = round(doc.net_pay)
     doc.compute_year_to_date()
@@ -192,11 +191,15 @@ def site_work_details(employee,start_date,end_date,designation):
         return loadman_cost
 
 def employee_update(doc,action):
+    update_employee_advance(doc)
     employee_doc = frappe.get_doc('Employee',doc.employee)
-    if(doc.get('pay_the_balance')):
-        employee_doc.salary_balance=doc.total_unpaid_amount
-    else:
-        employee_doc.salary_balance+=doc.total_unpaid_amount
+    if(doc.designation in ['Loader', 'Job Worker']):
+        if(doc.get('pay_the_balance')):
+            employee_doc.salary_balance=doc.total_unpaid_amount
+        else:
+            employee_doc.salary_balance+=doc.total_unpaid_amount
+    elif(doc.designation in ['Contractor']):
+        employee_doc.salary_balance += (doc.total_expense-doc.contractor_to_pay)
     employee_doc.save()
 
 def set_net_pay(self):
@@ -212,15 +215,7 @@ def set_net_pay(self):
 
     # Calculation of net Pay by round off
     if self.gross_pay:
-        net_pay=(round(self.gross_pay) - round(self.total_deduction))%10
-        if(net_pay<=2):
-            self.rounded_total=round(self.gross_pay - round(self.total_deduction))-net_pay
-            self.net_pay=round(self.gross_pay - round(self.total_deduction))-net_pay
-        
-        elif(net_pay>2):
-            value = 10- net_pay
-            self.rounded_total=round(self.gross_pay - round(self.total_deduction))+value
-            self.net_pay=round(self.gross_pay - round(self.total_deduction))+value
+        self.net_pay = self.gross_pay - self.total_deduction
 
         #Calculation of year to date
         self.compute_year_to_date()
@@ -308,12 +303,6 @@ def make_bank_entry(doc):
     new_journel.insert()
     new_journel.submit()
     frappe.msgprint("Journel Entry Submitted")
-    
-@frappe.whitelist()
-def get_employee_advance_amount(name, start_date, end_date):
-    deduct = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Deduct from Salary'}, pluck='advance_amount')) or 0
-    return_ = sum(frappe.get_all("Employee Advance", filters={'posting_date': ['between',(start_date, end_date)], 'employee':name, 'purpose':'Return Advance'}, pluck='advance_amount')) or 0
-    return deduct-return_
 
 @frappe.whitelist()
 def get_advance_amounts(employee):
@@ -342,10 +331,23 @@ def change_remaining_amount(data, length):
     create_defaults()
     data = json.loads(data)
     amount = 0 
+    deductions = []
     for i in range(int(length)):
         amount += data[f'amt_take{i}']
-        frappe.db.set_value('Employee Advance', data[f'name{i}'], 'remaining_amount', data[f'adv_amt{i}'] - data[f'amt_take{i}'])
-    return amount
+        if(data[f'amt_take{i}'] > 0):
+            deductions.append({'salary_component':'Advance','amount':  data[f'amt_take{i}'], 'employee_advance': data[f'name{i}']})
+        # frappe.db.set_value('Employee Advance', data[f'name{i}'], 'remaining_amount', data[f'adv_amt{i}'] - data[f'amt_take{i}'])
+    return deductions
+
+def update_employee_advance(doc):
+    for i in doc.deductions:
+        if(i.employee_advance):
+            amt = frappe.db.get_value('Employee Advance', i.employee_advance, 'remaining_amount')
+            frappe.db.set_value('Employee Advance', i.employee_advance, 'remaining_amount', amt-i.amount)
 def on_cancel(doc, action):
     balance = frappe.db.get_value('Employee', doc.employee, 'salary_balance') or 0
     frappe.db.set_value('Employee', doc.employee, 'salary_balance', balance - (doc.total_unpaid_amount or 0))
+    for i in doc.deductions:
+        if(i.employee_advance):
+            amt = frappe.db.get_value('Employee Advance', i.employee_advance, 'remaining_amount')
+            frappe.db.set_value('Employee Advance', i.employee_advance, 'remaining_amount', amt+i.amount)

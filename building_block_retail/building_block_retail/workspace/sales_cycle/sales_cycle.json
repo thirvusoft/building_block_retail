@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-08-29 14:08:57.385455",
+ "modified": "2022-09-09 15:29:14.647849",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Sales Cycle",
@@ -21,12 +21,6 @@
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
-  {
-   "doc_view": "List",
-   "label": "Sales Partner",
-   "link_to": "Sales Partner",
-   "type": "DocType"
-  },
   {
    "doc_view": "List",
    "label": "Sales Order",

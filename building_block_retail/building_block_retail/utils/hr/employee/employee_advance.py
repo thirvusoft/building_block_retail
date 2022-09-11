@@ -9,7 +9,7 @@ def employee_advance_customization():
 def employee_advance_custom_fields():
     custom_field = {
         'Employee Advance':[
-            dict(fieldname='    ', label='Remaining Amount', fieldtype='Currency', insert_after='return_amount', 
+            dict(fieldname='remaining_amount', label='Remaining Amount', fieldtype='Currency', insert_after='return_amount', 
                  read_only=1, allow_on_submit=1)
         ]
     }
