@@ -197,3 +197,11 @@ def html_history(single_slip,payroll_entry):
         ]
     value ='<table style="width:100%;border: 1px solid #ddd;border-collapse: collapse; ">'+html+''.join(td)+'</table>'
     frappe.set_value(payroll_entry.doctype, payroll_entry.name, "employee_salary_",value)
+
+
+def validate(doc, action):
+    for row in doc.employees:
+        total_balance_amount = sum(frappe.get_all("Employee Advance", filters=
+                {'employee':row.employee, 'purpose':'Deduct from Salary', 'remaining_amount': ['>', 0]}, 
+            pluck='remaining_amount'))  
+        row.total_balance_amount = total_balance_amount

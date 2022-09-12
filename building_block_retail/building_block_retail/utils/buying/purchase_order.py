@@ -9,6 +9,10 @@ def purchase_order():
         "Purchase Order": [
             dict(fieldname='company_name', label='Company',
                 fieldtype='Link', options='Company',insert_after='column_break1', read_only=0,reqd=1),
+                     	dict(fieldname='accounting', label='Accounting',
+				fieldtype='Check', insert_after='branch',fetch_from="branch.is_accounting",hidden=1),
+        dict(fieldname='abbr_purchase_order', label='Abbrevation',
+				fieldtype='Data', insert_after='accounting',fetch_from="branch.abbr",hidden=1)
             
         ]
         }
@@ -19,7 +23,7 @@ def purchase_order():
         'property':"hidden",
         'property_type':"Check",
         'field_name':"accounting_dimensions_section",
-        "value":1
+        "value":0
     })
     Purchase_Order.save()
     Purchase_Order=frappe.get_doc({

@@ -13,6 +13,7 @@ from building_block_retail.building_block_retail.utils.crm.lead.lead import lead
 from building_block_retail.building_block_retail.utils.crm.customer.address import address_customization
 from building_block_retail.building_block_retail.utils.hr.employee.employee import create_contracter_expense_account
 from building_block_retail.building_block_retail.utils.hr.employee.employee_advance import employee_advance_customization
+from building_block_retail.building_block_retail.utils.hr.payroll.payroll_entry import payroll_entry_customization
 from building_block_retail.building_block_retail.utils.hr.role.roles import create_role
 from building_block_retail.building_block_retail.utils.hr.salary_slip.salary_slip import create_salary_custom_field
 from building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card import create_job_card_custom_fields
@@ -36,6 +37,7 @@ from building_block_retail.building_block_retail.utils.hr.driver.driver import d
 from building_block_retail.building_block_retail.utils.hr.vehicle_log.vehicle_log import vehicle_log_customization
 from building_block_retail.building_block_retail.utils.selling.sales_order.sales_order import item_details_pavers_customization
 def function_calling():
+    payroll_entry_customization()
     create_defaults()
     create_salary_custom_field()
     employee_advance_customization()

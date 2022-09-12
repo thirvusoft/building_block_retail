@@ -335,6 +335,8 @@ def change_remaining_amount(data, length):
     for i in range(int(length)):
         amount += data[f'amt_take{i}']
         if(data[f'amt_take{i}'] > 0):
+            if(data[f'amt_take{i}'] > data[f'adv_amt{i}']):
+                frappe.throw('Amount Taken should not be greater than Advance amount.')
             deductions.append({'salary_component':'Advance','amount':  data[f'amt_take{i}'], 'employee_advance': data[f'name{i}']})
         # frappe.db.set_value('Employee Advance', data[f'name{i}'], 'remaining_amount', data[f'adv_amt{i}'] - data[f'amt_take{i}'])
     return deductions

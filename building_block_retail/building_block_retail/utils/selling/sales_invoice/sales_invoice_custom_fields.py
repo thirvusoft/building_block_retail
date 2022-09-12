@@ -137,43 +137,6 @@ def sales_invoice_custom_field():
 				label= "Remarks",
                 no_copy = 1
             ),
-            dict(
-                fieldname= "jobworker_salary",
-				fieldtype= "Section Break",
-				insert_after= "accounting_dimensions_section",
-				label= "Job Worker Salary",
-                collapsible = 1
-            ),
-             dict(
-                fieldname= "jobworker_name",
-				fieldtype= "Link",
-				insert_after= "jobworker_salary",
-				label= "Job Worker Name",
-                options = 'Employee',
-                mandatory_depends_on = 'eval:doc.work == "Supply and Laying"',
-                no_copy=1
-            ),
-            dict(
-                fieldname= "job_worker_table",
-				fieldtype= "Table",
-				insert_after= "jobworker_name",
-				label= "Job Worker Salary",
-                options = 'TS Job Worker Salary',
-                no_copy=1
-            ),
-            dict(
-                fieldname= "total_amount_job_worker",
-				fieldtype= "Float",
-				insert_after= "job_worker_table",
-				label= "Total Amount",
-                no_copy=1
-            ),
-            dict(
-                fieldname= "section_break1",
-				fieldtype= "Section Break",
-				insert_after= "total_amount_job_worker",
-
-            ),
             
         
         ],

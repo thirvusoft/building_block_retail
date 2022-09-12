@@ -139,7 +139,7 @@ def delivery_note_custom_field():
             dict(
                 fieldname= "branch",
 				fieldtype= "Link",
-				insert_after= "sales_team",
+				insert_after= "cost_center",
 				label= "Branch",
                 options= "Branch"
             ),
@@ -217,7 +217,11 @@ def delivery_note_custom_field():
                 fieldtype= "Button",
                 insert_after= "ts_map_link",
                 label= "Open Delivery Location",
-            )
+            ),
+               	dict(fieldname='accounting', label='Accounting',
+				fieldtype='Check', insert_after='branch',fetch_from="branch.is_accounting",hidden=1),
+        dict(fieldname='abbr_delivery_note', label='Abbrevation',
+				fieldtype='Data', insert_after='accounting',fetch_from="branch.abbr",hidden=1)
         ],
 
         "Delivery Note Item":[
@@ -305,7 +309,7 @@ def delivery_note_custom_field():
 def delivery_note_property_setter():
     make_property_setter("Delivery Note", "company", "hidden", "0", "Check")
     make_property_setter("Delivery Note", "transporter_name", "hidden", "0", "Check")
-    make_property_setter("Delivery Note", "accounting_dimensions_section", "hidden", "1", "Check")
+    make_property_setter("Delivery Note", "accounting_dimensions_section", "hidden", "0", "Check")
     make_property_setter("Delivery Note", "customer_po_details", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "currency_and_price_list", "hidden", "1", "Check")
     make_property_setter("Delivery Note", "sec_warehouse", "hidden", "1", "Check")

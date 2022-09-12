@@ -201,6 +201,9 @@ doc_events = {
 	},
     'Employee Advance':{
 		'on_submit':  'building_block_retail.building_block_retail.custom.py.employee_advance.after_insert'
+	},
+	'Payroll Entry':{
+		'validate':'building_block_retail.building_block_retail.custom.py.payroll_entry.validate'
 	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]
