@@ -26,6 +26,10 @@ def purchase_receipt():
 
             dict(fieldname='driver', label='Driver Name',
                  fieldtype='Data', insert_after='vehicle_number'),
+                          	dict(fieldname='accounting', label='Accounting',
+				fieldtype='Check', insert_after='branch',fetch_from="branch.is_accounting",hidden=1),
+        dict(fieldname='abbr_purchase_receipt', label='Abbrevation',
+				fieldtype='Data', insert_after='accounting',fetch_from="branch.abbr",hidden=1)
 
 
         ],
@@ -47,7 +51,7 @@ def purchase_receipt():
         'property': "hidden",
         'property_type': "Check",
         'field_name': "accounting_dimensions_section",
-        "value": 1
+        "value": 0
     })
     Purchase_Receipt.save()
     Purchase_Receipt = frappe.get_doc({

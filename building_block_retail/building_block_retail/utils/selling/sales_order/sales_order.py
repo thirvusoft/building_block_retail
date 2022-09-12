@@ -48,7 +48,7 @@ def sales_order_customization():
             dict(fieldname='raw_materials', label='Raw Materials', 
                     fieldtype='Table',insert_after='raw_materials_', options='TS Raw Materials'),
             dict(fieldname='branch', label='Branch', 
-                    fieldtype='Link',insert_after='update_auto_repeat_reference', options='Branch'),
+                    fieldtype='Link',insert_after='cost_center', options='Branch'),
             dict(
                 fieldname= "ts_map_link",
                 fieldtype= "Data",
@@ -57,11 +57,16 @@ def sales_order_customization():
                 description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
                 length=1000,
             ),
+            	dict(fieldname='accounting', label='Accounting',
+				fieldtype='Check', insert_after='branch',fetch_from="branch.is_accounting",hidden=1),
+        dict(fieldname='abbr_sales_order', label='Abbrevation',
+				fieldtype='Data', insert_after='accounting',fetch_from="branch.abbr",hidden=1)
+        
         ]
     }
     create_custom_fields(custom_fields)
     properties=[
-        ['hidden', 'Check', 'accounting_dimensions_section', 1],
+        ['hidden', 'Check', 'accounting_dimensions_section', 0],
         
         ['hidden', 'Check', 'contact_info', 1],
         
