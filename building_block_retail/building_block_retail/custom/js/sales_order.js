@@ -202,6 +202,7 @@ frappe.ui.form.on('Sales Order',{
         if(cur_frm.doc.type=='Compound Wall'){
             let rmm= cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
             for(let row=0;row<rmm.length;row++){
+                if(!cur_frm.doc.compoun_walls[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Compound Wall Table")}
                 var message;
                 var new_row = frm.add_child("items");
                 new_row.item_code=cur_frm.doc.compoun_walls[row].item
@@ -230,6 +231,7 @@ frappe.ui.form.on('Sales Order',{
 
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
+            if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
             var message;
             var new_row = frm.add_child("items");
             new_row.item_code=cur_frm.doc.raw_materials[row].item
