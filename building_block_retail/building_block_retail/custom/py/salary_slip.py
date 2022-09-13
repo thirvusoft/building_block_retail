@@ -89,6 +89,23 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
     
 #validate   
 def salary_slip_add_gross_pay(doc, event):
+    if(doc.is_new() and doc.get('payroll_entry')):
+        pe = frappe.get_doc('Payroll Entry', doc.payroll_entry)
+        for row in pe.employees:
+            if(row.employee == doc.employee):
+                if(row.amount_taken > 0):
+                    doc.update({
+                        'deductions': [{'salary_component': 'Advance', 'amount':row.amount_taken}]
+                    })
+        if(doc.designation in ['Job Worker', 'Loader']):
+            site_work = site_work_details(doc.employee,doc.start_date,doc.end_date,doc.designation) 
+            amt = sum([i['amount'] for i in site_work]) or 0
+            doc.update({
+                'salary_balance': frappe.db.get_value('Employee', doc.employee, 'salary_balance') or 0,
+                'site_work_details': site_work,
+                'total_amount': amt,
+                'total_unpaid_amount': amt
+            })   
     if(doc.designation != 'Contractor'):
         set_net_pay(doc)
         return
