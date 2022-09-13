@@ -71,11 +71,31 @@ frappe.ui.form.on('Delivery Note', {
         
        
     },
+    
 
 	return_odometer_value: function(frm){
         var  total_distance= (cur_frm.doc.return_odometer_value - cur_frm.doc.current_odometer_value)
         cur_frm.set_value("total_distance",total_distance)
     },
+     // Thirvu_dual_accoutning
+     company:function(frm){
+        frappe.call({
+            method:"building_block_retail.building_block_retail.custom.py.sales_order.branch_list",
+            args:{
+                company:frm.doc.company
+            },
+            callback: function(r){
+               
+            frm.set_query('branch',function(frm){
+                return{
+                    filters:{
+                        'name':['in',r.message]
+                    }
+                }
+            
+            })
+            }
+        })},
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
@@ -188,7 +208,10 @@ frappe.ui.form.on('TS Loadman Cost',{
         }
         cur_frm.set_value('ts_loadman_total_amount', loading_cost)
         cur_frm.refresh_field('ts_loadman_total_amount')
-    }
+    },
+
+
+   
 })
 
 function calculate_loading_cost(frm){

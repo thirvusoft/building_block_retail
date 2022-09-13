@@ -1,4 +1,6 @@
 function setquery(frm){
+   
+    
     frm.set_query('item','pavers',function(frm){
         return {
             filters:{
@@ -17,12 +19,14 @@ function setquery(frm){
             }
         }
     })
+ 
+  
 }
 
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
-        setTimeout(() => {
+        setTimeout(() => {   
             frm.remove_custom_button('Pick List', "Create");
             frm.remove_custom_button('Material Request', "Create");
             frm.remove_custom_button('Request for Raw Materials', "Create");
@@ -132,6 +136,28 @@ frappe.ui.form.on('Sales Order',{
             }
         })
     },
+
+//   Thirvu_dual_accounting
+    company:function(frm){
+    
+    frappe.call({
+        method:"building_block_retail.building_block_retail.custom.py.sales_order.branch_list",
+        args:{
+            company:frm.doc.company
+        },
+        callback: function(r){
+           
+        frm.set_query('branch',function(frm){
+            return{
+                filters:{
+                    'name':['in',r.message]
+                }
+            }
+        
+        })
+        }
+    })
+},
     site_work:function(frm){
         cur_frm.set_value('project',cur_frm.doc.site_work)
     },

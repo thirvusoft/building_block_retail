@@ -29,7 +29,7 @@ def purchase_invoice():
         'property': "hidden",
         'property_type': "Check",
         'field_name': "accounting_dimensions_section",
-        "value": 1
+        "value":0
     })
     Purchase_Invoice.save()
     Purchase_Invoice = frappe.get_doc({
