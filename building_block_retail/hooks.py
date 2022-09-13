@@ -32,7 +32,7 @@ app_license = "MIT"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
-doctype_list_js = {"Project" : "/building_block_retail/custom/js/sw_quick_entry.js"}
+doctype_list_js = {"Project" : "/building_block_retail/custom/js/sw_quick_entry.js",}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
 
@@ -228,7 +228,9 @@ doctype_js = {
 				"Payroll Entry": "/building_block_retail/custom/js/payroll_entry.js",
 				"Employee": "/building_block_retail/custom/js/employee.js",
 				"Supplier": "/building_block_retail/custom/js/supplier.js",
-				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" 
+				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" ,
+				
+                "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js"
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks

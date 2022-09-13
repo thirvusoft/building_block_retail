@@ -1,4 +1,5 @@
 from copy import copy
+from dataclasses import field
 import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
@@ -381,3 +382,17 @@ def add_price_list(doc, event):
                 'price_list_rate': i.rate
             })
             pl.save(ignore_permissions=True)
+
+
+@frappe.whitelist()
+def branch_list(company):
+    branch_filter=[]
+    branch_list=frappe.get_list(
+		"Accounting Dimension Detail",
+		filters={"parent":"Branch","company":company},
+        fields=["default_dimension"]
+    )
+    for rows in branch_list:
+        branch_filter.append(rows.default_dimension)
+   
+    return branch_filter
