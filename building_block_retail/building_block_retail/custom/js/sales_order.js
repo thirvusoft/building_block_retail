@@ -139,7 +139,7 @@ frappe.ui.form.on('Sales Order',{
 
 //   Thirvu_dual_accounting
     company:function(frm){
-    
+        if(frm.doc.company){
     frappe.call({
         method:"building_block_retail.building_block_retail.custom.py.sales_order.branch_list",
         args:{
@@ -156,7 +156,7 @@ frappe.ui.form.on('Sales Order',{
         
         })
         }
-    })
+    })}
 },
     site_work:function(frm){
         cur_frm.set_value('project',cur_frm.doc.site_work)

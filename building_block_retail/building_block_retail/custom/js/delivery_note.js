@@ -79,6 +79,7 @@ frappe.ui.form.on('Delivery Note', {
     },
      // Thirvu_dual_accoutning
      company:function(frm){
+        if(frm.doc.company){
         frappe.call({
             method:"building_block_retail.building_block_retail.custom.py.sales_order.branch_list",
             args:{
@@ -95,7 +96,7 @@ frappe.ui.form.on('Delivery Note', {
             
             })
             }
-        })},
+        })}},
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
