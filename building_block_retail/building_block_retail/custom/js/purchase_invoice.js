@@ -3,7 +3,7 @@ frappe.ui.form.on("Purchase Invoice",{
     company:function(frm){
   
         frappe.call({
-            method:"thirvu_dual_accounting.thirvu_dual_accounting.custom.py.sales_order.branch_list",
+            method:"building_block_retail.building_block_retail.custom.py.sales_order.branch_list",
             args:{
                 company:frm.doc.company
             },
