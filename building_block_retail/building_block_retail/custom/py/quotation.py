@@ -25,3 +25,48 @@ def workflow_quotation(doc,action):
             })
             notification.insert(ignore_permissions=True)
 
+def quotation_whatsapp(doc, action):
+
+    import http.client
+    import json
+    from frappe.utils.password import get_decrypted_password
+
+    conn = http.client.HTTPSConnection(frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint'))
+
+    payload = json.dumps({
+    "countryCode": "+91",
+    "phoneNumber": doc.supervisor_number,
+    "callbackData": "some text here",
+    "type": "Template",
+    "template": {
+        "name": "velavabricks_quotation_", 
+        "languageCode": "en",
+        "bodyValues": [
+        doc.customer_name,
+        doc.name
+        ],
+        "buttonValues": {
+        "0": [
+            (frappe.utils.get_url()+"/app/quotation/"+doc.name).split("https://velavaabricks.thirvusoft.com/")[-1]
+        ]
+        }
+    }
+    })
+    try:
+        headers = {
+        'Authorization': get_decrypted_password('Whatsapp Setting', 'Whatsapp Setting', 'ts_authentication',False),
+        'Content-Type': 'application/json',
+        'Cookie': 'ApplicationGatewayAffinity=a8f6ae06c0b3046487ae2c0ab287e175; ApplicationGatewayAffinityCORS=a8f6ae06c0b3046487ae2c0ab287e175'
+        }
+        conn.request("POST", "/v1/public/message/", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+    except Exception as e:
+        error = f"Doctype: {doc.doctype} " + str(e)
+        api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')
+        api_authentication = frappe.db.get_single_value('Whatsapp Setting', 'ts_authentication')
+        if(not api_endpoint):
+            error += "\n API End Point Not found."
+        if(not api_authentication):
+            error += "\n API Authentication Not found."
+        frappe.log_error(error,"Whatsapp error")

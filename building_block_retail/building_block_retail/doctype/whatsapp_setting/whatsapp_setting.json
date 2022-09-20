@@ -1,0 +1,46 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-09-19 17:00:31.279204",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "ts_api_endpoint",
+  "ts_authentication"
+ ],
+ "fields": [
+  {
+   "fieldname": "ts_api_endpoint",
+   "fieldtype": "Data",
+   "label": "API End Point"
+  },
+  {
+   "fieldname": "ts_authentication",
+   "fieldtype": "Password",
+   "label": "API Authentication"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-09-19 17:02:01.525876",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Whatsapp Setting",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
