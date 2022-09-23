@@ -177,5 +177,5 @@ def validate_jw_qty(self):
     for item in jw_items:
         if((jw_items.get(item) or 0)>(delivered_item.get(item) or 0)):
             wrong_items.append(frappe.bold(item))
-    if(wrong_items):
-        frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
+    # if(wrong_items):
+    #     frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))

@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "TS Settings",
  "links": [],
- "modified": "2022-07-29 10:00:20.849048",
- "modified_by": "naveen.kumar@thirvusoft.in",
+ "modified": "2022-09-21 12:01:06.132497",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Settings",
  "owner": "naveen.kumar@thirvusoft.in",
@@ -37,6 +37,12 @@
    "doc_view": "List",
    "label": "HR Settings",
    "link_to": "HR Settings",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Vehicle Settings",
+   "link_to": "Vehicle Settings",
    "type": "DocType"
   },
   {

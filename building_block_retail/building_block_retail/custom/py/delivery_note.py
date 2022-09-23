@@ -1,7 +1,10 @@
+import http
+from xml.dom.minidom import Document
 import frappe
 import json
 from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
+from frappe.utils.data import get_link_to_form
 
 def update_qty_sitework(self,event):
     if(self.doctype=='Sales Invoice' and self.update_stock==0):
@@ -259,3 +262,52 @@ def get_item_loading_cost(items, len, work=None):
         if(i.get('dont_include_in_loadman_cost') == 1):continue
         loading_cost += (frappe.get_value('Item', i.get('item_code'), 'loading_cost') or 0)*i.get('stock_qty')
     return (loading_cost*multiply)/flt(len)
+
+
+def delivery_note_whatsapp(doc, action):
+
+    import http.client
+    import json
+    from frappe.utils.password import get_decrypted_password
+
+    delivery_man_no = frappe.get_value("Driver",{'employee':doc.employee},"cell_number")
+    conn = http.client.HTTPSConnection(frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint'))
+
+    payload = json.dumps({
+    "countryCode": "+91",
+    "phoneNumber": delivery_man_no,
+    "callbackData": "some text here",
+    "type": "Template",
+    "template": {
+        "name": "velavabricks_delivery_note_7q", 
+        "languageCode": "en",
+        "bodyValues": [
+        doc.name,
+        frappe.utils.get_url()+"/app/delivery-note/"+doc.name,
+        doc.site_work
+        ],
+        "buttonValues": {
+        "0": [
+            (doc.ts_map_link or "").split("https://www.google.com/")[-1]
+        ]
+        }
+    }
+    })
+    try:
+        headers = {
+        'Authorization': get_decrypted_password('Whatsapp Setting', 'Whatsapp Setting', 'ts_authentication',False),
+        'Content-Type': 'application/json',
+        'Cookie': 'ApplicationGatewayAffinity=a8f6ae06c0b3046487ae2c0ab287e175; ApplicationGatewayAffinityCORS=a8f6ae06c0b3046487ae2c0ab287e175'
+        }
+        conn.request("POST", "/v1/public/message/", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+    except Exception as e:
+        error = f"Doctype: {doc.doctype} " + str(e)
+        api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')
+        api_authentication = frappe.db.get_single_value('Whatsapp Setting', 'ts_authentication')
+        if(not api_endpoint):
+            error += "\n API End Point Not found."
+        if(not api_authentication):
+            error += "\n API Authentication Not found."
+        frappe.log_error(error,"Whatsapp error")

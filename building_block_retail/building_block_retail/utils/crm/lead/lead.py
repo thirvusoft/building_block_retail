@@ -35,7 +35,7 @@ def lead_property_setter():
     make_property_setter('Opportunity', 'language', 'hidden', 1, 'Check')
     
     make_property_setter('Lead', 'lead_owner', 'read_only', 1, 'Check')
-    make_property_setter('Lead', 'lead_owner', 'read_only', 1, 'Check')
+    make_property_setter('Lead', 'lead_owner', 'hidden', 1, 'Check')
     make_property_setter('Lead', 'campaign_name', 'depends_on', 'eval:doc.source == "Campaign"', 'Text Editor')
     make_property_setter('Lead', 'fax', 'hidden', 1, 'Check')
     make_property_setter('Lead', 'language', 'hidden', 1, 'Check')

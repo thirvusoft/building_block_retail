@@ -114,7 +114,8 @@ doc_events = {
 	},
     "Quotation" :{
 		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
-		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation"	
+		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation",
+		"on_submit" : "building_block_retail.building_block_retail.custom.py.quotation.quotation_whatsapp"	
 	},
 	"Driver":{
 		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
@@ -136,12 +137,14 @@ doc_events = {
 		"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
+					"building_block_retail.building_block_retail.custom.py.delivery_note.delivery_note_whatsapp"
 					],
 		"on_cancel":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_return_qty_sitework"
 					 ],
 		"validate":["building_block_retail.building_block_retail.custom.py.delivery_note.validate",
+					
 					],
 		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
   		"before_submit":"building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_creation"

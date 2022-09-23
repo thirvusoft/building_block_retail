@@ -145,11 +145,11 @@ def salary_slip_add_gross_pay(doc, event):
 
 def get_employe_expense_report(doc):
     work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')
-    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order],  'company':doc.company}, fields=['name', 'workstation', 'production_item', 'posting_date'])
+    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order],  'company':doc.company, 'docstatus':1}, fields=['name', 'workstation', 'production_item', 'posting_date'])
     jc_name = [i['name'] for i in job_card]
     jc_details = {i['name']:[i['posting_date'], i['workstation'], i['production_item']] for i in job_card}
     jc_data = {}
-    for i in frappe.get_all('Job Card Time Log', filters={'parent': ['in', jc_name], 'employee':doc.employee}, fields=['completed_qty', 'parent']):
+    for i in frappe.get_all('Job Card Time Log', filters={'parent': ['in', jc_name], 'employee':doc.employee, 'docstatus':1}, fields=['completed_qty', 'parent']):
         if(i['parent'] in list(jc_data.keys())):jc_data[i['parent']] += (i['completed_qty'] or 0)
         else:jc_data[i['parent']]= i['completed_qty']
     final_data=[]
@@ -165,7 +165,7 @@ def get_employe_expense_report(doc):
     return final_data
 
 def get_expense_from_stock_entry(job_card, employee, item):
-    se = frappe.get_all("Stock Entry", filters={'ts_job_card': job_card}, fields=['code', 'work_order', 'name'])
+    se = frappe.get_all("Stock Entry", filters={'ts_job_card': job_card, 'docstatus':1}, fields=['code', 'work_order', 'name'])
     wo_name = {i['name']:i['work_order'] for i in se}
     emp_expense={}
     for i in wo_name:
@@ -176,7 +176,7 @@ def get_expense_from_stock_entry(job_card, employee, item):
     amount = []
     for i in list(wo_name.keys()):
         rate.append(frappe.db.get_value('Work Order', wo_name[i], 'total_expanse') or 0)
-        amount.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item}, pluck='amount')))
+        amount.append(average(frappe.get_all("Stock Entry Detail", filters={'parent':i, 'item_code':item, 'docstatus':1}, pluck='amount')))
     if(len(rate) == 0):rate=0
     if(len(amount) == 0):amount=[0]
     for i in se:
@@ -243,6 +243,7 @@ def set_net_pay(self):
         self.set_net_total_in_words()
         
 def create_journal_entry(doc,action):
+    if(doc.payroll_entry):return
     earn_component_list=[]
     earn_amount=[]
     ded_component_list=[]

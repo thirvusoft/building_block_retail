@@ -11,7 +11,6 @@ def item_customization():
                 fieldtype='Link',
                 options='Brand',
                 insert_after='stock_uom',
-                depends_on='eval:doc.parent_item_group == "Products"',
                 read_only=0),
 
             dict(fieldname='section_break_inventory',
