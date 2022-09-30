@@ -6,8 +6,9 @@ frappe.ui.form.on("Job Card",{
     refresh: function(frm){
         job_card_name = frm.doc.name
         if(!frm.is_new() && !([1,2],frm.doc.docstatus)){
-        frm.page.clear_primary_action();
-        frm.page.set_primary_action(__('Create Stock Entry'), () => {
+        // frm.page.clear_primary_action();
+        // frm.page.set_primary_action(__('Create Stock Entry'), () => {
+        frm.add_custom_button("Finish",()=>{
             if(frm.doc.work_order){
                 tot_comp_qty = frm.doc.total_completed_qty
                 opr = frm.doc.operation

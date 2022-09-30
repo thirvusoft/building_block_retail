@@ -27,6 +27,12 @@ def create_job_card_custom_fields():
                  read_only = 1
             ),
             dict(
+                 fieldname  = "reason",
+                 fieldtype  = "Small Text",
+                 insert_after  = "project",
+                 label = "Reason",
+            ),
+            dict(
                  fieldname  = "priority",
                  fieldtype  = "Select",
                  insert_after  = "posting_date",
