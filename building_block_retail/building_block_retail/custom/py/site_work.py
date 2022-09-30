@@ -48,12 +48,12 @@ def before_save(doc, action=None):
     for item in doc.item_details:
         if(item.get('warehouse')):
             bin_=frappe.get_value('Bin', {'warehouse': item.warehouse, 'item_code': item.item}, 'valuation_rate')
-            item_cost+=(bin_ or 0)* item.allocated_paver_area
+            item_cost+=(bin_ or 0)* (item.allocated_paver_area * frappe.db.get_value("Item", item.item, 'pavers_per_sqft') or 1)
 
     for item in doc.item_details_compound_wall:
         if(item.get('warehouse')):
             bin_=frappe.get_value('Bin', {'warehouse': item.warehouse, 'item_code': item.item}, 'valuation_rate')
-            item_cost+=(bin_ or 0)* item.allocated_ft
+            item_cost+=(bin_ or 0)* (item.allocated_ft * frappe.db.get_value("Item", item.item, 'pavers_per_sqft') or 1)
     
     for item in doc.raw_material:
         doc1=frappe.get_all('Item Price', {'buying':1, 'item_code': item.item}, pluck="price_list_rate")
@@ -161,13 +161,14 @@ def validate_jw_qty(self):
     for row in self.delivery_detail:
         if(row.item not  in delivered_item):
             delivered_item[row.item]=0
-        sqft=((row.delivered_bundle or 0)*float(frappe.get_value('Item', row.item, 'bundle_per_sqr_ft') or 0))+((row.delivered_pieces or 0)*float(frappe.get_value('Item', row.item, 'pavers_per_sqft') or 0))
-        item_doc=frappe.get_doc('Item', row.item, 'uoms')
-        conv_factor=[conv.conversion_factor for conv in item_doc.uoms if(conv.uom==item_doc.sales_uom)]
-        if(not sqft and not conv_factor):
-            frappe.throw('Please enter Sales UOM for an item: '+ frappe.bold(getlink('Item', row.item)))
-        stock_qty=(row.delivered_stock_qty or 0) *(conv_factor[0] if(conv_factor) else 0)
-        delivered_item[row.item]+=sqft if(sqft) else (stock_qty)
+        # sqft=((row.delivered_bundle or 0)*float(frappe.get_value('Item', row.item, 'bundle_per_sqr_ft') or 0))+((row.delivered_pieces or 0)*float(frappe.get_value('Item', row.item, 'pavers_per_sqft') or 0))
+        # item_doc=frappe.get_doc('Item', row.item, 'uoms')
+        # conv_factor=[conv.conversion_factor for conv in item_doc.uoms if(conv.uom==item_doc.sales_uom)]
+        # if(not sqft and not conv_factor):
+        #     frappe.throw('Please enter Sales UOM for an item: '+ frappe.bold(getlink('Item', row.item)))
+        # stock_qty=(row.delivered_stock_qty or 0) *(conv_factor[0] if(conv_factor) else 0)
+
+        delivered_item[row.item]+= row.delivered_stock_qty / (frappe.get_value('Item', row.item, 'pavers_per_sqft') or 1)
     jw_items={}
     for row in self.job_worker:
         if(row.item not  in jw_items):
@@ -177,5 +178,5 @@ def validate_jw_qty(self):
     for item in jw_items:
         if((jw_items.get(item) or 0)>(delivered_item.get(item) or 0)):
             wrong_items.append(frappe.bold(item))
-    # if(wrong_items):
-    #     frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
+    if(wrong_items):
+        frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))

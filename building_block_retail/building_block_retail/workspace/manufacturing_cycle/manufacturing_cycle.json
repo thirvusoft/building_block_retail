@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2022-07-28 09:38:11.049491",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-09-28 15:29:02.693735",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Manufacturing Cycle",
  "owner": "Administrator",
@@ -37,6 +37,24 @@
    "doc_view": "List",
    "label": "Stock Entry",
    "link_to": "Stock Entry",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Bom",
+   "link_to": "BOM",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Workstation",
+   "link_to": "Workstation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Operation",
+   "link_to": "Operation",
    "type": "DocType"
   }
  ]

@@ -42,7 +42,7 @@ def quotation_whatsapp(doc, action):
         "name": "velavabricks_quotation_", 
         "languageCode": "en",
         "bodyValues": [
-        doc.customer_name,
+        doc.supervisor_name,
         doc.name
         ],
         "buttonValues": {
