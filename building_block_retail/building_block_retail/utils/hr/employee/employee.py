@@ -18,6 +18,13 @@ def create_contracter_expense_account():
                 insert_after = 'date_of_joining',
                 read_only = 1,
                 description = "Pending Salary For Job Worker From Salary Slip."
+            ),
+            dict(
+                fieldname = 'employee_percentage',
+                label = 'Employee Percentage',
+                fieldtype = 'Currency',
+                insert_after = 'salary_balance',
+                description = "percentage of hike"
             )
         ]
     }

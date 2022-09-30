@@ -37,9 +37,14 @@ def before_validate(doc,action):
             doc.code = str(final_qty)
         else:
             doc.code = str(emp_qty)
+        amt = 0
+        for i in final_qty:
+            emp_per = frappe.get_value("Employee",i,"employee_percentage")
+            hike = wo.total_expanse * emp_per / 100
+            amt +=  (hike * final_qty[i]) + (wo.total_expanse * final_qty[i])
         wo=frappe.get_doc("Work Order",doc.work_order)
         expenses_included_in_valuation = frappe.get_cached_value("Company", wo.company, "expenses_included_in_valuation")
-        amount = wo.total_expanse * doc.fg_completed_qty
+        amount = amt
         if doc.amended_from:
             if wo.total_expanse:
                 creating_journal_entry(doc,wo.total_expanse)
@@ -61,22 +66,30 @@ def creating_journal_entry(doc,income):
     for i in code:
         if code[i] != 0:
             income_account = frappe.get_value("Employee",i,"contracter_expense_account")
+            per_emp = frappe.get_value("Employee",i,"employee_percentage")
+            hike = income * per_emp / 100
+            amt =  (hike * code[i]) + (income * code[i])
             if income_account:
                 default_employee_expenses_account = frappe.get_cached_value("Company", doc.company, "default_employee_expenses_account")
+                def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
+                
                 if default_employee_expenses_account:
                     new_journal=frappe.get_doc({
                         "doctype":"Journal Entry",
                         "company":doc.company,
                         "posting_date":doc.posting_date,
                         "stock_entry_linked":doc.name,
+                        "cost_center": def_cost_center,
                         "accounts":[
                             {
                                 "account":default_employee_expenses_account,
-                                "credit_in_account_currency":code[i]*income
+                                "credit_in_account_currency":amt,
+                                "cost_center": def_cost_center
                             },
                             {
                                 "account":income_account,
-                                "debit_in_account_currency":code[i]*income,
+                                "debit_in_account_currency":amt,
+                                "cost_center": def_cost_center,
                             },
                         ],
                     })

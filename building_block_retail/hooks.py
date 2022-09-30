@@ -147,7 +147,7 @@ doc_events = {
 					
 					],
 		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
-  		"before_submit":"building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_creation"
+  		"on_update":"building_block_retail.building_block_retail.custom.py.vehicle_log.vehicle_log_creation"
 	},
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
