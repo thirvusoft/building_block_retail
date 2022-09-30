@@ -13,3 +13,6 @@ def get_parent_item_group(item_group):
         if(not parent or parent == 'All Item Groups'):break
         else:item_group = parent
     return item_group
+    
+def item_validate(doc,action):
+    doc.item_name=doc.item_code

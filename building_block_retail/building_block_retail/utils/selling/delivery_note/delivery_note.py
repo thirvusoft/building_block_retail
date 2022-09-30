@@ -87,6 +87,7 @@ def delivery_note_custom_field():
 				fieldtype= "Int",
 				insert_after= "current_odometer_value",
 				label= "Return Odometer Value",
+                allow_on_submit=1,
                 depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
@@ -95,6 +96,7 @@ def delivery_note_custom_field():
 				insert_after= "return_odometer_value",
 				label= "Total Distance",
                 read_only=1,
+                allow_on_submit=1,
                 depends_on= "eval:doc.transporter=='Own Transporter'"
             ),
             dict(
@@ -181,18 +183,16 @@ def delivery_note_custom_field():
                 collapsible = 1
             ),
             dict(
-                fieldname= "ts_loadman_work",
-                fieldtype= "Select",
+                fieldname= "ts_both_loading_unloading",
+                fieldtype= "Check",
                 insert_after= "loadman_info_section",
-                label= "Loadman Work",
-                options='Both Loading and Unloading\nLoading Only\nUnloading Only',
-                default='Both Loading and Unloading',
+                label= "Both Loading and Unloading",
                 mandatory_depends_on = 'eval: doc.work == "Supply and Laying"'
             ),
             dict(
                 fieldname= "ts_loadman_info",
                 fieldtype= "Table",
-                insert_after= "ts_loadman_work",
+                insert_after= "ts_both_loading_unloading",
                 label= "Loadman Info",
                 options= "TS Loadman Cost",
             ),

@@ -1,0 +1,36 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2022-09-30 15:25:11.287862",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Delivery Note\",\"company\",\"=\",\"VB\"]],\"fields\":[[\"name\",\"Delivery Note\"],[\"docstatus\",\"Delivery Note\"],[\"site_work\",\"Delivery Note\"],[\"own_vehicle_no\",\"Delivery Note\"],[\"driver_name2\",\"Delivery Note\"],[\"current_odometer_value\",\"Delivery Note\"],[\"return_odometer_value\",\"Delivery Note\"]],\"order_by\":\"`tabDelivery Note`.`modified` desc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":120,\"site_work\":120,\"own_vehicle_no\":120,\"driver_name2\":120,\"current_odometer_value\":120,\"return_odometer_value\":120},\"group_by\":null}",
+ "modified": "2022-09-30 15:25:54.696883",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Delivery note Transport Details",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Delivery Note",
+ "report_name": "Delivery note Transport Details",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "Sales User"
+  },
+  {
+   "role": "Stock User"
+  },
+  {
+   "role": "Stock Manager"
+  },
+  {
+   "role": "Accounts User"
+  }
+ ]
+}

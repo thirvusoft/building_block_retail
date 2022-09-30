@@ -117,6 +117,9 @@ doc_events = {
 		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation",
 		"on_submit" : "building_block_retail.building_block_retail.custom.py.quotation.quotation_whatsapp"	
 	},
+	"Item":{
+		"validate":"building_block_retail.building_block_retail.custom.py.item.item_validate"
+	},
 	"Driver":{
 		"validate":"building_block_retail.building_block_retail.custom.py.driver.validate_phone"
 	},
