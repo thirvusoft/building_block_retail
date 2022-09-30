@@ -166,7 +166,7 @@ frappe.ui.form.on("Item Detail Pavers", {
 	number_of_bundle : function(frm,cdt,cdn) {
 			let data = locals[cdt][cdn]
 			let allocated_paver = data.number_of_bundle * data.area_per_bundle
-			frappe.model.set_value(cdt,cdn,"allocated_paver_area",allocated_paver?allocated_paver:0)
+			frappe.model.set_value(cdt,cdn,"allocated_paver_area",allocated_paver?allocated_paver:data.required_area)
 	},
 	allocated_paver_area :function(frm,cdt,cdn) {
 			
