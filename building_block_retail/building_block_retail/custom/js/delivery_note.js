@@ -22,7 +22,6 @@ frappe.ui.form.on('Delivery Note Item', {
     }
 })
 
-
 async function bundle_calc(frm, cdt, cdn){
     let row = locals[cdt][cdn]
     let uom=row.uom
@@ -57,6 +56,7 @@ async function bundle_calc(frm, cdt, cdn){
 
 
 
+
 frappe.ui.form.on('Delivery Note', {
     setup: function(frm){
         frm.set_query('employee', 'ts_loadman_info',function(frm){
@@ -71,6 +71,15 @@ frappe.ui.form.on('Delivery Note', {
         
        
     },
+
+   
+    // ts_both_loading_unloading: function(frm) {
+	// 	$.each(frm.doc.ts_loadman_info|| [], function(i, d) {
+	// 		if((d.ts_both_loading_unloading==1)=frm.doc.lode_type);
+	// 	});
+	// 	refresh_field("ts_loadman_info");
+	// },
+
     
 
 	return_odometer_value: function(frm){
@@ -97,6 +106,32 @@ frappe.ui.form.on('Delivery Note', {
             })
             }
         })}},
+    taxes_and_charges: function(frm) {
+        if(frm.doc.branch) {
+            frappe.db.get_value("Branch", frm.doc.branch, "is_accounting").then( value => {
+                console.log("pppp")
+                if (!value.message.is_accounting) {
+                    if(frm.doc.taxes_and_charges)
+                        frm.set_value("taxes_and_charges", "")
+                    if(frm.doc.tax_category)
+                        frm.set_value("tax_category", "")
+                        console.log("pppp")
+                    if(frm.doc.taxes)
+                        frm.clear_table("taxes")
+                        refresh_field("taxes")
+                }
+            })
+        }
+    },
+    tax_category: function(frm) {
+        frm.trigger("taxes_and_charges")
+    },
+    branch: function (frm) {
+        frm.trigger("taxes_and_charges")
+    },
+    validate: function(frm) {
+        frm.trigger("taxes_and_charges")
+    },
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
