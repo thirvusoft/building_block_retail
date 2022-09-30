@@ -10,7 +10,6 @@ frappe.ui.form.on("Employee", {
 				filters: {
 					"is_group": 0,
 					"company": doc.company,
-					"employee":doc.name
 				}
 			};
 		});

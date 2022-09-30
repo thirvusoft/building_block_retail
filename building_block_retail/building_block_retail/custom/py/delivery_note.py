@@ -81,6 +81,7 @@ def reduce_qty_sitework(self,event):
                         'raw_material': raw_material,
                         'delivery_detail': delivery_detail
                     })
+                    doc.flags.ignore_validate = True
                     doc.save()
         frappe.db.commit()
 
@@ -288,7 +289,7 @@ def delivery_note_whatsapp(doc, action):
         ],
         "buttonValues": {
         "0": [
-            (doc.ts_map_link or "").split("https://www.google.com/")[-1]
+            (doc.get('ts_map_link') or "").split("https://www.google.com/")[-1]
         ]
         }
     }

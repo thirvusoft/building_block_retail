@@ -466,15 +466,28 @@ function fill_paver_compound_table_from_item(frm){
     if(frm.doc.type=="Compound Wall"){
         if(!frm.doc.compoun_walls || frm.doc.compoun_walls==0){
         frm.doc.items.forEach((row) =>{
+            if(row.item_group != 'Raw Material'){
             var child = frm.add_child('compoun_walls')
             child.item = row.item_code
             child.rate = row.rate
+            child.allocated_ft = row.qty
+            child.amount = row.amount
+        }
+        else{
+            var child = frm.add_child('raw_materials')
+            child.item = row.item_code
+            child.rate = row.rate
+            child.qty = row.qty
+            child.amount = row.amount
+            child.uom = row.uom
+        }
         })
     }
     }
     else if(frm.doc.type == "Pavers"){
         if(!frm.doc.pavers || frm.doc.pavers==0){    
         frm.doc.items.forEach((row) =>{
+            if(row.item_group != 'Raw Material'){
             var child = frm.add_child('pavers')
             child.item = row.item_code
             child.required_area=row.qty
@@ -494,6 +507,15 @@ function fill_paver_compound_table_from_item(frm){
 			        child.allocated_paver_area = allocated_paver?allocated_paver:0
 				}
 			})
+        }
+        }
+        else{
+            var child = frm.add_child('raw_materials')
+            child.item = row.item_code
+            child.rate = row.rate
+            child.qty = row.qty
+            child.amount = row.amount
+            child.uom = row.uom
         }
         })
     }

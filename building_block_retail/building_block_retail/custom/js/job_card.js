@@ -5,8 +5,9 @@ let job_card_name = '';
 frappe.ui.form.on("Job Card",{
     refresh: function(frm){
         job_card_name = frm.doc.name
-        if(frm.doc.status != 'Completed' && frm.doc.status != 'Open')
-        frm.add_custom_button("Finish",()=>{
+        if(!frm.is_new() && !([1,2],frm.doc.docstatus)){
+        frm.page.clear_primary_action();
+        frm.page.set_primary_action(__('Create Stock Entry'), () => {
             if(frm.doc.work_order){
                 tot_comp_qty = frm.doc.total_completed_qty
                 opr = frm.doc.operation
@@ -25,6 +26,7 @@ frappe.ui.form.on("Job Card",{
             })
         }
         }).addClass("btn-warning").css({'color':'white','background-color': '#4CBB17','box-shadow': '2px 2px 2px #4CBB17'});
+    }
         frm.set_query('employee','time_logs', function() {
             return {
                 filters: {
