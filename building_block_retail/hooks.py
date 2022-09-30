@@ -211,6 +211,9 @@ doc_events = {
 	},
 	'Payroll Entry':{
 		'validate':'building_block_retail.building_block_retail.custom.py.payroll_entry.validate'
+	},
+	'Workstation' : {
+		'validate': 'building_block_retail.building_block_retail.custom.py.workstation.cal_per_hour'
 	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]
@@ -272,7 +275,8 @@ scheduler_events = {
 override_whitelisted_methods = {
 	"erpnext.erpnext.payroll.doctype.payroll_entry.payroll_entry.make_payment_entry": "building_block_retail.building_block_retail.utils.hr.journel_entry.journel_entry.make_payment_entry",
 	'erpnext.payroll.doctype.payroll_entry.payroll_entry.get_start_end_dates': 'building_block_retail.building_block_retail.custom.py.salary_slip.get_start_end_dates',
-	'erpnext.payroll.doctype.payroll_entry.payroll_entry.submit_salary_slips_for_employees': 'building_block_retail.building_block_retail.custom.py.salary_slip.submit_salary_slips_for_employees'
+	'erpnext.payroll.doctype.payroll_entry.payroll_entry.submit_salary_slips_for_employees': 'building_block_retail.building_block_retail.custom.py.salary_slip.submit_salary_slips_for_employees',
+	'erpnext.manufacturing.doctype.bom.bom.make_variant_bom' : 'building_block_retail.building_block_retail.custom.py.bom.make_variant_bom'
 }
 #
 # each overriding function accepts a `data` argument;
