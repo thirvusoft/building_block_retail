@@ -563,12 +563,12 @@ function make_work_order(frm) {
                                     return { filters: { item: doc.item_code } };
                                 }
                             }, {
-                                fieldtype: 'Float',
+                                fieldtype: 'Read Only',
                                 fieldname: 'req_qty',
                                 reqd: 1,
                                 label: __('Order Qty'),
                                 in_list_view: 1,
-                                columns: 1
+                                columns: 1,
                             }, {
                                 fieldtype: 'Data',
                                 fieldname: 'sales_order_item',
@@ -585,16 +585,23 @@ function make_work_order(frm) {
                                     // read_only :1
                                 },
                                 {
-                                    fieldtype: 'Float',
+                                    fieldtype: 'Read Only',
                                     fieldname: 'stock_taken',
                                     label: 'Stock Taken',
+                                    // in_list_view: 1,
+                                    columns: 1
+                                },
+                                {
+                                    fieldtype: 'Read Only',
+                                    fieldname: 'pending_qty',
+                                    label: 'Required Qty',
                                     in_list_view: 1,
                                     columns: 1
                                 },
                                 {
-                                    fieldtype: 'Float',
-                                    fieldname: 'pending_qty',
-                                    label: 'Required Qty (With Over Production Allowance)',
+                                    fieldtype: 'Int',
+                                    fieldname: 'buffer_qty',
+                                    label: 'Buffer Qty(Over Production Allowance)',
                                     in_list_view: 1,
                                     columns: 1
                                 },
