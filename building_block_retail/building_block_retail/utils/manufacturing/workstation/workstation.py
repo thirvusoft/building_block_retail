@@ -7,13 +7,13 @@ def workstation_custom_fields():
     custom_fields={
         "Workstation" :[
             dict(
-                 fieldname  = "expanse_per_piece",
+                 fieldname  = "administrator_expense",
                  fieldtype  = "Currency",
                  insert_after  = "hour_rate_consumable",
-                 label = "Expense Per Piece",
-                 description = "per qty"
+                 label = "Administrator Expense",
+                 description = "per hour"
             ),
-        ],
+        ]
     }
     create_custom_fields(custom_fields)
 
