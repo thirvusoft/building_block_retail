@@ -31,6 +31,8 @@ def create_job_card_custom_fields():
                  fieldtype  = "Small Text",
                  insert_after  = "project",
                  label = "Reason",
+                 allow_on_submit =1,
+                 read_only = 1
             ),
             dict(
                  fieldname  = "priority",

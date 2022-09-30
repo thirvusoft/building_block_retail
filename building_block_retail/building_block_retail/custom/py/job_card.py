@@ -24,17 +24,7 @@ class Jobcard(JobCard):
 			)
 
 		if self.for_quantity and self.total_completed_qty != self.for_quantity and not self.reason:
-			total_completed_qty = bold(_("Total Completed Qty"))
-			qty_to_manufacture = bold(_("Qty to Manufacture"))
-
-			frappe.throw(
-				_("The {0} ({1}) must be equal to {2} ({3}) Otherwise Fill The Reason Box").format(
-					total_completed_qty,
-					bold(self.total_completed_qty),
-					qty_to_manufacture,
-					bold(self.for_quantity),
-				)
-			)
+   			pass
 
 @frappe.whitelist()
 def get_workorder_doc(work_order, opr, workstation, qty=0):
