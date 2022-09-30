@@ -310,14 +310,16 @@ def get_stock_and_priority(items):
                 new_row=copy(row)
                 new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
-                new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv) + round(round((copy_req_qty - act_qty)*conv)*buffer/100)
+                new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv)
+                new_row['buffer_qty'] = round(round((copy_req_qty - act_qty)*conv)*buffer/100)
                 new_row['priority'] = 'Urgent Priority'
                 item.append(new_row)
                 row['req_qty'] = copy_req_qty
                 
             items[idx]['stock_availability'] = round(act_qty*conv)
             items[idx]['stock_taken'] = round(stock_taken*conv)
-            items[idx]['pending_qty'] = round(req_qty*conv) + round(round(req_qty*conv) * buffer/100)
+            items[idx]['pending_qty'] = round(req_qty*conv) 
+            items[idx]['buffer_qty'] = round(round(req_qty*conv) * buffer/100)
             items[idx]['priority'] = priority
             items[idx]['req_qty'] *= conv
             items[idx]['req_qty'] = round(items[idx]['req_qty'])
@@ -350,8 +352,8 @@ def make_work_orders(items, sales_order, company, project=None):
                 doctype="Work Order",
                 production_item=i["item_code"],
                 bom_no=i.get("bom"),
-                qty=(i["pending_qty"] / conv),
-                ts_qty_to_manufacture = i["pending_qty"],
+                qty=(i["pending_qty"]+i["buffer_qty"] / conv),
+                ts_qty_to_manufacture = i["pending_qty"]+i["buffer_qty"],
                 company=company,
                 use_multi_level_bom = 0,
                 sales_order=sales_order,

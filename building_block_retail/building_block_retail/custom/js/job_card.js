@@ -7,7 +7,24 @@ frappe.ui.form.on("Job Card",{
         job_card_name = frm.doc.name
         if(!frm.is_new() && !([1,2],frm.doc.docstatus)){
         frm.page.clear_primary_action();
-        frm.page.set_primary_action(__('Create Stock Entry'), () => {
+        frm.page.set_primary_action(__('Submit'), () => {
+            if (frm.doc.for_quantity && frm.doc.total_completed_qty != frm.doc.for_quantity && !frm.reason){
+                var d = new frappe.ui.Dialog({
+                    'fields': [
+                        {'fieldname': 'reason', 'label': __('Reason Box'),'fieldtype': 'Small Text',},
+                    ],
+                    primary_action: function(value){
+                        d.hide();
+                        cur_frm.set_value("reason",value.reason)
+                        frm.save('Submit')
+                    }
+                });
+                d.show();
+            }else{
+                frm.save('Submit')
+            }
+        })
+        frm.add_custom_button("Finish",()=>{
             if(frm.doc.work_order){
                 tot_comp_qty = frm.doc.total_completed_qty
                 opr = frm.doc.operation
