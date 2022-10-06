@@ -122,8 +122,7 @@ def vehicle_log_creation(self, event):
             vehicle_log.save()
             vehicle_log.submit()
         else:
-            vehicle_log_doc=frappe.get_doc('Vehicle Log',{"delivery_note":self.name})
-            frappe.throw(f"Vehicle Log {vehicle_log_doc.name} is already linked with this delivery note ")
+            frappe.throw("Return odometer value already updated!")
 
 def vehicle_log_draft(self, event):
     vehicle_draft=frappe.get_all("Vehicle Log",filters={"docstatus":0,"license_plate":self.license_plate})
