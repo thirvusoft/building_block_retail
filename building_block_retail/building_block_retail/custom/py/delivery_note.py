@@ -192,6 +192,7 @@ def odometer_validate(doc,action):
     if(doc.return_odometer_value):
         doc.total_distance=doc.return_odometer_value-doc.current_odometer_value
         frappe.db.set_value("Delivery Note" , doc.name, "total_distance",doc.return_odometer_value-doc.current_odometer_value)
+        doc.reload()
 
 @frappe.whitelist()
 def make_work_orders(items, delivery_note, company, project=None):
