@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "TS Settings",
  "links": [],
- "modified": "2022-09-21 12:01:06.132497",
+ "modified": "2022-10-05 09:33:48.857982",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Settings",
@@ -31,6 +31,12 @@
    "doc_view": "List",
    "label": "Selling Settings",
    "link_to": "Selling Settings",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Manufacturing Settings",
+   "link_to": "Manufacturing Settings",
    "type": "DocType"
   },
   {

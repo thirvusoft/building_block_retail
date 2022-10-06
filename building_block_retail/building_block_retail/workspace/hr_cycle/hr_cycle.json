@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "HR Cycle",
  "links": [],
- "modified": "2022-09-07 12:59:39.649358",
+ "modified": "2022-10-05 09:28:58.282647",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "HR Cycle",
@@ -29,8 +29,14 @@
   },
   {
    "doc_view": "List",
-   "label": "Salary Slip",
-   "link_to": "Salary Slip",
+   "label": "Leave Application",
+   "link_to": "Leave Application",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Holiday List",
+   "link_to": "Holiday List",
    "type": "DocType"
   },
   {
@@ -53,14 +59,8 @@
   },
   {
    "doc_view": "List",
-   "label": "Holiday List",
-   "link_to": "Holiday List",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Leave Application",
-   "link_to": "Leave Application",
+   "label": "Salary Slip",
+   "link_to": "Salary Slip",
    "type": "DocType"
   }
  ]

@@ -13,18 +13,8 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "CRM Cycle",
- "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Quotation",
-   "link_to": "Quotation",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  }
- ],
- "modified": "2022-08-29 14:11:10.887577",
+ "links": [],
+ "modified": "2022-10-06 12:39:00.721443",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "CRM Cycle",
@@ -66,6 +56,24 @@
    "doc_view": "List",
    "label": "Supplier Group",
    "link_to": "Supplier Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Address",
+   "link_to": "Address",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Contact",
+   "link_to": "Contact",
    "type": "DocType"
   }
  ]

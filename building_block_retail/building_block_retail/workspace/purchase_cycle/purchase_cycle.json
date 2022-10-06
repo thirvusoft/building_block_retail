@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Purchase Cycle",
  "links": [],
- "modified": "2022-07-28 09:38:33.196892",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-10-05 09:35:09.052741",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Purchase Cycle",
  "owner": "administrator",
@@ -25,6 +25,18 @@
    "doc_view": "List",
    "label": "Material Request",
    "link_to": "Material Request",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Request for Quotation",
+   "link_to": "Request for Quotation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Supplier Quotation",
+   "link_to": "Supplier Quotation",
    "type": "DocType"
   },
   {
@@ -43,18 +55,6 @@
    "doc_view": "List",
    "label": "Purchase Invoice",
    "link_to": "Purchase Invoice",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Supplier Quotation",
-   "link_to": "Supplier Quotation",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Request for Quotation",
-   "link_to": "Request for Quotation",
    "type": "DocType"
   }
  ]
