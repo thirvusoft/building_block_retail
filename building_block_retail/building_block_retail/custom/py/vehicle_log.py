@@ -106,18 +106,24 @@ def update_transport_cost(self, event):
 
 def vehicle_log_creation(self, event):
     if(self.own_vehicle_no):
-        vehicle_log=frappe.new_doc('Vehicle Log')
-        vehicle_log.update({
-            'license_plate':self.own_vehicle_no,
-            'employee':self.employee,
-            "date":self.lr_date,
-            "odometer":self.return_odometer_value,
-            "select_purpose":"Goods Supply",
-            "delivery_note":self.name
-        })
-        vehicle_log.flags.ignore_permissions=True
-        vehicle_log.save()
-        vehicle_log.submit()
+        if not frappe.db.exists('Vehicle Log',{"delivery_note":self.name,"license_plate":self.own_vehicle_no}):
+            vehicle_log=frappe.new_doc('Vehicle Log')
+            vehicle_log.update({
+                'license_plate':self.own_vehicle_no,
+                'employee':self.employee,
+                "date":self.lr_date,
+                "odometer":self.return_odometer_value,
+                "last_odometer":self.current_odometer_value,
+                "select_purpose":"Goods Supply",
+                "delivery_note":self.name,
+                "today_odometer_value":(self.return_odometer_value-self.current_odometer_value)
+            })
+            vehicle_log.flags.ignore_permissions=True
+            vehicle_log.save()
+            vehicle_log.submit()
+        else:
+            vehicle_log_doc=frappe.get_doc('Vehicle Log',{"delivery_note":self.name})
+            frappe.throw(f"Vehicle Log {vehicle_log_doc.name} is already linked with this delivery note ")
 
 def vehicle_log_draft(self, event):
     vehicle_draft=frappe.get_all("Vehicle Log",filters={"docstatus":0,"license_plate":self.license_plate})
