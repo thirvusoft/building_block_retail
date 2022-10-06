@@ -38,9 +38,9 @@ def execute(filters=None):
 				final_data.append(data[i])
 				total = [" " for i in range(9)]
 				total[5] = "<b style=color:orange;>""Total""</b>"
-				total[6] = sum(data[i][6] for i in range(start,i+1))
+				total[6] = sum(data[i][6]or 0 for i in range(start,i+1))
 				total[7] = ("NaN","NaN")
-				total[8] = sum(data[i][8] for i in range(start,i+1))
+				total[8] = sum(data[i][8]or 0 for i in range(start,i+1))
 				final_data.append(total)
 				start = i+1	
 			else:
@@ -49,9 +49,9 @@ def execute(filters=None):
 		final_data.append(data[-1])
 		total = [" " for i in range(9)]
 		total[5] = "<b style=color:orange;>""Total""</b>"
-		total[6] = sum(data[i][6] for i in range(start,len(data)))
+		total[6] = sum(data[i][6]or 0 for i in range(start,len(data)))
 		total[7] = ("NaN","NaN")
-		total[8] = sum(data[i][8] for i in range(start,len(data)))
+		total[8] = sum(data[i][8]or 0 for i in range(start,len(data)))
 		final_data.append(total)
 	columns = get_columns()
 	return columns, final_data

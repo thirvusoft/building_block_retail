@@ -1,0 +1,49 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2022-10-06 09:59:40.637822",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Salary Slip\",\"docstatus\",\"=\",\"0\",false],[\"Salary Slip\",\"designation\",\"=\",\"Contractor\",false],[\"Salary Slip\",\"company\",\"=\",\"Shri Velavaa Paver Bricks\"]],\"fields\":[[\"name\",\"Salary Slip\"],[\"docstatus\",\"Salary Slip\"],[\"employee_name\",\"Salary Slip\"],[\"employee\",\"Salary Slip\"],[\"designation\",\"Salary Slip\"],[\"start_date\",\"Salary Slip\"],[\"end_date\",\"Salary Slip\"],[\"pay_the_balance\",\"Salary Slip\"],[\"salary_balance\",\"Salary Slip\"],[\"salary_component\",\"Salary Detail\"],[\"amount\",\"Salary Detail\"],[\"total_expense\",\"Salary Slip\"],[\"contractor_to_pay\",\"Salary Slip\"],[\"gross_pay\",\"Salary Slip\"],[\"total_deduction\",\"Salary Slip\"],[\"net_pay\",\"Salary Slip\"]],\"order_by\":\"`tabSalary Slip`.`modified` desc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":120,\"employee_name\":120,\"employee\":120,\"designation\":120,\"start_date\":120,\"end_date\":120,\"pay_the_balance\":120,\"salary_balance\":120,\"Salary Detail:salary_component\":120,\"Salary Detail:amount\":120,\"total_expense\":120,\"contractor_to_pay\":120,\"gross_pay\":120,\"total_deduction\":120,\"net_pay\":120},\"group_by\":null}",
+ "letter_head": "Shri Velavaa Paver Bricks",
+ "modified": "2022-10-06 11:23:40.847187",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Salary Slip Report for Contractor",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Salary Slip",
+ "report_name": "Salary Slip Report for Contractor",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "Employee Self Service"
+  },
+  {
+   "role": "HR User"
+  },
+  {
+   "role": "HR Manager"
+  },
+  {
+   "role": "Employee"
+  },
+  {
+   "role": "Employee Self Service"
+  }
+ ]
+}
