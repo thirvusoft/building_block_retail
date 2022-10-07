@@ -183,16 +183,9 @@ def delivery_note_custom_field():
                 collapsible = 1
             ),
             dict(
-                fieldname= "ts_both_loading_unloading",
-                fieldtype= "Check",
-                insert_after= "loadman_info_section",
-                label= "Both Loading and Unloading",
-                mandatory_depends_on = 'eval: doc.work == "Supply and Laying"'
-            ),
-            dict(
                 fieldname= "ts_loadman_info",
                 fieldtype= "Table",
-                insert_after= "ts_both_loading_unloading",
+                insert_after= "loadman_info_section",
                 label= "Loadman Info",
                 options= "TS Loadman Cost",
             ),

@@ -7,10 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "employee",
-  "amount",
-  "site_work",
+  "type",
+  "item",
+  "qtypieces",
   "rate",
-  "load_type"
+  "amount"
  ],
  "fields": [
   {
@@ -28,31 +29,36 @@
    "label": "Amount"
   },
   {
-   "fieldname": "site_work",
-   "fieldtype": "Link",
-   "hidden": 1,
-   "in_list_view": 1,
-   "label": "Site Work",
-   "options": "Sales Order"
-  },
-  {
    "fieldname": "rate",
    "fieldtype": "Currency",
+   "in_list_view": 1,
    "label": "Rate"
   },
   {
-   "depends_on": "eval:doc.ts_both_loading_unloading==0",
-   "fieldname": "load_type",
+   "fieldname": "type",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Load Type",
-   "options": "\nBoth\nLoading Only\nUnloading Only"
+   "label": "Type",
+   "options": "\nLoading\nUnloading\nBoth"
+  },
+  {
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item"
+  },
+  {
+   "fieldname": "qtypieces",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Qty(Pieces)"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-09-30 11:52:58.835541",
+ "modified": "2022-10-07 09:16:50.015040",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Loadman Cost",
