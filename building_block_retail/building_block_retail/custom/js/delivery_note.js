@@ -74,7 +74,7 @@ frappe.ui.form.on('Delivery Note', {
     
     refresh: async function(frm){
         let item_list=[];
-        cur_frm.fields_dict.items.item_code.$input.on('click', async ()=>{
+       
         for(var i=0; i<frm.doc.items.length; i++){
             var item=frm.doc.items[i].item_code
             const res = await frappe.db.get_value("Item Group", {"name": frm.doc.items[i].item_group}, "parent_item_group");    
@@ -90,7 +90,6 @@ frappe.ui.form.on('Delivery Note', {
                 }
             }
         })
-    })
     },
    
     // ts_both_loading_unloading: function(frm) {
