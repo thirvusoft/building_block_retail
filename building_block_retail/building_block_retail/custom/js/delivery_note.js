@@ -71,21 +71,27 @@ frappe.ui.form.on('Delivery Note', {
         
        
     },
-    refresh:function(frm){
-        let item_list=[]
+    
+    refresh: async function(frm){
+        let item_list=[];
+        cur_frm.fields_dict.items.item_code.$input.on('click', async ()=>{
         for(var i=0; i<frm.doc.items.length; i++){
-            item_list.push(frm.doc.items[i].item_code)
+            var item=frm.doc.items[i].item_code
+            const res = await frappe.db.get_value("Item Group", {"name": frm.doc.items[i].item_group}, "parent_item_group");    
+            if(res.message.parent_item_group=="Products"){
+                item_list.push(frm.doc.items[i].item_code)
+                }      
+                      
         }
-        frm.set_query("item","ts_loadman_info",function(frm){
+            frm.set_query("item","ts_loadman_info",function(frm){
             return {
                 "filters": {
-                    name:['in',item_list]             
+                    name:['in',item_list],   
                 }
             }
         })
-
+    })
     },
-
    
     // ts_both_loading_unloading: function(frm) {
 	// 	$.each(frm.doc.ts_loadman_info|| [], function(i, d) {
@@ -144,7 +150,20 @@ frappe.ui.form.on('Delivery Note', {
     },
     validate: function(frm) {
         frm.trigger("taxes_and_charges")
+        if(frm.doc.ts_loadman_info){
+            for(var i=0; i<frm.doc.items.length; i++){
+                for(var j=0; j<frm.doc.ts_loadman_info.length; j++){
+                    if(frm.doc.items[i].item_code==frm.doc.ts_loadman_info[j].item){
+                       if(frm.doc.items[i].stock_qty<frm.doc.ts_loadman_info[j].qtypieces){ 
+                        frappe.throw("Loading and Unloading Qty is More than the Item Qty")
+                       }
+                    }
+                }
+            }
+        }   
+        
     },
+
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
