@@ -71,7 +71,26 @@ frappe.ui.form.on('Delivery Note', {
         
        
     },
-
+    
+    refresh: async function(frm){
+        let item_list=[];
+       
+        for(var i=0; i<frm.doc.items.length; i++){
+            var item=frm.doc.items[i].item_code
+            const res = await frappe.db.get_value("Item Group", {"name": frm.doc.items[i].item_group}, "parent_item_group");    
+            if(res.message.parent_item_group=="Products"){
+                item_list.push(frm.doc.items[i].item_code)
+                }      
+                      
+        }
+            frm.set_query("item","ts_loadman_info",function(frm){
+            return {
+                "filters": {
+                    name:['in',item_list],   
+                }
+            }
+        })
+    },
    
     // ts_both_loading_unloading: function(frm) {
 	// 	$.each(frm.doc.ts_loadman_info|| [], function(i, d) {
@@ -129,7 +148,20 @@ frappe.ui.form.on('Delivery Note', {
     },
     validate: function(frm) {
         frm.trigger("taxes_and_charges")
+        if(frm.doc.ts_loadman_info){
+            for(var i=0; i<frm.doc.items.length; i++){
+                for(var j=0; j<frm.doc.ts_loadman_info.length; j++){
+                    if(frm.doc.items[i].item_code==frm.doc.ts_loadman_info[j].item){
+                       if(frm.doc.items[i].stock_qty<frm.doc.ts_loadman_info[j].qtypieces){ 
+                        frappe.throw("Loading and Unloading Qty is More than the Item Qty")
+                       }
+                    }
+                }
+            }
+        }   
+        
     },
+
     onload:async function(frm){
         if(cur_frm.is_new() ){
             for(let ind=0;ind<cur_frm.doc.items.length;ind++){
@@ -221,8 +253,38 @@ frappe.ui.form.on('Delivery Note', {
     }
 })
 
-
 frappe.ui.form.on('TS Loadman Cost',{
+    item:function(frm, cdt, cdn){
+        var row=locals[cdt][cdn]
+        frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
+                frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
+                if (row.type=="Both"){
+                    frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost*2)
+                }
+            })
+            
+    },
+    type:function(frm, cdt, cdn){
+        var row=locals[cdt][cdn]
+        frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
+                frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
+                if (row.type=="Both"){
+                    frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost*2)
+                }
+            })
+    },
+    qtypieces:function(frm, cdt, cdn){
+        var row=locals[cdt][cdn]
+        var amount= (row.qtypieces*row.rate)
+        frappe.model.set_value(cdt, cdn, 'amount', amount )
+
+    },
+    rate:function(frm, cdt, cdn){
+        var row=locals[cdt][cdn]
+        var amount= (row.rate*row.qtypieces)
+        frappe.model.set_value(cdt, cdn, 'amount', amount )
+
+    },
     ts_loadman_info_add: function(frm, cdt, cdn){
         if(frm.doc.work === 'Supply and Laying' &&  !frm.doc.is_return)
         calculate_loading_cost(frm)
@@ -243,6 +305,7 @@ frappe.ui.form.on('TS Loadman Cost',{
         cur_frm.set_value('ts_loadman_total_amount', loading_cost)
         cur_frm.refresh_field('ts_loadman_total_amount')
     },
+   
 
 
    
