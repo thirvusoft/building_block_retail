@@ -116,7 +116,7 @@ doc_events = {
     "Quotation" :{
 		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
 		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation",
-		"on_submit" : "building_block_retail.building_block_retail.custom.py.quotation.quotation_whatsapp"	
+		"after_insert" : "building_block_retail.building_block_retail.custom.py.quotation.quotation_whatsapp"	
 	},
 	"Item":{
 		"validate":"building_block_retail.building_block_retail.custom.py.item.item_validate"

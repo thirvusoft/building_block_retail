@@ -2,7 +2,7 @@ make_delivery_note(delivery_dates) {
     var me = this
     if(this.frm.doc.is_multi_customer){
     this.frm.call({
-        method:"building_block_retail.custom.py.sales_order.get_customer_list",
+        method:"building_block_retail.building_block_retail.custom.py.sales_order.get_customer_list",
         args:{
             'sales_order':me.frm.doc.name
         },
@@ -18,7 +18,7 @@ make_delivery_note(delivery_dates) {
                 }],
                 primary_action: function() {
                     me.frm.call({
-                        method: 'building_block_retail.custom.py.sales_order.update_temporary_customer',
+                        method: 'building_block_retail.building_block_retail.custom.py.sales_order.update_temporary_customer',
                         args: {
                             customer: dialog.fields_dict.customer.value,
                             sales_order: me.frm.doc.name
@@ -53,11 +53,12 @@ else{
 }
 },
 
- make_sales_invoice() {
+
+make_sales_invoice() {
     var me = this
     if(this.frm.doc.is_multi_customer){
     this.frm.call({
-        method:"building_block_retail.custom.py.sales_order.get_customer_list",
+        method:"building_block_retail.building_block_retail.custom.py.sales_order.get_customer_list",
         args:{
             'sales_order':me.frm.doc.name
         },
@@ -73,7 +74,7 @@ else{
                 }],
                 primary_action: function() {
                     me.frm.call({
-                        method: 'building_block_retail.custom.py.sales_order.update_temporary_customer',
+                        method: 'building_block_retail.building_block_retail.custom.py.sales_order.update_temporary_customer',
                         args: {
                             customer: dialog.fields_dict.customer.value,
                             sales_order: me.frm.doc.name

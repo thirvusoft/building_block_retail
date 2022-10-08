@@ -94,9 +94,9 @@ def update_transport_cost(self, event):
         doc=frappe.get_doc('Project', sw)
         cost=0
         if(event=='on_submit'):
-            cost=(doc.transporting_cost + self.ts_total_cost or 0)  
+            cost=(doc.get("transporting_cost") or 0 + self.ts_total_cost or 0)  
         elif(event=='on_cancel'):
-            cost=(doc.transporting_cost - self.ts_total_cost or 0)
+            cost=(doc.get("transporting_cost") or 0 - self.ts_total_cost or 0)
         doc.update({
             'transporting_cost': cost 
         })

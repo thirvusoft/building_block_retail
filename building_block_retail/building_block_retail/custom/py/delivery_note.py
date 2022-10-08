@@ -6,6 +6,10 @@ from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
 from frappe.utils.data import get_link_to_form
 
+def delivery_note_whatsapp(doc, action):
+    delivery_note_whatsapp_driver(doc, action)
+    delivery_note_whatsapp_customer(doc, action)
+
 def update_qty_sitework(self,event):
     if(self.doctype=='Sales Invoice' and self.update_stock==0):
         return
@@ -266,31 +270,79 @@ def get_item_loading_cost(items, len, work=None):
     return (loading_cost*multiply)/flt(len)
 
 
-def delivery_note_whatsapp(doc, action):
+def delivery_note_whatsapp_driver(doc, action):
+
+    import http.client
+    import json
+    from frappe.utils.password import get_decrypted_password
+    if doc.ts_map_link:
+        delivery_man_no = frappe.get_value("Driver",{'employee':doc.employee},"cell_number")
+        conn = http.client.HTTPSConnection(frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint'))
+        frappe.errprint(delivery_man_no)
+        payload = json.dumps({
+        "countryCode": "+91",
+        "phoneNumber": delivery_man_no,
+        "callbackData": "some text here",
+        "type": "Template",
+        "template": {
+            "name": "velavabricks_delivery_note_7q", 
+            "languageCode": "en",
+            "bodyValues": [
+            doc.name,
+            frappe.utils.get_url()+"/app/delivery-note/"+doc.name,
+            doc.site_work or 'Site Name Not Mentioned'
+            ],
+            "buttonValues": {
+            "0": [
+                (doc.get('ts_map_link') or "").split("https://www.google.com/")[-1]
+            ]
+            }
+        }
+        })
+        try:
+            headers = {
+            'Authorization': get_decrypted_password('Whatsapp Setting', 'Whatsapp Setting', 'ts_authentication',False),
+            'Content-Type': 'application/json',
+            'Cookie': 'ApplicationGatewayAffinity=a8f6ae06c0b3046487ae2c0ab287e175; ApplicationGatewayAffinityCORS=a8f6ae06c0b3046487ae2c0ab287e175'
+            }
+            conn.request("POST", "/v1/public/message/", payload, headers)
+            res = conn.getresponse()
+            data = res.read()
+            frappe.errprint(data)
+        except Exception as e:
+            error = f"Doctype: {doc.doctype} " + str(e)
+            api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')
+            api_authentication = frappe.db.get_single_value('Whatsapp Setting', 'ts_authentication')
+            if(not api_endpoint):
+                error += "\n API End Point Not found."
+            if(not api_authentication):
+                error += "\n API Authentication Not found."
+            frappe.log_error(error,"Whatsapp error")
+
+def delivery_note_whatsapp_customer(doc, action):
 
     import http.client
     import json
     from frappe.utils.password import get_decrypted_password
 
-    delivery_man_no = frappe.get_value("Driver",{'employee':doc.employee},"cell_number")
+    customer_mobile_no = frappe.get_value("Customer",{'name':doc.customer},"mobile_no")
     conn = http.client.HTTPSConnection(frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint'))
 
     payload = json.dumps({
     "countryCode": "+91",
-    "phoneNumber": delivery_man_no,
+    "phoneNumber": customer_mobile_no,
     "callbackData": "some text here",
     "type": "Template",
     "template": {
-        "name": "velavabricks_delivery_note_7q", 
+        "name": "vb_deliverynote_customer", 
         "languageCode": "en",
         "bodyValues": [
         doc.name,
         frappe.utils.get_url()+"/app/delivery-note/"+doc.name,
-        doc.site_work
         ],
         "buttonValues": {
         "0": [
-            (doc.get('ts_map_link') or "").split("https://www.google.com/")[-1]
+            (frappe.utils.get_url()+"/app/delivery-note/"+doc.name).split("https://velavaabricks.thirvusoft.com/")[-1]
         ]
         }
     }

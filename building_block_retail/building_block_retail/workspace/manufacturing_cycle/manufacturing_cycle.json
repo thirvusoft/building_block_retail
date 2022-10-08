@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2022-09-28 15:29:02.693735",
+ "modified": "2022-10-05 09:30:19.923570",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Manufacturing Cycle",
@@ -21,24 +21,6 @@
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
-  {
-   "doc_view": "List",
-   "label": "Work Order",
-   "link_to": "Work Order",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Job Card",
-   "link_to": "Job Card",
-   "type": "DocType"
-  },
-  {
-   "doc_view": "List",
-   "label": "Stock Entry",
-   "link_to": "Stock Entry",
-   "type": "DocType"
-  },
   {
    "doc_view": "List",
    "label": "Bom",
@@ -55,6 +37,24 @@
    "doc_view": "List",
    "label": "Operation",
    "link_to": "Operation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Work Order",
+   "link_to": "Work Order",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Job Card",
+   "link_to": "Job Card",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Stock Entry",
+   "link_to": "Stock Entry",
    "type": "DocType"
   }
  ]

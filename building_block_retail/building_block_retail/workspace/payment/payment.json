@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Payment",
  "links": [],
- "modified": "2022-07-28 09:38:39.917324",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-10-05 09:25:40.438069",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Payment",
  "owner": "Administrator",
@@ -25,6 +25,24 @@
    "doc_view": "List",
    "label": "Payment Entry",
    "link_to": "Payment Entry",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Payment Reconciliation",
+   "link_to": "Payment Reconciliation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Journal Entry",
+   "link_to": "Journal Entry",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "Tree",
+   "label": "Chart of Accounts",
+   "link_to": "Account",
    "type": "DocType"
   }
  ]
