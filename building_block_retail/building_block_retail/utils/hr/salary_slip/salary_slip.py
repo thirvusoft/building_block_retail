@@ -40,14 +40,14 @@ def create_salary_custom_field():
               label = 'Salary Balance',
               read_only = 1,
               insert_after = 'payroll_frequency',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Contractor'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor' || doc.designation == 'Contractor'"
             ),
             dict(
               fieldname = 'pay_the_balance',
               fieldtype = 'Check',
               label = 'Pay the Balance',
               insert_after = 'salary_balance',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Contractor'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor' || doc.designation == 'Contractor'"
             ),
             dict(
               fieldname = 'section_break_41',
@@ -59,21 +59,21 @@ def create_salary_custom_field():
               fieldtype = 'Currency',
               label = 'Total Unpaid Amount',
               insert_after = 'total_paid_amount',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'"
             ),
             dict(
               fieldname = 'total_paid_amount',
               fieldtype = 'Currency',
               label = 'Total Paid Amount',
               insert_after = 'total_amount',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'"
             ),
             dict(
               fieldname = 'total_amount',
               fieldtype = 'Currency',
               label = 'Total Amount',
               insert_after = 'column_break_37',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'"
             ),
              dict(
               fieldname = 'site_work_details',
@@ -81,7 +81,7 @@ def create_salary_custom_field():
               label = 'Work Details',
               insert_after = 'section_break_26',
               options = 'Site work Details',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'"
             ),
               dict(
               fieldname = 'column_break_37',
@@ -94,8 +94,8 @@ def create_salary_custom_field():
               label = 'Payment Account',
               insert_after = 'designation',
               options = 'Account',
-              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'",
-              mandatory_depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader'"
+              depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'",
+              mandatory_depends_on = "eval:doc.designation == 'Job Worker' || doc.designation == 'Loader' || doc.designation == 'Earth Rammer Contractor'"
             ),
             dict(
               label = 'Get Employee Advance',

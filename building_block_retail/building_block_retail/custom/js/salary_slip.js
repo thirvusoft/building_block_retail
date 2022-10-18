@@ -47,10 +47,42 @@ frappe.ui.form.on('Salary Slip',{
                     cur_frm.refresh()
                     cur_frm.set_value("total_paid_amount",paid_amount);
                     cur_frm.set_value("total_amount",total_amount);
-                    cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount)+frm.doc.salary_balance);
+                    cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount));
+                    if(frm.doc.pay_the_balance){
+                        cur_frm.set_value("total_unpaid_amount",(frm.doc.total_unpaid_amount+frm.doc.salary_balance));
+                    }
                 }
         })
     }
+        }
+        else if(frm.doc.designation == 'Earth Rammer Contractor'){
+            if(frm.doc.employee && frm.doc.start_date && frm.doc.end_date){
+                frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
+                    salary_balance=doc.salary_balance
+                    frm.set_value('salary_balance',salary_balance)
+                });
+                frappe.call({
+                    method:"building_block_retail.building_block_retail.custom.py.salary_slip.get_earth_rammer_cost",
+                    args:{
+                        doc:cur_frm.doc
+                    },
+                    callback(r){
+                        let paid_amount = 0,total_unpaid_amount=0,total_amount=0;
+                        frm.set_value('site_work_details', r.message)
+                        r.message.forEach((d)=>{
+                            total_unpaid_amount+=d.amount
+                            total_amount+=d.amount
+                        })
+                        frm.refresh()
+                        cur_frm.set_value("total_paid_amount",paid_amount);
+                        cur_frm.set_value("total_amount",total_amount);
+                        cur_frm.set_value("total_unpaid_amount",(frm.doc.total_amount-frm.doc.total_paid_amount));
+                    if(frm.doc.pay_the_balance){
+                        cur_frm.set_value("total_unpaid_amount",(frm.doc.total_unpaid_amount+frm.doc.salary_balance));
+                    }
+                    }
+                })
+            }
         }
         
     },

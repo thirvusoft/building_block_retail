@@ -39,7 +39,7 @@ def before_validate(doc,action):
             doc.code = str(emp_qty)
         amt = 0
         for i in final_qty:
-            emp_per = frappe.get_value("Employee",i,"employee_percentage")
+            emp_per = frappe.get_value("Employee",i,"employee_percentage") or 0
             hike = wo.total_expanse * emp_per / 100
             amt +=  (hike * final_qty[i]) + (wo.total_expanse * final_qty[i])
         wo=frappe.get_doc("Work Order",doc.work_order)
@@ -66,7 +66,7 @@ def creating_journal_entry(doc,income):
     for i in code:
         if code[i] != 0:
             income_account = frappe.get_value("Employee",i,"contracter_expense_account")
-            per_emp = frappe.get_value("Employee",i,"employee_percentage")
+            per_emp = frappe.get_value("Employee",i,"employee_percentage") or 0
             hike = income * per_emp / 100
             amt =  (hike * code[i]) + (income * code[i])
             if income_account:

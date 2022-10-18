@@ -627,7 +627,8 @@ function make_work_order(frm) {
                                     fieldname: 'buffer_qty',
                                     label: 'Buffer Qty(Over Production Allowance)',
                                     in_list_view: 1,
-                                    columns: 1
+                                    columns: 1,
+                                    default:0
                                 },
                                 {
                                     fieldtype: 'Select',

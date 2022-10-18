@@ -48,6 +48,10 @@ def create_defaults():
         doc = frappe.new_doc("Designation")
         doc.designation_name = "Driver"
         doc.save(ignore_permissions=True)
+    if(not frappe.db.exists("Designation", "Earth Rammer Contractor")):
+        doc = frappe.new_doc("Designation")
+        doc.designation_name = "Earth Rammer Contractor"
+        doc.save(ignore_permissions=True)
         
     if(not frappe.db.exists("Salary Component", "Advance")):
         doc = frappe.new_doc("Salary Component")

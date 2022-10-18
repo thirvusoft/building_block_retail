@@ -86,7 +86,16 @@ def submit_salary_slips_for_employees(payroll_entry, salary_slips, publish_progr
         frappe.msgprint(_("Could not submit some Salary Slips"))
 
     frappe.flags.via_payroll_entry = False
-    
+  
+@frappe.whitelist()  
+def get_earth_rammer_cost(doc):
+    if(isinstance(doc, str)):
+        doc=json.loads(doc)
+    er_sw = frappe.get_all('Project', filters={'creation':['between',(doc.get('start_date'), doc.get('end_date'))], 'status':'Completed'}, fields=['er_total_amount', 'name']) 
+    er_sw_cost = sum([i['er_total_amount'] for i in er_sw])
+    sw_table = [{'site_work_name':i['name'], 'amount':i['er_total_amount']} for i in er_sw] 
+    return sw_table
+
 #validate   
 def salary_slip_add_gross_pay(doc, event):
     if(doc.is_new() and doc.get('payroll_entry')):
@@ -105,7 +114,15 @@ def salary_slip_add_gross_pay(doc, event):
                 'site_work_details': site_work,
                 'total_amount': amt,
                 'total_unpaid_amount': amt
-            })   
+            }) 
+        elif(doc.designation == 'Earth Rammer Contractor'):
+            site_work = get_earth_rammer_cost(doc)
+            amt = sum([i['amount'] for i in site_work]) or 0
+            doc.update({
+                'site_work_details':get_earth_rammer_cost(doc),
+                'total_amount': amt,
+                'total_unpaid_amount': amt
+            }) 
     if(doc.designation != 'Contractor'):
         set_net_pay(doc)
         return
@@ -244,6 +261,8 @@ def set_net_pay(self):
         
 def create_journal_entry(doc,action):
     if(doc.payroll_entry):return
+    def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
+    branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
     earn_component_list=[]
     earn_amount=[]
     ded_component_list=[]
@@ -278,22 +297,24 @@ def create_journal_entry(doc,action):
 				doc.start_date, doc.end_date
 			)
     for data in range(0,len(earn_component_list),1):
-        new_jv_doc.append('accounts',{'account':earn_component_list[data],'debit_in_account_currency':earn_amount[data]})
+        new_jv_doc.append('accounts',{'account':earn_component_list[data],'debit_in_account_currency':earn_amount[data], 'cost_center':def_cost_center, 'branch':branch, 'branch':branch})
     for data in range(0,len(ded_component_list),1):
-        new_jv_doc.append('accounts',{'account':ded_component_list[data],'credit_in_account_currency':ded_amount[data]})
+        new_jv_doc.append('accounts',{'account':ded_component_list[data],'credit_in_account_currency':ded_amount[data], 'cost_center':def_cost_center, 'branch':branch})
     if(frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
-        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.net_pay})
+        new_jv_doc.append('accounts',{'account':frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),'credit_in_account_currency':doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
     else:
         frappe.msgprint(_("Set Default Payable Account in {0}").format(doc.company), alert=True)
     new_jv_doc.ts_salary_slip = doc.name
     new_jv_doc.insert()
     new_jv_doc.submit()
-    if(doc.designation == "Contractor"):
+    if(doc.designation in ["Contractor", "Earth Rammer Contractor"]):
         journal_entry(doc)
     elif(doc.designation in ['Job Worker', 'Loader']):
         make_bank_entry(doc)
 
 def journal_entry(doc):
+    def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
+    branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
     new_journel = frappe.new_doc("Journal Entry")
     new_journel.company = doc.get("company")
     new_journel.posting_date = doc.get("posting_date")
@@ -301,26 +322,28 @@ def journal_entry(doc):
 
     empaccount = frappe.get_value("Employee",doc.employee,"contracter_expense_account")
    
-    new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay})
-    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay})
+    new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
+    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
     new_journel.insert()
     new_journel.submit()
-    frappe.msgprint("Journel Entry Submitted")
+    frappe.msgprint("Journal Entry Submitted")
 
 def make_bank_entry(doc):
+    def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
+    branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
     new_journel = frappe.new_doc("Journal Entry")
     new_journel.company = doc.get("company")
     new_journel.posting_date = doc.get("posting_date")
     new_journel.accounts =  [] 
     account = doc.payment_account
-    new_journel.append("accounts",{"account":account,"credit_in_account_currency":doc.gross_pay})
+    new_journel.append("accounts",{"account":account,"credit_in_account_currency":doc.gross_pay, 'cost_center':def_cost_center, 'branch':branch})
     new_journel.ts_salary_slip = doc.name
     if(not frappe.db.get_value("Company",doc.company, "default_payroll_payable_account")):
         frappe.throw("Set Default Payroll Payable Account in {0}").format(doc.company)
-    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.gross_pay})
+    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.gross_pay, 'cost_center':def_cost_center, 'branch':branch})
     new_journel.insert()
     new_journel.submit()
-    frappe.msgprint("Journel Entry Submitted")
+    frappe.msgprint("Journal Entry Submitted")
 
 @frappe.whitelist()
 def get_advance_amounts(employee):
