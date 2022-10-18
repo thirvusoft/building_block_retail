@@ -22,6 +22,13 @@ def journal_entry_custom_field():
                 label= "Salary Slip",
                 options = "Salary Slip",
                 hidden = 1
+            ),
+            dict(
+                fieldname= "er_site_work",
+                fieldtype= "Link",
+                label= "ER Site work",
+                options = "Project",
+                hidden = 1
             )
         ]
     }

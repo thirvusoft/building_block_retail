@@ -5,11 +5,12 @@ def create_contracter_expense_account():
     custom_fields = {
         "Employee":[
             dict(fieldname='contracter_expense_account',
-                 label="Salary Account for Contractor",
+                 label="Salary Account",
                  fieldtype='Link', 
                  insert_after='column_break_52', 
                  options="Account", 
-                 description="Manufacturing cost for Contractor will add in this account."
+                 description="Manufacturing cost for Contractor or Earth Rammer Cost of Site Work will add in this account.",
+                 mandatory_depends_on='eval:in_list(["Contractor","Earth Rammer Contractor"],doc.designation)'
               ),
             dict(
                 fieldname = 'salary_balance',
@@ -25,6 +26,15 @@ def create_contracter_expense_account():
                 fieldtype = 'Currency',
                 insert_after = 'salary_balance',
                 description = "percentage of hike"
+            ),
+            dict(
+                fieldname = 'earth_rammer_cost',
+                label = 'Earth Rammer Cost',
+                fieldtype = 'Currency',
+                insert_after = 'employment_type',
+                description = "Per Sqft",
+                mandatory_depends_on = 'eval:doc.designation == "Earth Rammer Contractor"',
+                depends_on = 'eval:doc.designation == "Earth Rammer Contractor"'
             )
         ]
     }

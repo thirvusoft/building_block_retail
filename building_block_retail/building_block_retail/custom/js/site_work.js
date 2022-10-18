@@ -21,9 +21,20 @@ function setquery(frm,cdt,cdn){
 
 
 
-
+function calc_er_cost(frm){
+	var er_cost_sqft = frm.doc.er_cost_sqft?frm.doc.er_cost_sqft:0
+	frm.set_value('er_total_sqft', frm.doc.total_completed_area)
+	frm.set_value('er_total_amount', frm.doc.er_cost_sqft * frm.doc.er_total_sqft)
+	frm.refresh()
+}
 
 frappe.ui.form.on("Project",{
+	er_employee: function(frm){
+		calc_er_cost(frm)
+	},
+	total_completed_area: function(frm){
+		calc_er_cost(frm)
+	},
 	ts_open_link: function(frm){
         if(!frm.doc.ts_map_link){
             cur_frm.scroll_to_field('ts_map_link')
@@ -36,7 +47,10 @@ frappe.ui.form.on("Project",{
     project_type:function(frm,cdt,cdn){
         setquery(frm,cdt,cdn)
     },
-    
+    status: function(frm){
+		if(frm.doc.status == 'Completed')
+		calc_er_cost(frm)
+	},
     refresh:function(frm,cdt,cdn){
         if(!cur_frm.is_new()){
             cur_frm.set_df_property('is_multi_customer', 'read_only', 1)
@@ -130,6 +144,9 @@ function percent_complete(frm,cdt,cdn){
 	let percent=(total_comp_bundle/total_bundle)*100
 	frm.set_value('total_required_area',total_area)
 	frm.set_value('total_completed_area',completed_area)
+	frm.set_value('er_total_sqft', completed_area?completed_area:0)
+	var er_cost = frm.doc.er_cost_sqft?frm.doc.er_cost_sqft:0
+	frm.set_value('er_total_amount', completed_area * er_cost)
 	frm.set_value('total_required_bundle',total_bundle)
 	frm.set_value('total_completed_bundle',total_comp_bundle)
 	frm.set_value('completed',percent)

@@ -146,7 +146,28 @@ def customize_field():
               ),
          dict(fieldname='total_advance_amount', label=" Total Advance Amount",
                  fieldtype='Float', insert_after='additional_cost', read_only=1
-                )
+                ),
+          dict(fieldname='er_sec', label="Earth Rammer Costing",
+                 fieldtype='Section Break', insert_after='department', depends_on='eval:doc.status=="Completed"'
+                ),
+          dict(fieldname='er_employee', label="Employee(Earth Rammer)",
+                 fieldtype='Link', insert_after='er_sec', options='Employee',mandatory_depends_on='eval:doc.status=="Completed"'
+                ),
+          dict(fieldname='er_col', fieldtype='Column Break', insert_after='er_employee'
+              ),
+          dict(fieldname='er_cost_sqft', label="Earth Rammer Cost",
+                 fieldtype='Currency', insert_after='er_col', fetch_from='er_employee.earth_rammer_cost',read_only=1, default=0
+                ),
+          dict(fieldname='er_col1', fieldtype='Column Break', insert_after='er_cost_sqft'
+              ),
+          dict(fieldname='er_total_sqft', label="Total Sqft",
+                 fieldtype='Float', insert_after='er_col1', read_only=1, default=0
+                ),
+          dict(fieldname='er_col2', fieldtype='Column Break', insert_after='er_total_sqft'
+              ),
+          dict(fieldname='er_total_amount', label="Total Amount",
+                 fieldtype='Currency', insert_after='er_col2', read_only=1, default=0, description='Total Cost For Earth Rammer'
+                ),
        ]
    }
 
