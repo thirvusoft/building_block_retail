@@ -1,0 +1,86 @@
+{
+ "cards_label": "",
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-06-30 14:12:28.723238",
+ "developer_mode_only": 0,
+ "disable_user_customization": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "CRM Cycle",
+ "links": [],
+ "modified": "2022-11-15 10:45:45.412666",
+ "modified_by": "Administrator",
+ "module": "Building Block CRM",
+ "name": "CRM Cycle",
+ "owner": "administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Lead",
+   "link_to": "Lead",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Opportunity",
+   "link_to": "Opportunity",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Customer",
+   "link_to": "Customer",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Customer Group",
+   "link_to": "Customer Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Supplier",
+   "link_to": "Supplier",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Supplier Group",
+   "link_to": "Supplier Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Address",
+   "link_to": "Address",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Contact",
+   "link_to": "Contact",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Building Block CRM",
+   "link_to": "Building Block CRM",
+   "type": "DocType"
+  }
+ ]
+}

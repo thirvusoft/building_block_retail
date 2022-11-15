@@ -9,8 +9,8 @@
  "filters": [],
  "idx": 0,
  "is_standard": "Yes",
- "letter_head": "vks letter head",
- "modified": "2022-07-28 15:58:57.169241",
+ "letter_head": "",
+ "modified": "2022-11-15 14:56:36.751179",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Thirvu Job Worker",
@@ -31,6 +31,9 @@
   },
   {
    "role": "Sales User"
+  },
+  {
+   "role": "TS Office Work"
   }
  ]
 }

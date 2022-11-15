@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "TS Vehicle",
  "links": [],
- "modified": "2022-07-26 18:25:09.562303",
+ "modified": "2022-11-14 09:31:28.424237",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Vehicle",
@@ -31,6 +31,12 @@
    "doc_view": "List",
    "label": "Vehicle Log",
    "link_to": "Vehicle Log",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Report1",
+   "link_to": "Report1",
    "type": "DocType"
   }
  ]
