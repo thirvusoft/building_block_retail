@@ -1,1 +1,12 @@
 Building Block Retail
+Building Block Retail Reports
+Building Block Driver
+Building Block Sales
+Building Block Purchase
+Building Block Accounts
+Building Block Site Work
+Building Block CRM
+Building Block Manufacture
+Building Block Inventory
+Building Block Item
+Building Block HR

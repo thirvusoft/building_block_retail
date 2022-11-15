@@ -1,0 +1,43 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-11-14 17:24:38.874421",
+ "developer_mode_only": 0,
+ "disable_user_customization": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "TS Inventory",
+ "links": [],
+ "modified": "2022-11-14 17:24:38.874421",
+ "modified_by": "Administrator",
+ "module": "Building Block Item",
+ "name": "TS Inventory",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Item",
+   "link_to": "Item",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Item Group",
+   "link_to": "Item Group",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Building Block Item",
+   "link_to": "Building Block Item",
+   "type": "DocType"
+  }
+ ]
+}

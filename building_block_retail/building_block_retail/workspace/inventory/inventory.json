@@ -13,8 +13,8 @@
  "is_standard": 1,
  "label": "Inventory",
  "links": [],
- "modified": "2022-07-28 09:37:43.219675",
- "modified_by": "parameshwari@gmail.com",
+ "modified": "2022-11-09 09:47:44.531069",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Inventory",
  "owner": "administrator",
@@ -49,6 +49,12 @@
    "doc_view": "List",
    "label": "Item Price",
    "link_to": "Item Price",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "-",
+   "link_to": "Report1",
    "type": "DocType"
   }
  ]

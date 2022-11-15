@@ -1,0 +1,163 @@
+{
+ "category": "Modules",
+ "charts": [],
+ "creation": "2022-07-19 14:15:14.648836",
+ "developer_mode_only": 0,
+ "disable_user_customization": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Inventory Reports",
+ "links": [],
+ "modified": "2022-11-08 18:06:40.389105",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail Reports",
+ "name": "Inventory Reports",
+ "owner": "parameshwari@gmail.com",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "Report Builder",
+   "label": "COGS By Item Group",
+   "link_to": "COGS By Item Group",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Level Report",
+   "link_to": "Stock Level Report",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item Shortage Report",
+   "link_to": "Item Shortage Report",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Balance",
+   "link_to": "Stock Balance",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock and Account Value Comparison",
+   "link_to": "Stock and Account Value Comparison",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Delayed Order Report",
+   "link_to": "Delayed Order Report",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Delayed Item Report",
+   "link_to": "Delayed Item Report",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Analytics",
+   "link_to": "Stock Analytics",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Batch-Wise Balance History",
+   "link_to": "Batch-Wise Balance History",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item-wise Price List Rate",
+   "link_to": "Item-wise Price List Rate",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item Balance (Simple)",
+   "link_to": "Item Balance (Simple)",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Warehouse wise Item Balance Age and Value",
+   "link_to": "Warehouse wise Item Balance Age and Value",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item Price Stock",
+   "link_to": "Item Price Stock",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Item Variant Details",
+   "link_to": "Item Variant Details",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Total Stock Summary",
+   "link_to": "Total Stock Summary",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Itemwise Recommended Reorder Level",
+   "link_to": "Itemwise Recommended Reorder Level",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Ledger",
+   "link_to": "Stock Ledger",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Ageing",
+   "link_to": "Stock Ageing",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Stock Projected Qty",
+   "link_to": "Stock Projected Qty",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Requested Items To Be Transferred",
+   "link_to": "Requested Items To Be Transferred",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Items To Be Requested",
+   "link_to": "Items To Be Requested",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Material Requests for which Supplier Quotations are not created",
+   "link_to": "Material Requests for which Supplier Quotations are not created",
+   "type": "Report"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Inactive Sales Items",
+   "link_to": "Inactive Sales Items",
+   "type": "Report"
+  }
+ ]
+}
