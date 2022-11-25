@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "",
- "modified": "2022-11-15 14:56:36.751179",
+ "modified": "2022-11-15 18:46:00.581314",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Thirvu Job Worker",
@@ -34,6 +34,15 @@
   },
   {
    "role": "TS Office Work"
+  },
+  {
+   "role": "TS Supervisor"
+  },
+  {
+   "role": "TS Accounts Manager"
+  },
+  {
+   "role": "TS Site Manager"
   }
  ]
 }

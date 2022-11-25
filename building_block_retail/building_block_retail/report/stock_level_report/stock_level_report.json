@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "json": "{\"filters\":[],\"fields\":[[\"name\",\"Bin\"],[\"warehouse\",\"Bin\"],[\"item_code\",\"Bin\"],[\"actual_qty\",\"Bin\"],[\"reserved_qty\",\"Bin\"],[\"projected_qty\",\"Bin\"]],\"order_by\":\"`tabBin`.`modified` asc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":120,\"warehouse\":120,\"item_code\":120,\"actual_qty\":120,\"reserved_qty\":120,\"projected_qty\":120},\"group_by\":null}",
- "modified": "2022-09-30 15:26:38.258583",
+ "modified": "2022-11-15 17:24:24.388934",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Stock Level Report",
@@ -28,6 +28,12 @@
   },
   {
    "role": "Stock User"
+  },
+  {
+   "role": "TS Accounts Manager"
+  },
+  {
+   "role": "TS Site Manager"
   }
  ]
 }

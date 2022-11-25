@@ -5,7 +5,7 @@ function setquery(frm){
         return {
             filters:{
                 'is_sales_item':1,
-                'item_group':['like', '%paver%'],
+                'parent_item_group':'Products',
                 'has_variants':0
             }
         }
