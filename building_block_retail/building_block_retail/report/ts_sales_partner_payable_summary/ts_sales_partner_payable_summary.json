@@ -10,8 +10,8 @@
  "idx": 0,
  "is_standard": "Yes",
  "json": "{}",
- "letter_head": "CREDit Note",
- "modified": "2022-08-09 18:16:21.061287",
+ "letter_head": "",
+ "modified": "2022-11-15 18:26:03.401890",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Sales Partner Payable Summary",
@@ -29,6 +29,9 @@
   },
   {
    "role": "Employee Self Service"
+  },
+  {
+   "role": "TS Site Manager"
   }
  ]
 }

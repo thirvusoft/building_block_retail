@@ -8,12 +8,13 @@
  "doctype": "Workspace",
  "extends_another_page": 0,
  "hide_custom": 1,
+ "icon": "sell",
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-11-15 11:56:29.717822",
+ "modified": "2022-11-22 14:33:52.040965",
  "modified_by": "Administrator",
  "module": "Building Block Sales",
  "name": "Sales Cycle",
@@ -22,7 +23,14 @@
  "pin_to_top": 1,
  "shortcuts": [
   {
+   "doc_view": "",
+   "label": "Quotation",
+   "link_to": "Quotation",
+   "type": "DocType"
+  },
+  {
    "doc_view": "List",
+   "icon": "",
    "label": "Sales Order",
    "link_to": "Sales Order",
    "type": "DocType"

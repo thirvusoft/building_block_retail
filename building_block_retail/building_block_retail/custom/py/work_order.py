@@ -13,9 +13,9 @@ class TSWorkOrder(WorkOrder):
     def on_submit(self):
         """Work Order on_submit Over Written Code"""
         if not self.wip_warehouse and not self.skip_transfer:
-            frappe.throw(_("Work-in-Progress Warehouse is required before Submit"))
+            frappe.throw(("Work-in-Progress Warehouse is required before Submit"))
         if not self.fg_warehouse:
-            frappe.throw(_("For Warehouse is required before Submit"))
+            frappe.throw(("For Warehouse is required before Submit"))
 
         if self.production_plan and frappe.db.exists(
             "Production Plan Item Reference", {"parent": self.production_plan}

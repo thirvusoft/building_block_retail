@@ -26,6 +26,7 @@ frappe.ui.form.on("Employee Advance Tool",{
 	before_submit:function(frm,cdt,cdn){
 		var advance=locals[cdt][cdn]
 		for(var i=0;i<advance.employee_advance_details.length;i++){
+			frappe.validated = false
 			frappe.call({
 				async:false,
 				freeze: true,
