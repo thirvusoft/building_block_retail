@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Incoming Bills (Purchase Invoice)",
+   "label": "Incoming Bills (Purchase Invoice)"
+  }
+ ],
  "creation": "2022-07-19 14:35:01.695096",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
@@ -14,7 +19,7 @@
  "is_standard": 1,
  "label": "Purchase Reports",
  "links": [],
- "modified": "2022-11-22 14:33:52.692609",
+ "modified": "2022-11-26 09:37:13.299502",
  "modified_by": "Administrator",
  "module": "Building Block Purchase",
  "name": "Purchase Reports",

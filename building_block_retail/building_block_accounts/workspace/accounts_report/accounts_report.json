@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Profit and Loss",
+   "label": "Profit and Loss"
+  }
+ ],
  "creation": "2022-11-15 12:42:27.699289",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
@@ -14,7 +19,7 @@
  "is_standard": 1,
  "label": "Accounts Report",
  "links": [],
- "modified": "2022-11-22 14:33:52.649283",
+ "modified": "2022-11-26 09:53:12.216269",
  "modified_by": "Administrator",
  "module": "Building Block Accounts",
  "name": "Accounts Report",

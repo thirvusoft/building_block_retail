@@ -1,0 +1,51 @@
+{
+ "category": "Modules",
+ "charts": [
+  {
+   "chart_name": "Work Order Analysis",
+   "label": "Work Order Analysis"
+  },
+  {
+   "chart_name": "Pending Work Order",
+   "label": "Pending Work Order"
+  },
+  {
+   "chart_name": "Job Card Analysis",
+   "label": "Job Card Analysis"
+  }
+ ],
+ "creation": "2022-11-26 09:57:51.049057",
+ "developer_mode_only": 0,
+ "disable_user_customization": 1,
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "extends_another_page": 0,
+ "hide_custom": 1,
+ "icon": "setting-gear",
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Manufacturing Dashboard",
+ "links": [],
+ "modified": "2022-11-26 10:26:28.924723",
+ "modified_by": "Administrator",
+ "module": "Building Block Manufacture",
+ "name": "Manufacturing Dashboard",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Building Block Manufacture",
+   "link_to": "Building Block Manufacture",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "BOM",
+   "link_to": "BOM",
+   "type": "DocType"
+  }
+ ]
+}
