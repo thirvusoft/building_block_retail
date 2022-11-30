@@ -13,9 +13,11 @@ from frappe.utils import today
 def item_details_fetching_pavers(item_code):
     if item_code:
         doc = frappe.get_doc("Item",item_code)
-        item_price = get_item_rate(item_code)
+        item_price = get_item_rate(item_code, check_for_uom='Square Foot')
         area_bundle= doc.bundle_per_sqr_ft
-        return area_bundle,item_price
+        pcs_per_bundle = doc.pavers_per_bundle or 1
+        pcs_per_sqft = doc.pavers_per_sqft or 1
+        return area_bundle,item_price, pcs_per_bundle, pcs_per_sqft
 	
 @frappe.whitelist()
 def item_details_fetching_compoundwall(item_code):

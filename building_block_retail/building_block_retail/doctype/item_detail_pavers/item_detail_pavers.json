@@ -10,6 +10,9 @@
   "work",
   "required_area",
   "area_per_bundle",
+  "req_pcs",
+  "pcs_per_sqft",
+  "pieces_per_bundle",
   "number_of_bundle",
   "allocated_paver_area",
   "rate",
@@ -29,23 +32,22 @@
   {
    "columns": 1,
    "fieldname": "required_area",
-   "fieldtype": "Int",
-   "in_list_view": 1,
+   "fieldtype": "Float",
    "label": "Required Area",
+   "read_only": 1,
    "reqd": 1
   },
   {
    "columns": 1,
    "fieldname": "area_per_bundle",
-   "fieldtype": "Int",
-   "in_list_view": 1,
+   "fieldtype": "Float",
    "label": "Area Per Bundle",
    "read_only": 1
   },
   {
    "columns": 1,
    "fieldname": "number_of_bundle",
-   "fieldtype": "Int",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Number of Bundle",
    "read_only": 1
@@ -54,7 +56,6 @@
    "columns": 1,
    "fieldname": "allocated_paver_area",
    "fieldtype": "Float",
-   "in_list_view": 1,
    "label": "Allocated Paver Area",
    "precision": "2",
    "read_only": 1,
@@ -65,7 +66,7 @@
    "fieldname": "rate",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Rate ",
+   "label": "Rate(Sqft)",
    "reqd": 1
   },
   {
@@ -89,12 +90,35 @@
    "fieldtype": "Link",
    "label": "Warehouse",
    "options": "Warehouse"
+  },
+  {
+   "fieldname": "req_pcs",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Required Pieces",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "pieces_per_bundle",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Pieces Per Bundle",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "pcs_per_sqft",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Pieces Per Sqft",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-07-20 18:31:06.464904",
+ "modified": "2022-11-29 15:57:56.871906",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Item Detail Pavers",

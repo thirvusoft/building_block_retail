@@ -191,12 +191,30 @@ def remove_project_fields(self,event):
 
 
 @frappe.whitelist()
-def get_item_rate(item='', uom=None, selling=1):
+def get_item_rate(item='', uom=None, selling=1, check_for_uom=None):
     filter1={'selling': selling}
-    if(uom):filter1['uom']=uom
+    if(uom):
+        filter1['uom']=uom
+    
     if(not item or item not in frappe.get_all('Item Price', filter1, pluck='item_code')):
         return 0
+    filter1['uom'] = check_for_uom
     filter1['item_code']=item
+    if(frappe.db.exists('Item Price', filter1) and check_for_uom):
+        return frappe.db.get_value('Item Price', filter1, 'price_list_rate')
+    elif(check_for_uom):
+        del filter1['uom']
+        uom, rate = frappe.db.get_value('Item Price', filter1, ['uom', 'price_list_rate'])
+        stock_uom = frappe.db.get_value('Item', item, 'stock_uom')
+        final_conv = 1
+        if(uom != stock_uom):
+            conv1= frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':stock_uom}, 'conversion_factor')
+            conv2= frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':uom}, 'conversion_factor')
+            final_conv = conv1/conv2
+        conv = frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':check_for_uom}, 'conversion_factor')
+        return rate * conv * final_conv
+
+    
     doc=frappe.get_last_doc('Item Price', filter1)
     return doc.price_list_rate or 0
     

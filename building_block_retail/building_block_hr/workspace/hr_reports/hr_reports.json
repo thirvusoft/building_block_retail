@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Outgoing Salary",
+   "label": "Outgoing Salary"
+  }
+ ],
  "creation": "2022-07-19 14:45:04.841319",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
@@ -14,7 +19,7 @@
  "is_standard": 1,
  "label": "HR Reports",
  "links": [],
- "modified": "2022-11-22 14:33:52.740068",
+ "modified": "2022-11-26 09:47:48.262569",
  "modified_by": "Administrator",
  "module": "Building Block HR",
  "name": "HR Reports",

@@ -165,18 +165,17 @@ frappe.ui.form.on("Item Detail Pavers", {
 				{
 					frappe.model.set_value(cdt,cdn,"area_per_bundle",r['message'][0]?parseFloat(r["message"][0]):0)
 					frappe.model.set_value(cdt,cdn,"rate",r["message"][1]?parseFloat(r["message"][1]):0)
+					frappe.model.set_value(cdt,cdn,"pieces_per_bundle",r["message"][2]?parseFloat(r["message"][2]):0)
+					frappe.model.set_value(cdt,cdn,"pcs_per_sqft",r["message"][3]?parseFloat(r["message"][3]):0)
 				}
 			})
 		}
 	},
 	required_area : function(frm,cdt,cdn) {
-			if(cur_frm.doc.type=="Project"){
-			percent_complete(frm, cdt, cdn)
-			}
 			let data = locals[cdt][cdn]
 			let bundle = data.area_per_bundle?data.required_area / data.area_per_bundle :0
 			let no_of_bundle = Math.ceil(bundle)
-			frappe.model.set_value(cdt,cdn,"number_of_bundle",no_of_bundle?no_of_bundle:0)
+			frappe.model.set_value(cdt,cdn,"number_of_bundle",bundle?bundle:0)
 			
 			
 	},
@@ -198,6 +197,10 @@ frappe.ui.form.on("Item Detail Pavers", {
 			let rate = data.rate
 			let tot_amount = rate * data.allocated_paver_area
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
+	},
+	req_pcs: function(frm, cdt, cdn){
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'required_area', row.req_pcs/row.pcs_per_sqft)
 	}  
 })
 

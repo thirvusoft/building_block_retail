@@ -1,6 +1,11 @@
 {
  "category": "Modules",
- "charts": [],
+ "charts": [
+  {
+   "chart_name": "Warehouse wise Stock Value",
+   "label": "Warehouse wise Stock Value"
+  }
+ ],
  "creation": "2022-07-19 14:15:14.648836",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
@@ -14,7 +19,7 @@
  "is_standard": 1,
  "label": "Inventory Reports",
  "links": [],
- "modified": "2022-11-22 14:33:52.533144",
+ "modified": "2022-11-26 09:33:28.357822",
  "modified_by": "Administrator",
  "module": "Building Block Inventory",
  "name": "Inventory Reports",
