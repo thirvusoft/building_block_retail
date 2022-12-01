@@ -31,6 +31,8 @@ frappe.ui.form.on("Quotation", {
         setTimeout(() => {
 			frm.remove_custom_button('Subscription', "Create");
 		}, 500);  
+        cur_frm.set_df_property('items','reqd',0);
+        cur_frm.set_df_property('items','hidden',1);
     },
     work: function(frm){
         if(frm.doc.work=="Supply Only"){
