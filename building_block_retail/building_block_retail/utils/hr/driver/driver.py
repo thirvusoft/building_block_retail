@@ -24,3 +24,5 @@ def driver_property_setter():
     doctype = "driver"
     make_property_setter(doctype, 'transporter', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'cell_number', 'reqd', '1', 'Check')
+    make_property_setter(doctype, 'full_name', 'fetch_from', 'employee.employee_name', 'Text')
+    make_property_setter(doctype, 'cell_number', 'fetch_from', 'employee.cell_number', 'Text')

@@ -19,8 +19,6 @@ function setquery(frm){
             }
         }
     })
- 
-  
 }
 
 var prop_name;
@@ -70,7 +68,8 @@ frappe.ui.form.on('Sales Order',{
         frm.set_query('supervisor', function(frm){
             return {
                 filters:{
-                    'designation': 'Supervisor'
+                    // 'designation': 'Supervisor',
+                    'status':'Active'
                 }
             }
         });
@@ -112,6 +111,7 @@ frappe.ui.form.on('Sales Order',{
             frm.set_df_property('available_qty','hidden',1)
         }
     },
+
     set_warehouse: function(frm){
         if(frm.doc.set_warehouse){
             let table=cur_frm.doc.pavers?cur_frm.doc.pavers:[]
@@ -147,6 +147,9 @@ frappe.ui.form.on('Sales Order',{
     },
     validate: function(frm) {
         frm.trigger("taxes_and_charges")
+        frm.doc.pavers.forEach(d=>{
+            frappe.model.set_value(d.doctype, d.name, 'work', frm.doc.work)
+        })
     },
     customer:function(frm){
         cur_frm.set_value('site_work','')

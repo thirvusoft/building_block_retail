@@ -13,7 +13,7 @@
  "is_standard": 1,
  "label": "TS Settings",
  "links": [],
- "modified": "2022-11-22 14:33:52.947375",
+ "modified": "2022-11-30 11:26:11.224895",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Settings",
@@ -21,6 +21,12 @@
  "pin_to_bottom": 0,
  "pin_to_top": 1,
  "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Stock Settings",
+   "link_to": "Stock Settings",
+   "type": "DocType"
+  },
   {
    "doc_view": "List",
    "label": "Buying Settings",

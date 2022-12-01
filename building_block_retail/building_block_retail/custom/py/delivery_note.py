@@ -183,15 +183,33 @@ def update_customer(self,event):
                 frappe.db.set(doc, "customer", cus)
 
 def validate(doc,action):
-    
+    validate_loadman_qty(doc)
     for d in doc.items:
         if d.pieces:
             doc.value_pieces = True
         if d.ts_qty:
             doc.value_bundle = True
 
-        
-  
+def validate_loadman_qty(doc):
+    item_qty = {}
+    for i in doc.ts_loadman_info:
+        if(i.item not in item_qty):
+            item_qty[i.item] = [i.qtypieces, 0.5]
+        else:
+            item_qty[i.item][0] += i.qtypieces
+
+    for i in doc.items:
+        if(i.dont_include_in_loadman_cost):continue
+        if(i.item_code not in item_qty):
+            item_qty[i.item_code] = [0, i.stock_qty]
+        else:
+            item_qty[i.item_code][1] += i.stock_qty
+    msg=''
+    for i in item_qty:
+        if(item_qty[i][0] > item_qty[i][1]):
+            msg += f'<p>=> <b>Item:</b> {i} <b>Delivered Qty:</b> {round(item_qty[i][1])} <b>Loading Qty:</b> {round(item_qty[i][0])}</p>'
+    if(msg):frappe.throw(title='Loadman Qty Exceeds', msg = msg)
+    
 def odometer_validate(doc,action):
     if(doc.return_odometer_value):
         doc.total_distance=doc.return_odometer_value-doc.current_odometer_value
@@ -278,7 +296,6 @@ def delivery_note_whatsapp_driver(doc, action):
     if doc.ts_map_link:
         delivery_man_no = frappe.get_value("Driver",{'employee':doc.employee},"cell_number")
         conn = http.client.HTTPSConnection(frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint'))
-        frappe.errprint(delivery_man_no)
         payload = json.dumps({
         "countryCode": "+91",
         "phoneNumber": delivery_man_no,
@@ -308,7 +325,6 @@ def delivery_note_whatsapp_driver(doc, action):
             conn.request("POST", "/v1/public/message/", payload, headers)
             res = conn.getresponse()
             data = res.read()
-            frappe.errprint(data)
         except Exception as e:
             error = f"Doctype: {doc.doctype} " + str(e)
             api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')

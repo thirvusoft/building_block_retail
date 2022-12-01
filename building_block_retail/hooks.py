@@ -215,7 +215,8 @@ doc_events = {
 		'validate': 'building_block_retail.building_block_retail.custom.py.workstation.cal_per_hour'
 	}
 }
-after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status"]
+after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status",
+  			"building_block_retail.building_block_retail.function_calling.function_calling"]
 doctype_js = {
 				"Item" : "/building_block_retail/custom/js/item.js",
 				"Payment Entry" : "/building_block_retail/custom/js/payment_entry.js",
@@ -238,7 +239,7 @@ doctype_js = {
 				"Employee": "/building_block_retail/custom/js/employee.js",
 				"Supplier": "/building_block_retail/custom/js/supplier.js",
 				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" ,
-				
+				"Driver": "/building_block_retail/custom/js/driver.js",
                 "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js"
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}

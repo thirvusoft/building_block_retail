@@ -211,7 +211,7 @@ def get_item_rate(item='', uom=None, selling=1, check_for_uom=None):
             conv1= frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':stock_uom}, 'conversion_factor')
             conv2= frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':uom}, 'conversion_factor')
             final_conv = conv1/conv2
-        conv = frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':check_for_uom}, 'conversion_factor')
+        conv = frappe.db.get_value('UOM Conversion Detail', {'parent':item, 'uom':check_for_uom}, 'conversion_factor') or 0
         return rate * conv * final_conv
 
     

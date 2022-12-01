@@ -52,6 +52,27 @@ def quotation_custom_field():
                 description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
                 length=1000,
             ),
+            dict(fieldname='type', 
+                label='Type', 
+                reqd=1,
+                fieldtype='Select',
+                insert_after='supervisor_number', 
+                options='\nPavers\nCompound Wall'
+            ),
+            dict(fieldname='pavers', 
+                label='Pavers',
+                fieldtype='Table',
+                insert_after='items', 
+                options='Item Detail Pavers', 
+                depends_on="eval:doc.type=='Pavers'"
+                ),
+            dict(fieldname='compoun_walls', 
+                label='Compound Walls', 
+                fieldtype='Table',
+                insert_after='pavers', 
+                options='Item Detail Compound Wall', 
+                depends_on="eval:doc.type=='Compound Wall'"
+                ),
         ],
         'Quotation Item':[
             dict(

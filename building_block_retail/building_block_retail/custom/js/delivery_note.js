@@ -11,6 +11,7 @@ frappe.ui.form.on('Delivery Note Item', {
     dont_include_in_loadman_cost: function(frm){
         if(frm.doc.work != "Supply and Laying")return
         calculate_loading_cost(frm)
+        frm.trigger('refresh');
     },
     qty: function(frm){
         if(frm.doc.work != "Supply and Laying")return
@@ -73,15 +74,18 @@ frappe.ui.form.on('Delivery Note', {
     },
     
     refresh: async function(frm){
+        frm.doc.items.forEach( m => {
+            frappe.model.set_value(m.doctype, m.name, 'work', frm.doc.work)
+        })
         let item_list=[];
-       
         for(var i=0; i<frm.doc.items.length; i++){
-            var item=frm.doc.items[i].item_code
-            const res = await frappe.db.get_value("Item Group", {"name": frm.doc.items[i].item_group}, "parent_item_group");    
-            if(res.message.parent_item_group=="Products"){
-                item_list.push(frm.doc.items[i].item_code)
-                }      
-                      
+            if(!frm.doc.items[i].dont_include_in_loadman_cost){
+                var item=frm.doc.items[i].item_code
+                const res = await frappe.db.get_value("Item", {"name": frm.doc.items[i].item_code}, "parent_item_group");    
+                if(res.message.parent_item_group=="Products"){
+                    item_list.push(frm.doc.items[i].item_code)
+                    }      
+            }          
         }
             frm.set_query("item","ts_loadman_info",function(frm){
             return {
@@ -90,6 +94,8 @@ frappe.ui.form.on('Delivery Note', {
                 }
             }
         })
+
+        
     },
    
     // ts_both_loading_unloading: function(frm) {
@@ -147,19 +153,7 @@ frappe.ui.form.on('Delivery Note', {
         frm.trigger("taxes_and_charges")
     },
     validate: function(frm) {
-        frm.trigger("taxes_and_charges")
-        if(frm.doc.ts_loadman_info){
-            for(var i=0; i<frm.doc.items.length; i++){
-                for(var j=0; j<frm.doc.ts_loadman_info.length; j++){
-                    if(frm.doc.items[i].item_code==frm.doc.ts_loadman_info[j].item){
-                       if(frm.doc.items[i].stock_qty<frm.doc.ts_loadman_info[j].qtypieces){ 
-                        frappe.throw("Loading and Unloading Qty is More than the Item Qty")
-                       }
-                    }
-                }
-            }
-        }   
-        
+        frm.trigger("taxes_and_charges")        
     },
 
     onload:async function(frm){
@@ -232,6 +226,9 @@ frappe.ui.form.on('Delivery Note', {
 			}, 500);    
     },
     work: function(frm){
+        frm.doc.items.forEach( m => {
+            frappe.model.set_value(m.doctype, m.name, 'work', frm.doc.work)
+        })
         if(frm.doc.work === "Supply and Laying")return
         frm.clear_table('ts_loadman_info')
         cur_frm.refresh_field('ts_loadman_info')
@@ -241,6 +238,18 @@ frappe.ui.form.on('Delivery Note', {
     ts_loadman_work: function(frm){
         if(frm.doc.work != "Supply and Laying")return
         calculate_loading_cost(frm)
+        
+        if(frm.doc.ts_loadman_work == 'Loading Only'){
+            frm.doc.ts_loadman_info.forEach(d => {
+                frappe.model.set_value(d.doctype, d.name, 'type', 'Loading')
+            })
+        }
+        else if(frm.doc.ts_loadman_work == 'Unloading Only'){
+            frm.doc.ts_loadman_info.forEach(d => {
+                frappe.model.set_value(d.doctype, d.name, 'type', 'Unloading')
+            })
+        }
+        frm.refresh()
     },
     ts_open_link: function(frm){
         if(!frm.doc.ts_map_link){
@@ -256,6 +265,7 @@ frappe.ui.form.on('Delivery Note', {
 frappe.ui.form.on('TS Loadman Cost',{
     item:function(frm, cdt, cdn){
         var row=locals[cdt][cdn]
+        if(!row.item)return
         frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
                 frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
                 if (row.type=="Both"){
@@ -264,9 +274,10 @@ frappe.ui.form.on('TS Loadman Cost',{
             })
             
     },
-    type:function(frm, cdt, cdn){
+    type:async function(frm, cdt, cdn){
         var row=locals[cdt][cdn]
-        frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
+        if(!row.item)return
+        await frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
                 frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
                 if (row.type=="Both"){
                     frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost*2)
@@ -312,6 +323,7 @@ frappe.ui.form.on('TS Loadman Cost',{
 })
 
 function calculate_loading_cost(frm){
+    return
     var loading_cost = 0
     if(!frm.doc.ts_loadman_info.length)return
     frappe.call({
