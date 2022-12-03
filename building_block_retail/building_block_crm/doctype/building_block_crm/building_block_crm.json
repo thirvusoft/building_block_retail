@@ -13,9 +13,10 @@
    "fieldtype": "Data"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-12-01 17:25:34.421544",
+ "modified": "2022-12-03 16:07:12.900507",
  "modified_by": "Administrator",
  "module": "Building Block CRM",
  "name": "Building Block CRM",
@@ -34,6 +35,7 @@
    "write": 1
   }
  ],
+ "read_only": 1,
  "sort_field": "modified",
  "sort_order": "DESC"
 }

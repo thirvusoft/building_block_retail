@@ -11,7 +11,7 @@ def get_permission_for_attachment(user):
 
 def workflow_quotation(doc,action):
     if doc.workflow_state == "Waiting for Approval":
-        user_list = frappe.get_all("Has Role",pluck="parent",filters={"role":"Admin","parent":['!=', 'Administrator']})
+        user_list = frappe.get_all("Has Role",pluck="parent",filters={'parenttype': 'User', "role":"Admin","parent":['!=', 'Administrator']})
         for i in user_list:
             notification = frappe.new_doc("Notification Log")
             notification.update({

@@ -11,7 +11,7 @@ def quotation_custom_field():
             dict(
                 fieldname= "supervisor",
                 fieldtype= "Link",
-                insert_after= "customer_name",
+                insert_after= "site_work",
                 label= "Supervisor",
                 options= "Employee"
             ),
@@ -51,6 +51,15 @@ def quotation_custom_field():
                 label= "Enter Delivery Location Map Link",
                 description = 'Open Google Map in Browser and Point a Exact Delivery Location and Copy the Browser Url and Paste Here. Eg: <a href = https://maps.google.com>https://maps.google.com</a>',
                 length=1000,
+            ),
+            dict(fieldname='site_work', 
+                label='Site Name', 
+                fieldtype='Link',
+                insert_after='customer_name', 
+                options='Project', 
+                allow_on_submit=0, 
+                mandatory_depends_on="eval:doc.work!='Supply Only'", 
+                depends_on="eval:doc.work!='Supply Only'"
             ),
             dict(fieldname='type', 
                 label='Type', 
