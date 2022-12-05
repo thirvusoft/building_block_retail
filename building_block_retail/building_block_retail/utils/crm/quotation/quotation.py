@@ -66,7 +66,8 @@ def quotation_custom_field():
                 reqd=1,
                 fieldtype='Select',
                 insert_after='customer_name', 
-                options='\nPavers\nCompound Wall'
+                options='\nPavers\nCompound Wall',
+                default = 'Pavers',
             ),
             dict(fieldname='pavers', 
                 label='Pavers',

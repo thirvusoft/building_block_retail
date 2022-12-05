@@ -19,7 +19,7 @@ def sales_order_customization():
             dict(fieldname='temporary_customer', label='temporary_customer', allow_on_submit=1, hidden=1,
                 fieldtype='Data',insert_after='customers_name'),
             dict(fieldname='type', label='Type', reqd=1,
-                fieldtype='Select',insert_after='temporary_customer', options='\nPavers\nCompound Wall'),
+                fieldtype='Select',insert_after='temporary_customer', options='\nPavers\nCompound Wall', default = 'Pavers',),
             dict(fieldname='work', label='Work', 
                 fieldtype='Select',insert_after='type', options='\nSupply Only\nSupply and Laying', reqd=1),
             dict(fieldname='site_work', label='Site Name', 
