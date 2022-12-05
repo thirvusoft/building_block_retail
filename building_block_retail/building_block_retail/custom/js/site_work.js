@@ -176,8 +176,7 @@ frappe.ui.form.on("Item Detail Pavers", {
 			let bundle = data.area_per_bundle?data.required_area / data.area_per_bundle :0
 			let no_of_bundle = Math.ceil(bundle)
 			frappe.model.set_value(cdt,cdn,"number_of_bundle",bundle?bundle:0)
-			
-			
+			frappe.model.set_value(cdt,cdn,"req_pcs",Math.ceil(data.required_area*data.pcs_per_sqft))
 	},
 	number_of_bundle : function(frm,cdt,cdn) {
 			let data = locals[cdt][cdn]

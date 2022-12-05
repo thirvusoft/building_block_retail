@@ -34,7 +34,6 @@
    "fieldname": "required_area",
    "fieldtype": "Float",
    "label": "Required Area",
-   "read_only": 1,
    "reqd": 1
   },
   {
@@ -118,7 +117,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-11-29 15:57:56.871906",
+ "modified": "2022-12-05 10:00:03.777361",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Item Detail Pavers",
