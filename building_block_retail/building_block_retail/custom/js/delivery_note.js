@@ -9,16 +9,16 @@ frappe.ui.form.on('Delivery Note Item', {
         bundle_calc(frm, cdt, cdn)
     },
     dont_include_in_loadman_cost: function(frm){
-        if(frm.doc.work != "Supply and Laying")return
+        if(frm.doc.work != "Supply and Laying" || frm.doc.work != "Laying Only")return
         calculate_loading_cost(frm)
         frm.trigger('refresh');
     },
     qty: function(frm){
-        if(frm.doc.work != "Supply and Laying")return
+        if(frm.doc.work != "Supply and Laying" || frm.doc.work != "Laying Only")return
         calculate_loading_cost(frm)
     },
     items_remove: function(frm){
-        if(frm.doc.work != "Supply and Laying")return
+        if(frm.doc.work != "Supply and Laying" || frm.doc.work != "Laying Only")return
         calculate_loading_cost(frm)
     }
 })
@@ -229,14 +229,14 @@ frappe.ui.form.on('Delivery Note', {
         frm.doc.items.forEach( m => {
             frappe.model.set_value(m.doctype, m.name, 'work', frm.doc.work)
         })
-        if(frm.doc.work === "Supply and Laying")return
+        if(frm.doc.work === "Supply and Laying" || frm.doc.work === "Laying Only")return
         frm.clear_table('ts_loadman_info')
         cur_frm.refresh_field('ts_loadman_info')
         frm.set_value('ts_loadman_total_amount', 0)
         cur_frm.refresh_field('ts_loadman_total_amount')
     },
     ts_loadman_work: function(frm){
-        if(frm.doc.work != "Supply and Laying")return
+        if(frm.doc.work != "Supply and Laying" || frm.doc.work != "Laying Only")return
         calculate_loading_cost(frm)
         
         if(frm.doc.ts_loadman_work == 'Loading Only'){
@@ -297,11 +297,11 @@ frappe.ui.form.on('TS Loadman Cost',{
 
     },
     ts_loadman_info_add: function(frm, cdt, cdn){
-        if(frm.doc.work === 'Supply and Laying' &&  !frm.doc.is_return)
+        if((frm.doc.work === 'Supply and Laying' || frm.doc.work === 'Laying Only') &&  !frm.doc.is_return)
         calculate_loading_cost(frm)
     },
     ts_loadman_info_remove: function(frm, cdt, cdn){
-        if(frm.doc.work === 'Supply and Laying' &&  !frm.doc.is_return && frm.doc.ts_loadman_info.length)
+        if((frm.doc.work === 'Supply and Laying' || frm.doc.work === 'Laying Only') &&  !frm.doc.is_return && frm.doc.ts_loadman_info.length)
         calculate_loading_cost(frm)
         else{
             cur_frm.set_value('ts_loadman_total_amount', 0)

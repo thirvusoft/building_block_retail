@@ -172,7 +172,7 @@ def delivery_note_custom_field():
                 fieldtype= "Select",
                 insert_after= "site_work",
                 label= "Work",
-                options= "Supply Only\nSupply and Laying",
+                options= "Supply Only\nSupply and Laying\nLaying Only",
                 reqd = 1
             ),
             dict(
@@ -223,7 +223,7 @@ def delivery_note_custom_field():
                 fieldtype= "Select",
                 insert_after= "item_code",
                 label= "Work",
-                options= "Supply Only\nSupply and Laying"
+                options= "Supply Only\nSupply and Laying\nLaying Only"
             ),
             dict(
                 fieldname= "ts_qty",

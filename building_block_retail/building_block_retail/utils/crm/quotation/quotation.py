@@ -42,7 +42,7 @@ def quotation_custom_field():
                 fieldtype= "Select",
                 insert_after= "type",
                 label= "Work",
-                options= "Supply Only\nSupply and Laying"
+                options= "Supply Only\nSupply and Laying\nLaying Only"
             ),
             dict(
                 fieldname= "ts_map_link",
@@ -90,7 +90,7 @@ def quotation_custom_field():
                 fieldtype= "Select",
                 insert_after= "item_code",
                 label= "Work",
-                options= "Supply Only\nSupply and Laying"
+                options= "Supply Only\nSupply and Laying\nLaying Only"
             ),
         ]
     }
