@@ -131,7 +131,10 @@ def salary_slip_add_gross_pay(doc, event):
     emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
     je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
     emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
+    table = get_employe_expense_report(doc)
+    emp_amount = sum([i['expense'] for i in table])
     doc.total_expense = emp_amount
+    doc.set('ts_hr_employee_salary_report', table)
     if(not doc.contractor_to_pay):
         doc.contractor_to_pay = emp_amount
     com = [i.salary_component for i in doc.earnings]
@@ -154,8 +157,7 @@ def salary_slip_add_gross_pay(doc, event):
     doc.set_net_total_in_words()
     
     #### Get Employee Expense Report Table
-    table = get_employe_expense_report(doc)
-    doc.set('ts_hr_employee_salary_report', table)
+    
     
     
     
