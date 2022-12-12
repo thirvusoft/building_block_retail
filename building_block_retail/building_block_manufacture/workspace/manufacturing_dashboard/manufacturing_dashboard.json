@@ -2,6 +2,10 @@
  "category": "Modules",
  "charts": [
   {
+   "chart_name": "Weekly Production",
+   "label": "Weekly Production"
+  },
+  {
    "chart_name": "Work Order Analysis",
    "label": "Work Order Analysis"
   },
@@ -27,7 +31,7 @@
  "is_standard": 1,
  "label": "Manufacturing Dashboard",
  "links": [],
- "modified": "2022-11-26 10:26:28.924723",
+ "modified": "2022-12-12 17:46:14.164509",
  "modified_by": "Administrator",
  "module": "Building Block Manufacture",
  "name": "Manufacturing Dashboard",
