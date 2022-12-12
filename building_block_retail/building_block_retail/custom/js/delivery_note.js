@@ -74,9 +74,11 @@ frappe.ui.form.on('Delivery Note', {
     },
     
     refresh: async function(frm){
-        frm.doc.items.forEach( m => {
-            frappe.model.set_value(m.doctype, m.name, 'work', frm.doc.work)
-        })
+        if(frm.doc.docstatus == 0){
+            frm.doc.items.forEach( m => {
+                frappe.model.set_value(m.doctype, m.name, 'work', frm.doc.work)
+            })
+        }
         let item_list=[];
         for(var i=0; i<frm.doc.items.length; i++){
             if(!frm.doc.items[i].dont_include_in_loadman_cost){
@@ -168,7 +170,7 @@ frappe.ui.form.on('Delivery Note', {
                 if(row.item_code)
                 {
 					await frappe.db.get_doc('Item', row.item_code).then((doc) => {
-                        let bundle_conv=1
+                        let bundle_conv=0;
                         let other_conv=1;
                         let nos_conv=1
                         for(let doc_row=0; doc_row<doc.uoms.length; doc_row++){
@@ -190,9 +192,12 @@ frappe.ui.form.on('Delivery Note', {
                
                 if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
                     let total_qty=row.qty
+                    var bundle_qty = 0
+                    if(conv1){
                     await frappe.model.set_value(cdt, cdn, 'ts_qty', parseInt(row.qty/conv1))
                     await frappe.model.set_value(cdt, cdn, 'pieces', 0)
-                    let bundle_qty=row.qty
+                    bundle_qty=row.qty
+                    }
                     let pieces_qty=total_qty-bundle_qty
                     await frappe.model.set_value(cdt, cdn, 'pieces', Math.round((pieces_qty/conv2)+.5))
                     let rate=row.rate
