@@ -13,7 +13,10 @@
   "sqft_allocated",
   "completed_bundle",
   "rate",
-  "amount"
+  "amount",
+  "pcs_per_sqft",
+  "pieces_per_bundle",
+  "area_per_bundle"
  ],
  "fields": [
   {
@@ -86,12 +89,29 @@
    "fieldtype": "Float",
    "in_preview": 1,
    "label": "Completed Bundle"
+  },
+  {
+   "fieldname": "pieces_per_bundle",
+   "fieldtype": "Float",
+   "label": "Pieces Per Bundle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "area_per_bundle",
+   "fieldtype": "Float",
+   "label": "Area Per Bundle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pcs_per_sqft",
+   "fieldtype": "Float",
+   "label": "Pieces Per Sqft"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-08-08 09:40:12.060580",
+ "modified": "2022-12-12 14:52:38.021742",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Job Worker Details",
