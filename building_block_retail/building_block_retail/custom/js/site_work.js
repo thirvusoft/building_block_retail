@@ -275,6 +275,9 @@ frappe.ui.form.on('TS Job Worker Details',{
 	},
 	completed_bundle: function(frm,cdt,cdn){
 		completed_bundle_calc(frm,cdt,cdn)
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+
 	},
 	item:function(frm,cdt,cdn){
 		completed_bundle_calc(frm,cdt,cdn)
@@ -284,10 +287,31 @@ frappe.ui.form.on('TS Job Worker Details',{
 				frappe.model.set_value(cdt, cdn, 'rate', data.message.laying_cost)
 			})
 			}
+		let item_code = row.item
+		if (item_code){
+			frappe.call({
+				method:"building_block_retail.building_block_retail.custom.py.site_work.item_details_fetching_pavers",
+				args:{item_code},
+				callback(r)
+				{
+					frappe.model.set_value(cdt,cdn,"area_per_bundle",r['message'][0]?parseFloat(r["message"][0]):0)
+					// frappe.model.set_value(cdt,cdn,"rate",r["message"][1]?parseFloat(r["message"][1]):0)
+					frappe.model.set_value(cdt,cdn,"pieces_per_bundle",r["message"][2]?parseFloat(r["message"][2]):0)
+					frappe.model.set_value(cdt,cdn,"pcs_per_sqft",r["message"][3]?parseFloat(r["message"][3]):0)
+				}
+			})
+		}
 	},
 	sqft_allocated: function(frm, cdt, cdn){
+		var row = locals[cdt][cdn]
 		percent_complete(frm, cdt, cdn)
 		amount(frm, cdt, cdn)
+		if(row.area_per_bundle){
+			frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
+		}
+		else{
+			frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
+		}
 
 	},
 	job_worker_add: function(frm, cdt, cdn){
