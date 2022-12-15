@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "HR Cycle",
  "links": [],
- "modified": "2022-11-22 14:39:35.679527",
+ "modified": "2022-12-14 13:19:32.405720",
  "modified_by": "Administrator",
  "module": "Building Block HR",
  "name": "HR Cycle",
@@ -32,6 +32,12 @@
    "doc_view": "List",
    "label": "Driver",
    "link_to": "Driver",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Employee Checkin",
+   "link_to": "Employee Checkin",
    "type": "DocType"
   },
   {

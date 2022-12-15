@@ -109,6 +109,9 @@ override_doctype_class = {
 #	}
 # }
 doc_events = {
+	"Customer":{
+		'autoname': 'building_block_retail.building_block_retail.custom.py.customer.autoname'
+	},
     "Item Price":{
 		'validate': 'building_block_retail.building_block_retail.custom.py.item_price.validate'	
 	},

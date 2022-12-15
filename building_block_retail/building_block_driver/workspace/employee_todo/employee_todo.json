@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Employee Todo",
  "links": [],
- "modified": "2022-11-22 14:33:52.127006",
+ "modified": "2022-12-14 19:04:42.933196",
  "modified_by": "Administrator",
  "module": "Building Block Driver",
  "name": "Employee Todo",
@@ -26,7 +26,45 @@
    "doc_view": "List",
    "label": "Assigned Delivery Notes",
    "link_to": "ToDo",
-   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Delivery Note', 'date':frappe.datetime.nowdate()}",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Delivery Note', 'status':'Open'}",
+   "type": "DocType"
+  },
+  {
+   "color": "#ECAD4B",
+   "doc_view": "List",
+   "label": "Assigned Lead",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Lead', 'status':'Open'}",
+   "type": "DocType"
+  },
+  {
+   "color": "#ECAD4B",
+   "doc_view": "List",
+   "label": "Assigned Opportunity",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Opportunity', 'status':'Open'}",
+   "type": "DocType"
+  },
+  {
+   "color": "#ECAD4B",
+   "doc_view": "List",
+   "label": "Assigned Sales Order",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Sales Order', 'status':'Open'}",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Assigned Quotation",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Quotation', 'status':'Open'}",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Other Assignments",
+   "link_to": "ToDo",
+   "stats_filter": "{'owner':frappe.session.user, 'status':'Open'}",
    "type": "DocType"
   },
   {
