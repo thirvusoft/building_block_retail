@@ -8,7 +8,15 @@ frappe.query_reports["Daily Production summary"] = {
 			fieldname:'sales_order',
 			label:'Sales Order',
 			fieldtype:'Link',
-			options:'Sales Order'
+			options:'Sales Order',
+			filters:{'docstatus':1},
+		},
+		{
+			fieldname:'item_code',
+			label:'Item',
+			fieldtype:'Link',
+			options:'Item',
+			filters:{'disabled':0, 'parent_item_group':'Products'},
 		},
 		{
 			fieldname:'from_date',

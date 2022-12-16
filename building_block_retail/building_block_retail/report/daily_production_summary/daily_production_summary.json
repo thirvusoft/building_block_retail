@@ -1,5 +1,5 @@
 {
- "add_total_row": 0,
+ "add_total_row": 1,
  "columns": [],
  "creation": "2022-12-15 17:19:29.538919",
  "disable_prepared_report": 0,
@@ -10,7 +10,7 @@
  "idx": 0,
  "is_standard": "Yes",
  "letter_head": "Shri Velavaa Paver Bricks",
- "modified": "2022-12-15 17:19:29.538919",
+ "modified": "2022-12-16 12:54:59.825836",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Daily Production summary",
