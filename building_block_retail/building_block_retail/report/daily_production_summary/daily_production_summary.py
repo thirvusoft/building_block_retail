@@ -30,31 +30,31 @@ def get_columns():
 			'fieldname':'total_planned_qty',
 			'label':'Total Planned Qty',
 			'fieldtype':'Float',
-			'width':200,
+			'width':150,
 		},
 		{
 			'fieldname':'total_prod_qty',
 			'label':'Total Production Qty',
 			'fieldtype':'Float',
-			'width':200,
-		},
-		{
-			'fieldname':'today_prod_qty',
-			'label':'Today Produced Qty',
-			'fieldtype':'Float',
-			'width':200,
+			'width':150,
 		},
 		{
 			'fieldname':'today_planned_qty',
 			'label':'Today Planned Qty',
 			'fieldtype':'Float',
-			'width':200,
+			'width':150,
+		},
+		{
+			'fieldname':'today_prod_qty',
+			'label':'Today Produced Qty',
+			'fieldtype':'Float',
+			'width':150,
 		},
 		{
 			'fieldname':'stock_not_added',
 			'label':'Stock Not Added',
 			'fieldtype':'Float',
-			'width':200,
+			'width':150,
 		},
 	]
 	return columns
@@ -67,10 +67,10 @@ def get_chart_data(data):
 		chart_data = {
 			"data": {
 				"labels": label,
-				"datasets": [{"name": "Qty Produced", "values": today_prod_qty}, {"name": "Planned Qty", "values": planned_qty}],
+				"datasets": [{"name": "Planned Qty", "values": planned_qty},{"name": "Qty Produced", "values": today_prod_qty}],
 			},
 			"type": "line",
-			'colors':['blue', 'green'],
+			'colors':['green','blue'],
 			'lineOptions':{'hideDots':0, 'dotSize':6, 'regionFill':1}
 		}
 

@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Employee Todo",
  "links": [],
- "modified": "2022-12-14 19:04:42.933196",
+ "modified": "2022-12-16 14:25:29.875890",
  "modified_by": "Administrator",
  "module": "Building Block Driver",
  "name": "Employee Todo",
@@ -33,16 +33,16 @@
    "color": "#ECAD4B",
    "doc_view": "List",
    "label": "Assigned Lead",
-   "link_to": "ToDo",
-   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Lead', 'status':'Open'}",
+   "link_to": "Lead",
+   "stats_filter": "{'contact_by':frappe.session.user, 'contact_date':['between',(frappe.datetime.nowdate(), frappe.datetime.nowdate())}",
    "type": "DocType"
   },
   {
    "color": "#ECAD4B",
    "doc_view": "List",
    "label": "Assigned Opportunity",
-   "link_to": "ToDo",
-   "stats_filter": "{'owner':frappe.session.user, 'reference_type':'Opportunity', 'status':'Open'}",
+   "link_to": "Opportunity",
+   "stats_filter": "{'contact_by':frappe.session.user, 'contact_date':frappe.datetime.nowdate()}",
    "type": "DocType"
   },
   {

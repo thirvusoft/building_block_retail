@@ -1,4 +1,5 @@
 {
+ "cards_label": "Reports",
  "category": "Modules",
  "charts": [
   {
@@ -30,8 +31,18 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "Manufacturing Dashboard",
- "links": [],
- "modified": "2022-12-12 17:46:14.164509",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Daily Production summary",
+   "link_to": "Daily Production summary",
+   "link_type": "Report",
+   "onboard": 1,
+   "type": "Link"
+  }
+ ],
+ "modified": "2022-12-16 14:15:22.125766",
  "modified_by": "Administrator",
  "module": "Building Block Manufacture",
  "name": "Manufacturing Dashboard",
