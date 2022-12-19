@@ -13,6 +13,12 @@ def item_customization():
                 insert_after='stock_uom',
                 read_only=0),
 
+            dict(fieldname='daily_max_production_limit',
+                label='Daily Production(in default uom)',
+                fieldtype='Float',
+                insert_after='brand_field',
+                description = 'Daily maximum production limit(To get the possible delivery date of this item)'),
+
             dict(fieldname='section_break_inventory',
                 label='Inventory',
                 fieldtype='Section Break',

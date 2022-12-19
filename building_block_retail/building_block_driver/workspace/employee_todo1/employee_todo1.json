@@ -1,7 +1,7 @@
 {
  "category": "Modules",
  "charts": [],
- "creation": "2022-09-07 15:40:00.960391",
+ "creation": "2022-12-17 09:59:50.564821",
  "developer_mode_only": 0,
  "disable_user_customization": 1,
  "docstatus": 0,
@@ -12,12 +12,12 @@
  "idx": 0,
  "is_default": 0,
  "is_standard": 1,
- "label": "Employee Todo",
+ "label": "Employee Todo1",
  "links": [],
- "modified": "2022-12-17 10:01:32.351905",
+ "modified": "2022-12-17 09:59:50.564821",
  "modified_by": "Administrator",
  "module": "Building Block Driver",
- "name": "Employee Todo",
+ "name": "Employee Todo1",
  "owner": "Administrator",
  "pin_to_bottom": 0,
  "pin_to_top": 1,
@@ -34,7 +34,7 @@
    "doc_view": "List",
    "label": "Assigned Lead",
    "link_to": "Lead",
-   "stats_filter": "{'contact_by':frappe.session.user, 'contact_date':frappe.datetime.nowdate()}",
+   "stats_filter": "{'contact_by':frappe.session.user, 'contact_date':['between',(frappe.datetime.nowdate(), frappe.datetime.nowdate())}",
    "type": "DocType"
   },
   {

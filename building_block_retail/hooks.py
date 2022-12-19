@@ -216,10 +216,13 @@ doc_events = {
 	},
 	'Workstation' : {
 		'validate': 'building_block_retail.building_block_retail.custom.py.workstation.cal_per_hour'
+	},
+	'*' : {
+		'validate': 'building_block_retail.building_block_retail.custom.py.document_follow.check_doc_follow_up'
 	}
 }
-# after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status",
-#   			"building_block_retail.building_block_retail.function_calling.function_calling"]
+after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status",
+  			"building_block_retail.building_block_retail.function_calling.function_calling"]
 doctype_js = {
 				"Item" : "/building_block_retail/custom/js/item.js",
 				"Payment Entry" : "/building_block_retail/custom/js/payment_entry.js",

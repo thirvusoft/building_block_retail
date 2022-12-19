@@ -39,8 +39,16 @@ def sales_order_customization():
                 fieldtype='Section Break',insert_after='tax_id'),
             dict(fieldname='distance', label='Distance (km)', precision=2, allow_on_submit=1,
                 fieldtype='Float',insert_after='delivery_details'),
+            dict(fieldname='possible_delivery_dates', 
+            label='Possible Delivery Dates',
+            fieldtype='Table',
+            insert_after='items', 
+            options='Item wise Delivery Date', 
+            read_only = 1,
+            allow_on_submit = 1,
+            ),
             dict(fieldname='pavers', label='Pavers',
-                fieldtype='Table',insert_after='items', options='Item Detail Pavers', depends_on="eval:doc.type=='Pavers'"),
+                fieldtype='Table',insert_after='possible_delivery_dates', options='Item Detail Pavers', depends_on="eval:doc.type=='Pavers'"),
             dict(fieldname='compoun_walls', label='Compound Walls', 
                 fieldtype='Table',insert_after='pavers', options='Item Detail Compound Wall', depends_on="eval:doc.type=='Compound Wall'"),
             dict(fieldname='raw_materials_', label='Raw Materials ',
@@ -95,9 +103,7 @@ def sales_order_customization():
         ['hidden', 'Check', 'shipping_rule', 1],
         
         ['hidden', 'Check', 'section_break_48', 1],
-        
-        ['hidden', 'Check', 'payment_schedule_section', 1],
-                
+                        
         ['hidden', 'Check', 'more_info', 1],
         
         ['hidden', 'Check', 'printing_details', 1],

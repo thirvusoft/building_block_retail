@@ -217,7 +217,16 @@ frappe.ui.form.on('Sales Order',{
         else{
             frm.clear_table("customers_name");
         }
-
+        var qtn_item = {}
+        var item = []
+        if(frm.doc.items){
+            frm.doc.items.forEach(r => {
+                if(r.prevdoc_docname){
+                    item.push(r.item_code)
+                    qtn_item[r.item_code] = r.prevdoc_docname
+                }
+            })
+        }
         frm.clear_table("items");
         if(cur_frm.doc.type=='Pavers'){
             cur_frm.set_value("compoun_walls",[])
@@ -281,7 +290,11 @@ frappe.ui.form.on('Sales Order',{
             }
         }
         
-
+        frm.doc.items.forEach(r => {
+            if(item.includes(r.item_code)){
+                r.prevdoc_docname = qtn_item[r.item_code]
+            }
+        })
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
             if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}

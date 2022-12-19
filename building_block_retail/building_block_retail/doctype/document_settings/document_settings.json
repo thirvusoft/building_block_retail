@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2022-12-19 12:10:39.908404",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_follow_up_section",
+  "lead_to_opportunity",
+  "opportunity_to_quotation",
+  "quotation_to_sales_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "document_follow_up_section",
+   "fieldtype": "Section Break",
+   "label": "Document Follow up"
+  },
+  {
+   "default": "1",
+   "fieldname": "lead_to_opportunity",
+   "fieldtype": "Check",
+   "label": "Lead to Opportunity"
+  },
+  {
+   "default": "1",
+   "fieldname": "opportunity_to_quotation",
+   "fieldtype": "Check",
+   "label": "Opportunity to Quotation"
+  },
+  {
+   "default": "1",
+   "fieldname": "quotation_to_sales_order",
+   "fieldtype": "Check",
+   "label": "Quotation to Sales Order"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2022-12-19 12:15:42.360918",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Document Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
