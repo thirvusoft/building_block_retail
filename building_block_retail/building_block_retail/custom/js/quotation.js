@@ -180,7 +180,8 @@ frappe.ui.form.on('Item Detail Pavers', {
 			let bundle = data.area_per_bundle?data.required_area / data.area_per_bundle :0
 			let no_of_bundle = Math.ceil(bundle)
 			frappe.model.set_value(cdt,cdn,"number_of_bundle",bundle?bundle:0)
-			frappe.model.set_value(cdt,cdn,"req_pcs",Math.ceil(data.required_area*data.pcs_per_sqft))		
+			frappe.model.set_value(cdt,cdn,"req_pcs",Math.ceil(data.required_area*data.pcs_per_sqft))	
+            frappe.model.set_value(cdt,cdn,"allocated_paver_area", data.required_area)	
 	},
 	number_of_bundle : function(frm,cdt,cdn) {
 			let data = locals[cdt][cdn]
@@ -193,6 +194,7 @@ frappe.ui.form.on('Item Detail Pavers', {
 			let allocated_paver = data.allocated_paver_area
 			let tot_amount = data.rate * allocated_paver
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
+            get_possible_delivery_date(frm)
 			
 	},
 	rate : function(frm,cdt,cdn) {
@@ -241,3 +243,23 @@ frappe.ui.form.on('Item Detail Compound Wall',{
     }
   
   })
+
+var get_possible_delivery_date = function(frm){
+    var child = []
+    frm.doc.pavers.forEach(row => {
+        if(row.item && row.req_pcs){
+            frappe.call({
+                method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
+                args:{
+                    filters:{'item_code':row.item, 'order_qty':row.req_pcs},
+                    call_from_report : 0
+                },
+                callback(r){
+                    child.push({'item':row.item, 'possible_delivery_date':r.message})
+                    frm.set_value('possible_delivery_dates', child)
+                    frm.refresh_field('possible_delivery_dates')
+                }
+            })
+        }
+    })
+}

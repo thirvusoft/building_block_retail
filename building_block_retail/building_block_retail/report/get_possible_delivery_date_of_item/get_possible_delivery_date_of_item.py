@@ -1,6 +1,7 @@
 # Copyright (c) 2022, Thirvusoft and contributors
 # For license information, please see license.txt
 
+import json
 import frappe
 import datetime
 
@@ -28,7 +29,7 @@ def execute(filters={}):
 			"datatype": "Data",
 		}
 	]
-	return columns, data, f'Exclude Holidays metioned in <b>{holiday_list}</b>', None, summary
+	return columns, data, f'Exclude Holidays metioned in <b>{holiday_list}</b><br>Enter qty in Pieces', None, summary
 
 
 def get_columns():
@@ -80,7 +81,12 @@ def date_by_adding_business_days(from_date, add_days, leave_days=[]):
 # print '10 business days from today:'
 # print date_by_adding_business_days(datetime.date.today(), 10)
 
+@frappe.whitelist()
 def get_data(filters, call_from_report = 1, check_warehouse=[]):
+	if(isinstance(filters, str)):
+		filters = json.loads(filters)
+		call_from_report = int(call_from_report)
+
 	if(not filters.get('item_code')):
 		frappe.msgprint('Select Item')
 		return 
@@ -104,8 +110,10 @@ def get_data(filters, call_from_report = 1, check_warehouse=[]):
 	prod_qty = actual_stock
 	days_count = (tot_qty + (filters.get('order_qty') or 0) - prod_qty)/max_qty
 	possible_date = date_by_adding_business_days(datetime.date.today(), days_count, leave_days)
+
 	if( not call_from_report):
 		return possible_date
+		
 	data = []
 	qty = 0
 	for i in wo:
