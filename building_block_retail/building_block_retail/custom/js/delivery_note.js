@@ -69,7 +69,24 @@ frappe.ui.form.on('Delivery Note', {
                 }
             }
         })
-        
+        frm.set_query('employee', 'ts_only_loadman',function(frm){
+            return {
+                filters:{
+                    'status':'Active',
+                    'designation':'Loader',
+                    'company':cur_frm.doc.company
+                }
+            }
+        })
+        frm.set_query('employee', 'ts_only_unloadman',function(frm){
+            return {
+                filters:{
+                    'status':'Active',
+                    'designation':'Loader',
+                    'company':cur_frm.doc.company
+                }
+            }
+        })
        
     },
     
@@ -265,6 +282,110 @@ frappe.ui.form.on('Delivery Note', {
         window.open(frm.doc.ts_map_link, '_blank')
         }
     }
+})
+
+frappe.ui.form.on('Loading Employee',{
+    employee:async function(frm,cdt,cdn){
+        var d = locals[cdt][cdn]
+        if(d.employee){
+            var f=0
+            for(var i=0;i<frm.doc.ts_only_loadman.length;i++){
+                if(frm.doc.ts_only_loadman[i].employee == d.employee){
+                    f+=1
+                }
+            }
+            if(f<2){
+                var n=1
+                for(var j=0;j<frm.doc.items.length;j++){
+                    for(var i=0;i<frm.doc.ts_loadman_info.length;i++){
+                        if(frm.doc.ts_loadman_info[i].employee == d.employee && frm.doc.ts_loadman_info[i].item == frm.doc.items[j].item_code){
+                            frappe.model.set_value(frm.doc.ts_loadman_info[i].doctype,frm.doc.ts_loadman_info[i].name,"type","Both")
+                            n=0
+                        }
+                    }
+                }
+                if(n == 1){
+                    for(var j=0;j<frm.doc.items.length;j++){
+                        if(frm.doc.items[j].dont_include_in_loadman_cost == 0){
+                            await frappe.db.get_list("Item",{filters:{"item_code":frm.doc.items[j].item_code},fields:["loading_cost"]}).then(function(e){
+                                var row = frm.add_child('ts_loadman_info');
+                                row.employee = d.employee;
+                                row.item = frm.doc.items[j].item_code
+                                row.qtypieces = frm.doc.items[j].stock_qty/(frm.doc.ts_only_loadman.length || 1)
+                                row.rate = e[0].loading_cost
+                                row.type = "Loading"
+                                row.amount = (frm.doc.items[j].stock_qty/(frm.doc.ts_only_loadman.length || 1))*e[0].loading_cost
+                            })
+                                
+                        } 
+                    }
+                    lodunlod(frm,"Loading",frm.doc.ts_only_loadman.length)
+                }
+                refresh_field('ts_loadman_info')
+            } else{
+                frappe.throw("Duplicate Entry")
+            }
+            
+        }
+
+    }  
+})
+function lodunlod(frm,lod,len){
+    for(var i=0;i<frm.doc.ts_loadman_info.length;i++){
+        if(frm.doc.ts_loadman_info[i].type == lod || frm.doc.ts_loadman_info[i].type == "Both"){
+            for(var j=0;j<frm.doc.items.length;j++){
+                if(frm.doc.ts_loadman_info[i].item == frm.doc.items[j].item_code){
+                    frappe.model.set_value(frm.doc.ts_loadman_info[i].doctype,frm.doc.ts_loadman_info[i].name,"qtypieces",frm.doc.items[j].stock_qty/len)     
+                }
+            }
+        }
+    }
+}
+frappe.ui.form.on('Unloading Employee',{
+    employee:async function(frm,cdt,cdn){
+        var d = locals[cdt][cdn]
+        if(d.employee){
+            var f=0
+            for(var i=0;i<frm.doc.ts_only_unloadman.length;i++){
+                if(frm.doc.ts_only_unloadman[i].employee == d.employee){
+                    f+=1
+                }
+            }
+            if(f<2){
+                var n=1
+                for(var j=0;j<frm.doc.items.length;j++){
+                    for(var i=0;i<frm.doc.ts_loadman_info.length;i++){
+                        if(frm.doc.ts_loadman_info[i].employee == d.employee && frm.doc.ts_loadman_info[i].item == frm.doc.items[j].item_code){
+                            frappe.model.set_value(frm.doc.ts_loadman_info[i].doctype,frm.doc.ts_loadman_info[i].name,"type","Both")
+                            n=0
+                        }
+                    }
+                }
+                if(n == 1){
+                    for(var j=0;j<frm.doc.items.length;j++){
+                        if(frm.doc.items[j].dont_include_in_loadman_cost == 0){
+                            await frappe.db.get_list("Item",{filters:{"item_code":frm.doc.items[j].item_code},fields:["loading_cost"]}).then(function(e){
+                                var row = frm.add_child('ts_loadman_info');
+                                row.employee = d.employee;
+                                row.item = frm.doc.items[j].item_code
+                                row.qtypieces = frm.doc.items[j].stock_qty/(frm.doc.ts_only_loadman.length || 1)
+                                row.rate = e[0].loading_cost
+                                row.type = "Unloading"
+                                row.amount = (frm.doc.items[j].stock_qty/(frm.doc.ts_only_loadman.length || 1))*e[0].loading_cost
+                            })
+                                
+                        } 
+                    }
+                    lodunlod(frm,"Unloading",frm.doc.ts_only_unloadman.length)
+                }
+                refresh_field('ts_loadman_info')
+            } else{
+                frappe.throw("Duplicate Entry")
+            }
+            
+        }
+
+    }  
 })
 
 frappe.ui.form.on('TS Loadman Cost',{

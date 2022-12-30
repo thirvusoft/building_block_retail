@@ -179,13 +179,39 @@ def delivery_note_custom_field():
                 fieldname= "loadman_info_section",
                 fieldtype= "Section Break",
                 insert_after= "total_distance",
+                label= "Loading and Unloading Info",
+                collapsible = 1
+            ),
+            dict(
+                fieldname= "ts_only_loadman",
+                fieldtype= "Table",
+                insert_after= "loadman_info_section",
+                label= "Loading Employee",
+                options= "Loading Employee",
+            ),
+            dict(
+                fieldname= "cblm_1",
+                fieldtype= "Column Break",
+                insert_after= "ts_only_loadman",
+            ),
+            dict(
+                fieldname= "ts_only_unloadman",
+                fieldtype= "Table",
+                insert_after= "cblm_1",
+                label= "Unloading Employee",
+                options= "Unloading Employee",
+            ),
+            dict(
+                fieldname= "loadman_info_section1",
+                fieldtype= "Section Break",
+                insert_after= "ts_only_unloadman",
                 label= "Loadman Info",
                 collapsible = 1
             ),
             dict(
                 fieldname= "ts_loadman_info",
                 fieldtype= "Table",
-                insert_after= "loadman_info_section",
+                insert_after= "loadman_info_section1",
                 label= "Loadman Info",
                 options= "TS Loadman Cost",
             ),
