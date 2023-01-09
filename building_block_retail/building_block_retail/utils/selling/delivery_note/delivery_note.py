@@ -252,6 +252,12 @@ def delivery_note_custom_field():
                 options= "Supply Only\nSupply and Laying\nLaying Only"
             ),
             dict(
+                fieldname= "loading_cost",
+                fieldtype= "Currency",
+                label= "Loading Cost",
+                fetch_from = "item_code.loading_cost"
+            ),
+            dict(
                 fieldname= "ts_qty",
 				fieldtype= "Float",
 				insert_after= "qty",

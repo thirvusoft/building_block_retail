@@ -194,7 +194,7 @@ frappe.ui.form.on('Item Detail Pavers', {
 			let allocated_paver = data.allocated_paver_area
 			let tot_amount = data.rate * allocated_paver
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
-            get_possible_delivery_date(frm)
+            // get_possible_delivery_date(frm)
 			
 	},
 	rate : function(frm,cdt,cdn) {

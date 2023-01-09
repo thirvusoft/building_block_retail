@@ -9,7 +9,8 @@ def workflow_document_creation():
 
 def create_quotation_flow():
     if frappe.db.exists('Workflow', 'Quotation Flow'):
-        frappe.delete_doc('Workflow', 'Quotation Flow')
+        return
+        # frappe.delete_doc('Workflow', 'Quotation Flow')
     create_role()
     workflow = frappe.new_doc('Workflow')
     workflow.workflow_name = 'Quotation Flow'

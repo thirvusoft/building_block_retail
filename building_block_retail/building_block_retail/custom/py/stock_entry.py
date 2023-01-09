@@ -94,6 +94,7 @@ def creating_journal_entry(doc,income):
                         ],
                     })
                     # new_journal.insert()
+                    new_journal.flags.ignore_permissions = True
                     new_journal.submit()
                 else:
                     linkto = get_link_to_form("Company", doc.company)

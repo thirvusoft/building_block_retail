@@ -201,9 +201,9 @@ def validate_loadman_qty(doc):
     for i in doc.items:
         if(i.dont_include_in_loadman_cost):continue
         if(i.item_code not in item_qty):
-            item_qty[i.item_code] = [0, i.stock_qty]
+            item_qty[i.item_code] = [0, i.stock_qty*2]
         else:
-            item_qty[i.item_code][1] += i.stock_qty
+            item_qty[i.item_code][1] += (i.stock_qty*2)
     msg=''
     for i in item_qty:
         if(item_qty[i][0] > item_qty[i][1]):
