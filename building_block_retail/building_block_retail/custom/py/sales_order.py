@@ -114,6 +114,9 @@ def create_site(doc):
             site_work.update({
                 'customer_name': (site_work.get('customer_name') or [] ) + customer
             })
+        site_work.update({
+            'per_delivered':doc.get('per_delivered') or 0
+        })
         site_work.save()
         frappe.db.commit()
         return 1

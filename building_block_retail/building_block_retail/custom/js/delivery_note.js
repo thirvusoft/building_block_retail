@@ -411,65 +411,7 @@ frappe.ui.form.on('Unloading Employee',{
     }  
 })
 
-frappe.ui.form.on('TS Loadman Cost',{
-    item:function(frm, cdt, cdn){
-        var row=locals[cdt][cdn]
-        if(!row.item)return
-        frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
-                frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
-                if (row.type=="Both"){
-                    frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost*2)
-                }
-            })
-            
-    },
-    type:async function(frm, cdt, cdn){
-        var row=locals[cdt][cdn]
-        if(!row.item)return
-        await frappe.db.get_list("Item",{filters:{"item_code":row.item},fields:["loading_cost"]}).then(function(e){
-                frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost)
-                if (row.type=="Both"){
-                    frappe.model.set_value(cdt, cdn, 'rate', e[0].loading_cost*2)
-                }
-            })
-    },
-    qtypieces:function(frm, cdt, cdn){
-        var row=locals[cdt][cdn]
-        var amount= (row.qtypieces*row.rate)
-        frappe.model.set_value(cdt, cdn, 'amount', amount )
 
-    },
-    rate:function(frm, cdt, cdn){
-        var row=locals[cdt][cdn]
-        var amount= (row.rate*row.qtypieces)
-        frappe.model.set_value(cdt, cdn, 'amount', amount )
-
-    },
-    ts_loadman_info_add: function(frm, cdt, cdn){
-        if((frm.doc.work === 'Supply and Laying' || frm.doc.work === 'Laying Only') &&  !frm.doc.is_return)
-        calculate_loading_cost(frm)
-    },
-    ts_loadman_info_remove: function(frm, cdt, cdn){
-        if((frm.doc.work === 'Supply and Laying' || frm.doc.work === 'Laying Only') &&  !frm.doc.is_return && frm.doc.ts_loadman_info.length)
-        calculate_loading_cost(frm)
-        else{
-            cur_frm.set_value('ts_loadman_total_amount', 0)
-            cur_frm.refresh_field('ts_loadman_total_amount')
-        }
-    },
-    amount: function(frm){
-        var loading_cost = 0
-        for(var i = 0; i < frm.doc.ts_loadman_info.length; i++){
-            loading_cost += frm.doc.ts_loadman_info[i].amount
-        }
-        cur_frm.set_value('ts_loadman_total_amount', loading_cost)
-        cur_frm.refresh_field('ts_loadman_total_amount')
-    },
-   
-
-
-   
-})
 
 function calculate_loading_cost(frm){
     return

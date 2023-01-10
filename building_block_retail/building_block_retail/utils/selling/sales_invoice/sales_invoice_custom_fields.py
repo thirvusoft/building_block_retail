@@ -137,6 +137,14 @@ def sales_invoice_custom_field():
 				label= "Remarks",
                 no_copy = 1
             ),
+            dict(
+                fieldname= "measured_qty",
+				fieldtype= "Float",
+				insert_after= "is_debit_note",
+				label= "Measured Qty in Site",
+                no_copy = 1,
+                fetch_from = 'site_work.measured_qty'
+            ),
             
         
         ],

@@ -14,13 +14,14 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-12-30 14:24:11.833706",
+ "modified": "2023-01-10 15:50:51.092805",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Loading Employee",

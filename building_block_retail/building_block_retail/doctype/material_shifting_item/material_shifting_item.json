@@ -1,0 +1,49 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-01-10 15:41:01.687965",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "stock_qty",
+  "loading_cost"
+ ],
+ "fields": [
+  {
+   "default": "0",
+   "fetch_from": "item_code.loading_cost",
+   "fieldname": "loading_cost",
+   "fieldtype": "Currency",
+   "label": "Loading Cost",
+   "read_only": 1
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stock_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty (Pieces)",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-01-10 16:42:44.175752",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Material Shifting Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

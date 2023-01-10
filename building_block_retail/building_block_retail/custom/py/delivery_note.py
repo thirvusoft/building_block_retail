@@ -18,6 +18,7 @@ def update_qty_sitework(self,event):
             so=(row.against_sales_order if self.doctype=='Delivery Note' else row.sales_order)
             if(so):
                 sw=frappe.get_value('Sales Order', so, 'site_work')
+                per_delivered = frappe.get_value('Sales Order', so, 'per_delivered') or 0
                 if(sw):
                     item_group=frappe.get_value('Item', row.item_code, 'item_group')
                     doc=frappe.get_doc('Project', sw)
@@ -43,7 +44,8 @@ def update_qty_sitework(self,event):
                         })
                     doc.update({
                         'raw_material': raw_material,
-                        'delivery_detail': delivery_detail
+                        'delivery_detail': delivery_detail,
+                        'per_delivered':per_delivered or 0
                     })
                     doc.save()
         frappe.db.commit()

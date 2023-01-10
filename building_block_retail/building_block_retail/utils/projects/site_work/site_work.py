@@ -9,17 +9,23 @@ def customize_field():
          dict(fieldname='work', label='Work',
               fieldtype='Data', insert_after='status', read_only=1
               ),
-         dict(fieldname='completed', label='% Completed',
-              fieldtype='Percent', insert_after='work', read_only=1
+         dict(fieldname='completed', label='Laying %',
+              fieldtype='Percent', insert_after='work', read_only=1, in_list_view=1
+              ),
+          dict(fieldname='per_delivered', label='Delivered %',
+              fieldtype='Percent', insert_after='completed', read_only=1, in_list_view=1
               ),
          dict(fieldname='total_expense_amount', label='Total Costing as Per Bill',
-              fieldtype='Currency', insert_after='completed', read_only=1, description='It includes Items sales rate, Raw Materials Sales Rate and Additional Cost except Site Advance.'
+              fieldtype='Currency', insert_after='per_delivered', read_only=1, description='It includes Items sales rate, Raw Materials Sales Rate and Additional Cost except Site Advance.'
               ),
           dict(fieldname='actual_site_cost_calculation', label='Actual Costing of this Site',
               fieldtype='Currency', insert_after='total_expense_amount', read_only=1, description= 'It includes Items Valuation rate, Raw Materials Buying Rate, Job Workers cost and Additional Cost except Site Advance.'
               ),
           dict(fieldname='site_profit', label='Site Profit',
               fieldtype='Currency', insert_after='actual_site_cost_calculation', read_only=1
+              ),
+          dict(fieldname='measured_qty', label='Measured Qty(Sqft)',
+              fieldtype='Float', insert_after='site_profit', mandatory_depends_on = 'eval:doc.status=="Site Measured"'
               ),
          dict(fieldname='job__work', label='Job worker',
               fieldtype='Link', insert_after='completed', options="Employee", hidden=1
@@ -49,6 +55,13 @@ def customize_field():
          dict(fieldname='total_completed_bundle', label='Total Completed Bundle',
               fieldtype='Data', insert_after='total_required_bundle', default=0,read_only=1
               ),
+          dict(fieldname='machinery_details_sec_brk', label='Machinery Details',
+              fieldtype='Section Break', insert_after='total_completed_bundle'
+              ),
+          
+          dict(fieldname='machinery_used', label='Machines Used In Site',
+          fieldtype='Table', insert_after='machinery_details_sec_brk', options='Machines In Site'
+          ),
          dict(fieldname='is_multi_customer', label='is_multi_customer',
               fieldtype='Check', insert_after='customer_details', allow_in_quick_entry=1
               ),
@@ -234,9 +247,27 @@ def site_doc_name():
          'doctype': 'Property Setter',
          'doctype_or_field': "DocField",
          'doc_type': "Project",
+         'property': "in_list_view",
+         'field_name': "expected_start_date",
+         "value": 0
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
          'property': "hidden",
          'field_name': "expected_end_date",
          "value": 1
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "in_list_view",
+         'field_name': "expected_end_date",
+         "value": 0
     })
     Project.save(ignore_permissions=True),
     Project = frappe.get_doc({
@@ -255,6 +286,15 @@ def site_doc_name():
          'property': "hidden",
          'field_name': "project_type",
          "value": 1
+    })
+    Project.save(ignore_permissions=True),
+    Project = frappe.get_doc({
+         'doctype': 'Property Setter',
+         'doctype_or_field': "DocField",
+         'doc_type': "Project",
+         'property': "in_list_view",
+         'field_name': "project_type",
+         "value": 0
     })
     Project.save(ignore_permissions=True),
     Project = frappe.get_doc({

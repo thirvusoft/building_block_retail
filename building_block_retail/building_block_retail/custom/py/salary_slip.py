@@ -216,8 +216,9 @@ def site_work_details(employee,start_date,end_date,designation):
 
     elif(designation == 'Loader'):
         delivery_note = frappe.db.get_all("Delivery Note", filters={'posting_date':['between',(start_date, end_date)], 'docstatus':1}, fields=['name', 'site_work', 'ts_loadman_work'])
-        dn_names = [i['name'] for i in delivery_note]
-        loadman_cost = frappe.db.get_all('TS Loadman Cost', filters={'parent':['in', dn_names], 'employee':employee},  fields=['amount', 'rate', 'parent'])
+        material_shift = frappe.db.get_all("Material Shifting", filters={'posting_date':['between',(start_date, end_date)], 'docstatus':1}, pluck='name')
+        parents = [i['name'] for i in delivery_note] + material_shift
+        loadman_cost = frappe.db.get_all('TS Loadman Cost', filters={'parent':['in', parents], 'employee':employee},  fields=['amount', 'rate', 'parent'])
         for i in range(len(loadman_cost)):
             for j in delivery_note:
                 if(loadman_cost[i].parent == j.name):

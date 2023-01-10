@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Inventory",
  "links": [],
- "modified": "2022-11-22 14:33:52.309989",
+ "modified": "2023-01-10 19:12:55.735158",
  "modified_by": "Administrator",
  "module": "Building Block Inventory",
  "name": "Inventory",
@@ -50,6 +50,12 @@
    "doc_view": "List",
    "label": "Item Price",
    "link_to": "Item Price",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Material Shifting",
+   "link_to": "Material Shifting",
    "type": "DocType"
   },
   {

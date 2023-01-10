@@ -32,7 +32,7 @@ def create_defaults():
         "doc_type":"Project",
         "field_name":"status",
         "property":"options",
-        "value":"\nOpen\nCompleted\nCancelled\nStock Pending at Site\nPart Measurement"
+        "value":"\nOpen\nLand Work Completed\nOn Process\nHold\nStock Pending at Site\nPending Qty Returned\nPart Measurement\nSite Measured\nCompleted\nCancelled"
     })
     doc.save()
 
