@@ -288,6 +288,9 @@ frappe.ui.form.on('Delivery Note', {
     ts_only_unloadman_remove: function(frm){
         split_loading_unloading_qty_evenly(frm)
     },
+    calculate_again: function(frm){
+        split_loading_unloading_qty_evenly(frm)
+    },
     
 })
 
@@ -300,17 +303,20 @@ function get_employees_for_loadman(frm){
     var employees = {'Loading':[], 'Unloading':[], 'Both':[]}
     
     var load_emp = [], unload_emp = [], used_unload_emp = [];
+    if(frm.doc.ts_only_loadman){
     frm.doc.ts_only_loadman.forEach(e => {
         if(e.employee){
         load_emp.push(e.employee)
         }
     })
+    }
+    if(frm.doc.ts_only_unloadman){
     frm.doc.ts_only_unloadman.forEach(e => {
         if(e.employee){
         unload_emp.push(e.employee)
         }
     })
-
+    }
     load_emp.forEach(ld => {
         if(in_list(unload_emp, ld)){
             employees['Both'].push(ld)
@@ -362,16 +368,20 @@ function split_loading_unloading_qty_evenly(frm){
     }
     })
     var employee_list=[];
+    if(frm.doc.ts_only_loadman){
     frm.doc.ts_only_loadman.forEach(e => {
         if(!in_list(employee_list, e.employee) && e.employee){
         employee_list.push(e.employee)
         }
     })
+    }
+    if(frm.doc.ts_only_unloadman){
     frm.doc.ts_only_unloadman.forEach(e => {
         if(!in_list(employee_list, e.employee) && e.employee){
             employee_list.push(e.employee)
             }
     })
+    }
     employee_list.forEach(emp => {
         Object.keys(items).forEach(itm => {
     
@@ -410,7 +420,16 @@ frappe.ui.form.on('Unloading Employee',{
         split_loading_unloading_qty_evenly(frm)
     }  
 })
-
+frappe.ui.form.on('TS Loadman Cost', {
+    rate: function(frm, cdt, cdn){
+    var row = locals[cdt][cdn]
+    frappe.model.set_value(cdt, cdn, 'amount', row.rate*row.qtypieces)
+    },
+    qtypieces: function(frm, cdt, cdn){
+        var row = locals[cdt][cdn]
+        frappe.model.set_value(cdt, cdn, 'amount', row.rate*row.qtypieces) 
+    }
+})
 
 
 function calculate_loading_cost(frm){

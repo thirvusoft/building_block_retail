@@ -49,7 +49,20 @@ frappe.ui.form.on('Material Shifting', {
 				}
 			}
 		})
-	}
+	},
+    calculate_again: function(frm){
+        split_loading_unloading_qty_evenly(frm)
+    },
+    validate: function(frm){
+        if(frm.doc.ts_loadman_info){
+            var total = 0;
+            frm.doc.ts_loadman_info.forEach(dt => {
+                total= total+dt.amount
+            })
+            frm.set_value('ts_loadman_total_amount', total)
+            frm.refresh_field('ts_loadman_total_amount')
+        }
+    }
 });
 
 
@@ -62,14 +75,24 @@ frappe.ui.form.on('Loading Employee',{
 frappe.ui.form.on('Unloading Employee',{
     employee: function(frm){
         split_loading_unloading_qty_evenly(frm)
-    }  
+    }
 })
 
+frappe.ui.form.on('TS Loadman Cost', {
+    rate: function(frm, cdt, cdn){
+    var row = locals[cdt][cdn]
+    frappe.model.set_value(cdt, cdn, 'amount', row.rate*row.qtypieces)
+    },
+    qtypieces: function(frm, cdt, cdn){
+        var row = locals[cdt][cdn]
+        frappe.model.set_value(cdt, cdn, 'amount', row.rate*row.qtypieces) 
+    }
+})
 
 function get_employees_for_loadman(frm){
     var employees = {'Loading':[], 'Unloading':[], 'Both':[]}
     
-    var load_emp = [], unload_emp = [], used_unload_emp = [];
+    var load_emp = [], unload_emp = [];
 	if(frm.doc.ts_only_loadman){
     frm.doc.ts_only_loadman.forEach(e => {
         if(e.employee){
@@ -134,16 +157,20 @@ function split_loading_unloading_qty_evenly(frm){
     }
     })
     var employee_list=[];
+    if(frm.doc.ts_only_loadman){
     frm.doc.ts_only_loadman.forEach(e => {
         if(!in_list(employee_list, e.employee) && e.employee){
         employee_list.push(e.employee)
         }
     })
+    }
+    if(frm.doc.ts_only_unloadman){
     frm.doc.ts_only_unloadman.forEach(e => {
         if(!in_list(employee_list, e.employee) && e.employee){
             employee_list.push(e.employee)
             }
     })
+    }
     employee_list.forEach(emp => {
         Object.keys(items).forEach(itm => {
     

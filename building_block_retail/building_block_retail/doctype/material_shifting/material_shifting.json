@@ -21,6 +21,7 @@
   "column_break_6",
   "ts_only_unloadman",
   "loadman_info_section",
+  "calculate_again",
   "ts_loadman_info",
   "ts_loadman_total_amount",
   "amended_from"
@@ -125,18 +126,25 @@
    "label": "Item",
    "options": "Material Shifting Item",
    "reqd": 1
+  },
+  {
+   "fieldname": "calculate_again",
+   "fieldtype": "Button",
+   "label": "Calculate Again"
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-10 16:26:16.955711",
+ "modified": "2023-01-11 17:59:10.297961",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Material Shifting",
  "owner": "Administrator",
  "permissions": [
   {
+   "amend": 1,
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -146,6 +154,31 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "TS Accounts Manager",
+   "share": 1,
+   "submit": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "TS Production Manager",
+   "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],
