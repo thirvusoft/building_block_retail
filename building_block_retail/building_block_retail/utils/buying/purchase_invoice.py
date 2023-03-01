@@ -9,7 +9,16 @@ def purchase_invoice():
         "Purchase Invoice": [
             dict(fieldname='branch', label='Branch',
                  fieldtype='Link', options='Branch', insert_after='company', read_only=0),
+            dict(fieldname='vehicle_log', label='Vehicle Log',
+                    fieldtype='Link', options='Vehicle Log', insert_after='tax_id', read_only=1),
         ],
+        "Purchase Invoice Item": [
+            dict(fieldname='vehicle', label='Vehicle', fieldtype='Link', options='Vehicle', 
+                 mandatory_depends_on='eval:doc.item_group == "Fuel"', depends_on='eval:doc.item_group == "Fuel"',
+                 insert_after = 'item_code'),
+            dict(fieldname='current_odometer_value', label='Current Oddometer', fieldtype='Float', 
+                fetch_from='vehicle.last_odometer', insert_after = 'vehicle')
+        ]
 
     }
     Purchase_Invoice = frappe.get_doc({

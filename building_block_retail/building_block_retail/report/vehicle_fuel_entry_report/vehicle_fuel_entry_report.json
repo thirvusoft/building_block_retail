@@ -1,0 +1,55 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2023-03-01 19:03:23.317697",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Purchase Invoice Item\",\"item_group\",\"=\",\"Fuel\",false]],\"fields\":[[\"name\",\"Purchase Invoice\"],[\"docstatus\",\"Purchase Invoice\"],[\"vehicle\",\"Purchase Invoice Item\"],[\"current_odometer_value\",\"Purchase Invoice Item\"],[\"item_code\",\"Purchase Invoice Item\"],[\"rate\",\"Purchase Invoice Item\"],[\"amount\",\"Purchase Invoice Item\"],[\"qty\",\"Purchase Invoice Item\"]],\"order_by\":\"`tabPurchase Invoice`.`modified` desc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":120,\"Purchase Invoice Item:vehicle\":120,\"Purchase Invoice Item:current_odometer_value\":137,\"Purchase Invoice Item:item_code\":120,\"Purchase Invoice Item:rate\":120,\"Purchase Invoice Item:amount\":120,\"Purchase Invoice Item:qty\":134},\"group_by\":null}",
+ "letter_head": "Shri Velavaa Paver Bricks",
+ "modified": "2023-03-01 19:06:46.111044",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Vehicle Fuel Entry Report",
+ "owner": "Administrator",
+ "prepared_report": 0,
+ "ref_doctype": "Purchase Invoice",
+ "report_name": "Vehicle Fuel Entry Report",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "Accounts User"
+  },
+  {
+   "role": "Auditor"
+  },
+  {
+   "role": "Purchase User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Purchase Manager"
+  },
+  {
+   "role": "TS Supervisor"
+  },
+  {
+   "role": "TS Office Work"
+  },
+  {
+   "role": "TS Accounts Manager"
+  },
+  {
+   "role": "TS Production Manager"
+  },
+  {
+   "role": "TS Site Manager"
+  }
+ ]
+}

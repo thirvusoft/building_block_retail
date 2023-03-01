@@ -94,9 +94,9 @@ def update_transport_cost(self, event):
         doc=frappe.get_doc('Project', sw)
         cost=0
         if(event=='on_submit'):
-            cost=(doc.get("transporting_cost") or 0 + self.ts_total_cost or 0)  
+            cost=((doc.get("transporting_cost") or 0) + (self.ts_total_cost or 0))  
         elif(event=='on_cancel'):
-            cost=(doc.get("transporting_cost") or 0 - self.ts_total_cost or 0)
+            cost=((doc.get("transporting_cost") or 0) - (self.ts_total_cost or 0))
         doc.update({
             'transporting_cost': cost 
         })
@@ -105,7 +105,7 @@ def update_transport_cost(self, event):
         doc.save()
 
 def vehicle_log_creation(self, event):
-    if(self.own_vehicle_no):
+    if(self.own_vehicle_no and self.return_odometer_value):
         if not frappe.db.exists('Vehicle Log',{"delivery_note":self.name,"license_plate":self.own_vehicle_no}):
             vehicle_log=frappe.new_doc('Vehicle Log')
             vehicle_log.update({
@@ -122,7 +122,7 @@ def vehicle_log_creation(self, event):
             vehicle_log.save()
             vehicle_log.submit()
         else:
-            frappe.throw("Return odometer value already updated!")
+            frappe.msgprint("Return odometer value already updated!")
 
 def vehicle_log_draft(self, event):
     vehicle_draft=frappe.get_all("Vehicle Log",filters={"docstatus":0,"license_plate":self.license_plate})

@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "TS Vehicle",
  "links": [],
- "modified": "2022-11-22 14:33:52.271218",
+ "modified": "2023-03-01 19:03:54.569678",
  "modified_by": "Administrator",
  "module": "Building Block Driver",
  "name": "TS Vehicle",
@@ -39,6 +39,12 @@
    "label": "Building Block Driver",
    "link_to": "Building Block Driver",
    "type": "DocType"
+  },
+  {
+   "doc_view": "Report Builder",
+   "label": "Vehicle Fuel Entry Report",
+   "link_to": "Vehicle Fuel Entry Report",
+   "type": "Report"
   }
  ]
 }
