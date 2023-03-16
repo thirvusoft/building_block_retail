@@ -5,8 +5,24 @@ frappe.ui.form.on('Quotation', {
                 filters: {"Designation":"Supervisor"}
             }
         })
+        frm.set_query('item','raw_materials',function(frm){
+            return {
+                filters:{
+                    'item_group':'Raw Material',
+                    'has_variants':0
+                }
+            }
+        })
     },
     refresh:function(frm){
+        frm.set_query('item','raw_materials',function(frm){
+            return {
+                filters:{
+                    'item_group':'Raw Material',
+                    'has_variants':0
+                }
+            }
+        })
         if(frm.doc.workflow_state == "Rejected" ){
             frm.grid_buttons.find('.btn-custom').addClass('hidden');
         }
@@ -24,7 +40,55 @@ frappe.ui.form.on('Quotation', {
         })
     }
 })
+function amount_rawmet(frm,cdt,cdn){
+    let row=locals[cdt][cdn]
+    frappe.model.set_value(cdt,cdn,'amount', (row.rate?row.rate:0)*(row.qty?row.qty:0))
+}
+frappe.ui.form.on('TS Raw Materials',{
+    item: function(frm,cdt,cdn){
+        let row=locals[cdt][cdn]
+        if(row.item){
+            frappe.db.get_doc('Item',row.item).then((item)=>{
+                frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
+                frappe.call({
+                    method: "building_block_retail.building_block_retail.custom.py.sales_order.get_item_rate",
+                    args:{
+                        item: row.item,
+                        uom: item.stock_uom
+                    },
+                    callback: async function(r){
+                       await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
+                    }
+                })
+                frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
+            })
+        }
+    },
+    rate: function(frm,cdt,cdn){
+        amount_rawmet(frm,cdt,cdn)
+    },
+    qty: function(frm,cdt,cdn){
+        amount_rawmet(frm,cdt,cdn)
+    },
+    uom: function(frm,cdt,cdn){
+        let row=locals[cdt][cdn]
+        if(row.item && row.uom){
+            frappe.db.get_list("Item Price",{filters:{'item_code': row.item,'uom' : row.uom,'price_list': frm.doc.selling_price_list}, fields:['price_list_rate']}).then((data)=>{
+                
+                if(!data.length){
+                    frappe.show_alert({
+                        message:'Price List Rate not found for <a href="/app/item-price/">'+row.item+'</a> with the UOM '+row.uom,
+                        indicator:'orange'
+                    })
+                }
+                else{
+                    frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
+                }   
+            })
+        }
+    }
 
+})
 frappe.ui.form.on("Quotation", {
     refresh: function(frm){
         setquery(frm)
@@ -125,6 +189,37 @@ frappe.ui.form.on("Quotation", {
                 new_row.work=cur_frm.doc.compoun_walls[row].work
             }
         }
+
+        let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
+        for(let row=0;row<rm.length;row++){
+            if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
+            var message;
+            var new_row = frm.add_child("items");
+            new_row.item_code=cur_frm.doc.raw_materials[row].item
+            new_row.qty=cur_frm.doc.raw_materials[row].qty
+            new_row.uom=cur_frm.doc.raw_materials[row].uom
+            new_row.rate=cur_frm.doc.raw_materials[row].rate
+            new_row.amount=cur_frm.doc.raw_materials[row].amount
+            await frappe.call({
+                method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
+                args:{
+                    'doctype':cur_frm.doc.raw_materials[row].item,
+                },
+                callback: function(r){
+                    message=r.message;
+                    new_row.item_name=message['item_name']
+                    new_row.description=message['description']
+                }
+            })
+            new_row.conversion_factor=1
+            new_row.warehouse=cur_frm.doc.set_warehouse
+            new_row.delivery_date=cur_frm.doc.delivery_date
+            
+        }
+       
+            
+           
+        refresh_field("items");
     }
 })
 
@@ -194,7 +289,7 @@ frappe.ui.form.on('Item Detail Pavers', {
 			let allocated_paver = data.allocated_paver_area
 			let tot_amount = data.rate * allocated_paver
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
-            // get_possible_delivery_date(frm)
+            get_possible_delivery_date(frm, data)
 			
 	},
 	rate : function(frm,cdt,cdn) {
@@ -243,10 +338,13 @@ frappe.ui.form.on('Item Detail Compound Wall',{
     }
   
   })
-
-var get_possible_delivery_date = function(frm){
+  frappe.realtime.on('show_poss_del_date_error', (item)=>{
+    frappe.show_alert({'message':`Enter Daily maximum production qty in Item <b>${item}</b>`,'indicator':'red'}) 
+})
+var get_possible_delivery_date = function(frm, row){
     var child = []
-    frm.doc.pavers.forEach(row => {
+    
+    // frm.doc.pavers.forEach(row => {
         if(row.item && row.req_pcs){
             frappe.call({
                 method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
@@ -261,5 +359,5 @@ var get_possible_delivery_date = function(frm){
                 }
             })
         }
-    })
+    // })
 }

@@ -91,6 +91,18 @@ def quotation_custom_field():
                 options='Item Detail Compound Wall', 
                 depends_on="eval:doc.type=='Compound Wall'"
                 ),
+            dict(fieldname='raw_material_sec', 
+                label='Raw Materials', 
+                fieldtype='Section Break',
+                insert_after='compoun_walls', 
+                collapsible=1
+                ),
+            dict(fieldname='raw_materials', 
+                label='Raw Materials', 
+                fieldtype='Table',
+                insert_after='raw_material_sec', 
+                options='TS Raw Materials',
+                ),
         ],
         'Quotation Item':[
             dict(

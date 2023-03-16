@@ -190,7 +190,9 @@ frappe.ui.form.on("Item Detail Pavers", {
 			let allocated_paver = data.allocated_paver_area
 			let tot_amount = data.rate * allocated_paver
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
-			get_possible_delivery_date(frm)
+			get_possible_delivery_date(frm, data)
+			console.log('call')
+			
 	},
 	rate : function(frm,cdt,cdn) {
 			let data = locals[cdt][cdn]
@@ -401,10 +403,15 @@ function customer_query(){
 		}
 	})
 }
-
-var get_possible_delivery_date = function(frm){
+frappe.realtime.on('show_poss_del_date_error', (item)=>{
+	console.log('call')
+	frappe.show_alert({'message':`Enter Daily maximum production qty in Item <b>${item}</b>`,'indicator':'red'}) 
+})
+var get_possible_delivery_date = function(frm, row){
     var child = []
-    frm.doc.pavers.forEach(row => {
+	
+	
+    // frm.doc.pavers.forEach(row => {
         if(row.item && row.req_pcs){
             frappe.call({
                 method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
@@ -419,5 +426,5 @@ var get_possible_delivery_date = function(frm){
                 }
             })
         }
-    })
+    // })
 }
