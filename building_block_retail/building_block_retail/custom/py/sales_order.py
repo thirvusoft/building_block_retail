@@ -392,6 +392,14 @@ def make_work_orders(items, sales_order, company, project=None):
 
     return [p.name for p in out]
 
+
+#on submit
+def check_opportunity(doc,event):
+    opportunity=frappe.get_all("Opportunity",filters={"party_name":doc.customer},pluck="name",order_by="`creation` DESC",limit=1)
+    opp_doc=frappe.get_doc("Opportunity",opportunity[0])
+    opp_doc.status="Ordered"
+    opp_doc.save()
+
 #Validate
 def add_price_list(doc, event):
     for i in doc.items:
