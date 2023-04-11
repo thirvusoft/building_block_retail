@@ -70,3 +70,14 @@ def quotation_whatsapp(doc, action):
         if(not api_authentication):
             error += "\n API Authentication Not found."
         frappe.log_error(error,"Whatsapp error")
+
+
+def in_quotes(doc,action):
+    if doc.site_work:
+            s_order = frappe.get_all("Sales Order", filters={'status':['not in',['Cancelled']],}, pluck='site_work')
+            for i in s_order:
+                if doc.site_work == i:
+                    frappe.db.set_value('Project',doc.site_work,'status','In Quotation')
+                    
+                    
+        

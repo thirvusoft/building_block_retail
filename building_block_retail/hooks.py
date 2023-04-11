@@ -117,7 +117,9 @@ doc_events = {
 	},
     "Quotation" :{
 		"before_validate": 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
-		"validate" : "building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation",
+		"validate" : ["building_block_retail.building_block_retail.custom.py.quotation.workflow_quotation",
+					  "building_block_retail.building_block_retail.custom.py.quotation.in_quotes"
+				],
 		"after_insert" : "building_block_retail.building_block_retail.custom.py.quotation.quotation_whatsapp"	
 	},
 	"Item":{
@@ -135,7 +137,8 @@ doc_events = {
 	"Sales Order":{
      	"before_validate":'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
         "validate" : 'building_block_retail.building_block_retail.custom.py.sales_order.add_price_list',
-		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields"
+		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields",
+		"on_submit":"building_block_retail.building_block_retail.custom.py.sales_order.check_opportunity"
 	},
 	"Delivery Note":{
 		"before_validate":["building_block_retail.building_block_retail.custom.py.delivery_note.update_customer",
@@ -246,7 +249,7 @@ doctype_js = {
 				"Supplier": "/building_block_retail/custom/js/supplier.js",
 				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" ,
 				"Driver": "/building_block_retail/custom/js/driver.js",
-                "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js"
+                "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js",
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks

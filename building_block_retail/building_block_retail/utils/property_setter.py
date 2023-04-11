@@ -16,6 +16,7 @@ def create_property_setter():
     make_property_setter('Quotation','select_print_heading','hidden',1,'Check')
     make_property_setter('Quotation','language','hidden',1,'Check')
     make_property_setter('Quotation','supplier_quotation','hidden',1,'Check')
+    
     make_property_setter('Quotation','shipping_rule','hidden',1,'Check')
     make_property_setter('BOM','website_section','hidden',1,'Check')
     make_property_setter('BOM','scrap_section','hidden',1,'Check')
