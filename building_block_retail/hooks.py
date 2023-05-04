@@ -1,6 +1,6 @@
 from re import M
 from . import __version__ as app_version
-
+from .jinja import jenvs
 app_name = "building_block_retail"
 app_title = "Building Block Retail"
 app_publisher = "Thirvusoft"
@@ -11,7 +11,7 @@ app_email = "thivusoft@gmail.com"
 app_license = "MIT"
 # Includes in <head>
 # ------------------
-
+jenv = jenvs
 # include js, css files in header of desk.html
 app_include_css = "/assets/building_block_retail/css/building_block_retail.css"
 # app_include_js = "/assets/building_block_retail/js/building_block_retail.js"

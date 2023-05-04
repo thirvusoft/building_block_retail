@@ -300,6 +300,7 @@ frappe.ui.form.on('Sales Order',{
             if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
             var message;
             var new_row = frm.add_child("items");
+            new_row.is_raw_material = 1
             new_row.item_code=cur_frm.doc.raw_materials[row].item
             new_row.qty=cur_frm.doc.raw_materials[row].qty
             new_row.uom=cur_frm.doc.raw_materials[row].uom

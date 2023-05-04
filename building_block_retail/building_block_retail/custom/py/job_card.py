@@ -5,6 +5,20 @@ from frappe.model.document import Document
 from frappe.utils.data import get_link_to_form
 from erpnext.manufacturing.doctype.job_card.job_card import JobCard
 class Jobcard(JobCard):
+	def validate(self):
+		# self.validate_time_logs()
+		self.set_status()
+		self.validate_operation_id()
+		self.validate_sequence_id()
+		self.set_sub_operations()
+		self.update_sub_operation_status()
+		self.validate_work_order()
+
+	def after_insert(self):
+		if(self.work_order):
+			if(frappe.db.get_value('Work Order', self.work_order, 'status') == "Not Started"):
+				frappe.db.set_value('Work Order', self.work_order, 'status', 'Job Card Created')
+				
 	def validate_job_card(self):
 		if (
 			self.work_order
