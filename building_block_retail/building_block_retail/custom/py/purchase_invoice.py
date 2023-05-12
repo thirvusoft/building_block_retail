@@ -4,7 +4,25 @@ import json
 def remove_tax_percent_from_description(doc, event):
     for i in range(len(doc.taxes)):
         doc.taxes[i].description = doc.taxes[i].description.split("@")[0]
-
+def create_landed_cost_voucher(doc,action):
+    if doc.transporter=="Own Transporter":
+        if doc.taxes_and_charges_in_landed:
+            new_doc = frappe.new_doc("Landed Cost Voucher")
+            new_doc.company = doc.company
+            new_doc.append("purchase_receipts",dict(
+                receipt_document_type = doc.doctype,
+                receipt_document = doc.name
+            ))
+            for i in doc.taxes_and_charges_in_landed:
+                new_doc.append("taxes",dict(
+                    expense_account = i.expense_account,
+                    description = i.description,
+                    amount = i.amount
+                ))
+            new_doc.save()
+            new_doc.submit()
+        else:
+            frappe.throw("Kindly Enter Applicable Charges")
 @frappe.whitelist()
 def make_vehicle_log(doc, data, vehicles):
     if isinstance(doc, str):
