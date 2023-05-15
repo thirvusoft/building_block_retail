@@ -294,6 +294,13 @@ frappe.ui.form.on('Finalised Job Worker Details',{
 		completed_bundle_calc(frm,cdt,cdn)
 		var row = locals[cdt][cdn]
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
+
+	},
+	completed_pieces: function(frm,cdt,cdn){
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
+		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
 
 	},
 	item:function(frm,cdt,cdn){
@@ -363,6 +370,13 @@ frappe.ui.form.on('TS Job Worker Details',{
 		completed_bundle_calc(frm,cdt,cdn)
 		var row = locals[cdt][cdn]
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
+
+	},
+	completed_pieces: function(frm,cdt,cdn){
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
+		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
 
 	},
 	item:function(frm,cdt,cdn){
