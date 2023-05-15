@@ -38,6 +38,13 @@ def get_columns():
 			'width':250
 		},
 		{
+			'fieldname':'workstation',
+			'label':'Workstation',
+			'fieldtype':'Link',
+			'options':'Workstation',
+			'width':100
+		},
+		{
 			'fieldname':'total_hrs',
 			'label':'Hrs Worked',
 			'fieldtype':'Float',
@@ -97,7 +104,7 @@ def get_data(filters={}):
 			ORDER BY
 				jc.posting_date desc
 			"""
-	data = frappe.db.sql(query, as_dict=1, debug=1)
+	data = frappe.db.sql(query, as_dict=1)
 	workstation_capacity = {}
 	workstations = frappe.db.get_all('Workstation', pluck='name')
 	for i in workstations:

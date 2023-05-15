@@ -36,13 +36,13 @@ frappe.query_reports["Workstation Capacity"] = {
 	"formatter": function (value, row, column, data, default_formatter) {
 		value = default_formatter(value, row, column, data);
 		if(data && data.effective_percent < 100 && column.fieldname == "effective_percent"){
-			value = "<p style='color:red;font-weight:bold'>" + value + "</p>";
+			value = "<p style='color:red;font-weight:bold'>" + value + "%</p>";
 		}
 		if(data && data.effective_percent == 100 && column.fieldname == "effective_percent"){
-			value = "<p style='color:blue;font-weight:bold'>" + value + "</p>";
+			value = "<p style='color:blue;font-weight:bold'>" + value + "%</p>";
 		}
 		if(data && data.effective_percent > 100 && column.fieldname == "effective_percent"){
-			value = "<p style='color:green;font-weight:bold'>" + value + "</p>";
+			value = "<p style='color:green;font-weight:bold'>" + value + "%</p>";
 		}
 		
 		return value;

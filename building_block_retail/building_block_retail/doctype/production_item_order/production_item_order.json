@@ -1,0 +1,70 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-05-12 16:34:10.921218",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "work_order",
+  "qty_to_produced",
+  "today_produced_qty",
+  "color",
+  "priority",
+  "item_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "work_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Work Order",
+   "options": "Work Order"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "description": "In Pieces",
+   "fieldname": "qty_to_produced",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Qty To Produced (In Pcs)"
+  },
+  {
+   "description": "In Pieces",
+   "fieldname": "today_produced_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Today Produced Qty (In Pcs)"
+  },
+  {
+   "fieldname": "color",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Color"
+  },
+  {
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Priority",
+   "options": "\nUrgent Priority\nHigh Priority\nLow Priority"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-05-15 13:36:05.938725",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Production Item Order",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

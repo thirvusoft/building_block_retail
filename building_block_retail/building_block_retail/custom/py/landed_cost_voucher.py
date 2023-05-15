@@ -11,7 +11,7 @@ def on_submit(doc,action):
             stock_uom = frappe.get_value(items,i.purchase_receipt_item,"stock_uom")
             conversion_factor = frappe.get_value(items,i.purchase_receipt_item,"conversion_factor")
             get_item_pl = frappe.get_all("Item Price",{'item_code':i.item_code,'buying':1})
-            total_amount = i.rate+i.applicable_charges
+            total_amount = i.rate+(i.applicable_charges/i.qty)
             conv = frappe.get_value("UOM Conversion Detail", {'parent':i.item_code, 'uom':purchased_uom}, 'conversion_factor') or 1
             stock_uom_rate = total_amount/conv
             	
