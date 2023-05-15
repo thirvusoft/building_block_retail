@@ -8,7 +8,7 @@ frappe.query_reports["Thirvu Job Worker"] = {
 			"fieldname":"from_date",
 			"label": __("From Date"),
 			"fieldtype": "Date",
-			"default": frappe.datetime.add_days(frappe.datetime.get_today(), -7),
+			"default": frappe.datetime.add_days(frappe.datetime.get_today(), -30),
 			"width": "80",
 			"reqd":1
 		},
@@ -37,5 +37,24 @@ frappe.query_reports["Thirvu Job Worker"] = {
 		}
 
 
-	]
+	],
+	"formatter": function (value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if(column.fieldname == 'status'){
+			if(value == 'Total'){
+				value = "<b style=color:orange;>Total</b>"
+			}
+			else{
+				value = "<span style=colour:"+frappe.utils.guess_colour(data['status'])+";>"+value+" </span>"
+			}
+			
+			return value;
+		}
+		if(data['status'] == "Total"){
+			value = "<b style=color:#1d4157>"+value+"</b>"
+			return value;
+		}
+		
+		return value;
+	},
 };
