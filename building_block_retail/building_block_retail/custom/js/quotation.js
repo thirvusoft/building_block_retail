@@ -95,8 +95,8 @@ frappe.ui.form.on("Quotation", {
         setTimeout(() => {
 			frm.remove_custom_button('Subscription', "Create");
 		}, 500);  
-        cur_frm.set_df_property('items','reqd',0);
-        cur_frm.set_df_property('items','hidden',1);
+        frm.set_df_property('items','reqd',0);
+        frm.set_df_property('items','hidden',1);
     },
     work: function(frm){
         if(frm.doc.work=="Supply Only"){
@@ -112,8 +112,8 @@ frappe.ui.form.on("Quotation", {
         })
     },
     rounding_adjustment: function(frm){
-            cur_frm.set_value('rounded_total', (frm.doc.rounding_adjustment + frm.doc.grand_total))
-            cur_frm.refresh()
+            frm.set_value('rounded_total', (frm.doc.rounding_adjustment + frm.doc.grand_total))
+            frm.refresh()
     },
     type(frm){
         setquery(frm)
@@ -128,23 +128,26 @@ frappe.ui.form.on("Quotation", {
     },
     async before_save(frm){
         frm.clear_table("items");
-        if(cur_frm.doc.type=='Pavers'){
-            cur_frm.set_value("compoun_walls",[])
-            let rm= cur_frm.doc.pavers?cur_frm.doc.pavers:[]
+        if(frm.doc.type=='Pavers'){
+            frm.set_value("compoun_walls",[])
+            let rm= frm.doc.pavers?frm.doc.pavers:[]
             for(let row=0;row<rm.length;row++){
-                if(!cur_frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
+                if(!frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
                 var message;
                 var new_row = frm.add_child("items");
-                new_row.item_code=cur_frm.doc.pavers[row].item
-                new_row.qty=cur_frm.doc.pavers[row].allocated_paver_area
-                new_row.ts_qty=cur_frm.doc.pavers[row].number_of_bundle
-                new_row.area_per_bundle=cur_frm.doc.pavers[row].area_per_bundle
-                new_row.rate=cur_frm.doc.pavers[row].rate
-                new_row.amount=cur_frm.doc.pavers[row].amount
+                new_row.item_code=frm.doc.pavers[row].item
+                new_row.qty=frm.doc.pavers[row].allocated_paver_area
+                new_row.ts_qty=frm.doc.pavers[row].number_of_bundle
+                new_row.area_per_bundle=frm.doc.pavers[row].area_per_bundle
+                new_row.rate=frm.doc.pavers[row].rate
+                new_row.amount=frm.doc.pavers[row].amount
+                new_row.qty_in_sqft = frm.doc.pavers[row].allocated_paver_area
+                new_row.qty_in_pcs = frm.doc.pavers[row].req_pcs
+                new_row.print_uom = frm.doc.pavers[row].print_uom
                 await frappe.call({
                     method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
                     args:{
-                        'doctype':cur_frm.doc.pavers[row].item,
+                        'doctype':frm.doc.pavers[row].item,
                     },
                     callback: function(r){
                         message=r.message;
@@ -154,27 +157,27 @@ frappe.ui.form.on("Quotation", {
                         new_row.conversion_factor=message['uom_conversion']
                     }
                 })
-                new_row.warehouse=cur_frm.doc.set_warehouse
-                new_row.delivery_date=cur_frm.doc.delivery_date
-                new_row.work=cur_frm.doc.pavers[row].work
+                new_row.warehouse=frm.doc.set_warehouse
+                new_row.delivery_date=frm.doc.delivery_date
+                new_row.work=frm.doc.pavers[row].work
             }
         }
 
         
-        if(cur_frm.doc.type=='Compound Wall'){
-            let rmm= cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
+        if(frm.doc.type=='Compound Wall'){
+            let rmm= frm.doc.compoun_walls?frm.doc.compoun_walls:[]
             for(let row=0;row<rmm.length;row++){
-                if(!cur_frm.doc.compoun_walls[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Compound Wall Table")}
+                if(!frm.doc.compoun_walls[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Compound Wall Table")}
                 var message;
                 var new_row = frm.add_child("items");
-                new_row.item_code=cur_frm.doc.compoun_walls[row].item
-                new_row.qty=cur_frm.doc.compoun_walls[row].allocated_ft
-                new_row.rate=cur_frm.doc.compoun_walls[row].rate
-                new_row.amount=cur_frm.doc.compoun_walls[row].amount
+                new_row.item_code=frm.doc.compoun_walls[row].item
+                new_row.qty=frm.doc.compoun_walls[row].allocated_ft
+                new_row.rate=frm.doc.compoun_walls[row].rate
+                new_row.amount=frm.doc.compoun_walls[row].amount
                 await frappe.call({
                     method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
                     args:{
-                        'doctype':cur_frm.doc.compoun_walls[row].item,
+                        'doctype':frm.doc.compoun_walls[row].item,
                     },
                     callback: function(r){
                         message=r.message;
@@ -184,27 +187,27 @@ frappe.ui.form.on("Quotation", {
                         new_row.conversion_factor=message['uom_conversion']
                     }
                 })
-                new_row.warehouse=cur_frm.doc.set_warehouse
-                new_row.delivery_date=cur_frm.doc.delivery_date
-                new_row.work=cur_frm.doc.compoun_walls[row].work
+                new_row.warehouse=frm.doc.set_warehouse
+                new_row.delivery_date=frm.doc.delivery_date
+                new_row.work=frm.doc.compoun_walls[row].work
             }
         }
 
-        let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
+        let rm= frm.doc.raw_materials?frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
-            if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
+            if(!frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
             var message;
             var new_row = frm.add_child("items");
             new_row.is_raw_material = 1
-            new_row.item_code=cur_frm.doc.raw_materials[row].item
-            new_row.qty=cur_frm.doc.raw_materials[row].qty
-            new_row.uom=cur_frm.doc.raw_materials[row].uom
-            new_row.rate=cur_frm.doc.raw_materials[row].rate
-            new_row.amount=cur_frm.doc.raw_materials[row].amount
+            new_row.item_code=frm.doc.raw_materials[row].item
+            new_row.qty=frm.doc.raw_materials[row].qty
+            new_row.uom=frm.doc.raw_materials[row].uom
+            new_row.rate=frm.doc.raw_materials[row].rate
+            new_row.amount=frm.doc.raw_materials[row].amount
             await frappe.call({
                 method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
                 args:{
-                    'doctype':cur_frm.doc.raw_materials[row].item,
+                    'doctype':frm.doc.raw_materials[row].item,
                 },
                 callback: function(r){
                     message=r.message;
@@ -213,8 +216,8 @@ frappe.ui.form.on("Quotation", {
                 }
             })
             new_row.conversion_factor=1
-            new_row.warehouse=cur_frm.doc.set_warehouse
-            new_row.delivery_date=cur_frm.doc.delivery_date
+            new_row.warehouse=frm.doc.set_warehouse
+            new_row.delivery_date=frm.doc.delivery_date
             
         }
        
@@ -311,7 +314,7 @@ function amt(frm, cdt, cdn){
 frappe.ui.form.on('Item Detail Compound Wall',{
     compoun_walls_add: function(frm, cdt, cdn){
         let data = locals[cdt][cdn]
-        frappe.model.set_value(cdt, cdn, 'work', (data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
+        frappe.model.set_value(cdt, cdn, 'work', (data.idx>1)?frm.doc.compoun_walls[data.idx -2].work:'')
     },
     allocated_ft:function(frm,cdt,cdn){
        amt(frm, cdt, cdn)

@@ -44,3 +44,7 @@ def make_variant_bom(source_name, bom_no, item, variant_items, target_doc=None):
 	)
 
 	return doc
+
+@frappe.whitelist()
+def get_workstation_capacity(item, workstation):
+	return frappe.db.get_value('Workstation Capacity', {'parent':workstation, 'item_code':item}, 'production_capacity')

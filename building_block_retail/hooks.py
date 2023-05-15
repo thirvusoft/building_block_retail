@@ -255,6 +255,8 @@ doctype_js = {
 				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" ,
 				"Driver": "/building_block_retail/custom/js/driver.js",
                 "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js",
+				"Workstation": "/building_block_retail/custom/js/workstation.js",
+				"BOM":"/building_block_retail/custom/js/bom.js"
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks
