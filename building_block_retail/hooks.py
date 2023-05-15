@@ -191,12 +191,17 @@ doc_events = {
 		'on_cancel': ['building_block_retail.building_block_retail.custom.py.salary_slip.on_cancel']
 	},
     'Purchase Invoice':{
-		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+        'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher'
+	},
+    'Landed Cost Voucher':{
+        'on_submit' : 'building_block_retail.building_block_retail.custom.py.landed_cost_voucher.on_submit'
 	},
     'Purchase Order':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     'Purchase Receipt':{
+        'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher',
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     "Vehicle Log":{
