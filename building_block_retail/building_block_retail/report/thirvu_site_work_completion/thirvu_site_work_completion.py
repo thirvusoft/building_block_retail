@@ -12,21 +12,21 @@ def execute(filters=None):
 	if from_date or to_date or employee or site_name:
 		conditions = " where 1 = 1"
 		if from_date and to_date:
-			conditions += "  and jwd.start_date between '{0}' and '{1}' ".format(from_date, to_date)
+			conditions += "  and jwd.date between '{0}' and '{1}' ".format(from_date, to_date)
 		if employee:
 			conditions += " and jwd.name1 ='{0}' ".format(employee)
 		if site_name:
 			conditions += " and site.name = '{0}' ".format(site_name)
 
-	report_data = frappe.db.sql(""" select jwd.start_date,site.name,
+	report_data = frappe.db.sql(""" select jwd.date,site.name,
 											(select employee_name from `tabEmployee` where name = jwd.name1 ) as jobworker,
 											site.supervisor_name,jwd.item,
 											jwd.completed_bundle,jwd.sqft_allocated,jwd.rate,jwd.amount 
 									from tabProject as site
-									left outer join `tabTS Job Worker Details` as jwd
+									left outer join `tabFinalised Job Worker Details` as jwd
 										on site.name = jwd.parent 
 									{0}
-									order by site.name, jwd.start_date
+									order by site.name, jwd.date
 									""".format(conditions))
 
 	data = [list(i) for i in report_data]
