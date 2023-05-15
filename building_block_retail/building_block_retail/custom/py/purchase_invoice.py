@@ -9,6 +9,7 @@ def create_landed_cost_voucher(doc,action):
         if doc.taxes_and_charges_in_landed:
             new_doc = frappe.new_doc("Landed Cost Voucher")
             new_doc.company = doc.company
+            new_doc.distribute_charges_based_on = doc.get('distribute_charges_based_on')
             new_doc.append("purchase_receipts",dict(
                 receipt_document_type = doc.doctype,
                 receipt_document = doc.name
