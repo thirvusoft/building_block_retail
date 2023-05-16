@@ -179,6 +179,7 @@ doc_events = {
 	},
 	"Work Order":{
         "before_submit":"building_block_retail.building_block_retail.custom.py.work_order.before_save",
+		"on_submit": "building_block_retail.building_block_retail.custom.py.work_order.production_order_creation"
     },
     "Stock Entry":{
         "before_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.before_validate",
