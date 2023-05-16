@@ -209,9 +209,9 @@ def get_expense_from_stock_entry(job_card, employee, item):
 def site_work_details(employee,start_date,end_date,designation):
     if(designation == 'Job Worker'):
         job_worker = frappe.db.get_all(
-                'TS Job Worker Details',
-                fields=['parent as site_work_name','amount','start_date','end_date', 'rate', 'sqft_allocated'],
-                filters={'start_date':['>=', start_date], 'end_date':['<=', end_date], 'name1':employee})
+                'Finalised Job Worker Details',
+                fields=['parent as site_work_name','amount', 'rate', 'sqft_allocated'],
+                filters={'date':['between', (start_date, end_date)], 'name1':employee})
         return job_worker
 
     elif(designation == 'Loader'):

@@ -103,7 +103,7 @@ def create_status():
     frappe.db.commit()
     
 def create_je_for_er(doc):
-    if(doc.status == 'Completed'):
+    if(doc.status == 'Completed' and doc.er_employee):
         if(not frappe.db.exists('Journal Entry', {'er_site_work':doc.name, 'docstatus':['<', 2]})):
             income_account = frappe.get_value("Employee",doc.er_employee,"contracter_expense_account")
             per_emp = frappe.get_value("Employee",doc.er_employee,"employee_percentage") or 0

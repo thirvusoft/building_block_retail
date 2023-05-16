@@ -1,6 +1,6 @@
 from re import M
 from . import __version__ as app_version
-
+from .jinja import jenvs
 app_name = "building_block_retail"
 app_title = "Building Block Retail"
 app_publisher = "Thirvusoft"
@@ -11,7 +11,7 @@ app_email = "thivusoft@gmail.com"
 app_license = "MIT"
 # Includes in <head>
 # ------------------
-
+jenv = jenvs
 # include js, css files in header of desk.html
 app_include_css = "/assets/building_block_retail/css/building_block_retail.css"
 # app_include_js = "/assets/building_block_retail/js/building_block_retail.js"
@@ -191,12 +191,17 @@ doc_events = {
 		'on_cancel': ['building_block_retail.building_block_retail.custom.py.salary_slip.on_cancel']
 	},
     'Purchase Invoice':{
-		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
+		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+        'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher'
+	},
+    'Landed Cost Voucher':{
+        'on_submit' : 'building_block_retail.building_block_retail.custom.py.landed_cost_voucher.on_submit'
 	},
     'Purchase Order':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     'Purchase Receipt':{
+        'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher',
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     "Vehicle Log":{
@@ -250,6 +255,8 @@ doctype_js = {
 				"Salary Slip": "/building_block_retail/custom/js/salary_slip.js" ,
 				"Driver": "/building_block_retail/custom/js/driver.js",
                 "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js",
+				"Workstation": "/building_block_retail/custom/js/workstation.js",
+				"BOM":"/building_block_retail/custom/js/bom.js"
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks

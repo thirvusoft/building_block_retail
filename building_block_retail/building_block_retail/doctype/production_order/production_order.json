@@ -1,0 +1,83 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:item_template",
+ "creation": "2023-05-12 16:10:37.835332",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_template",
+  "section_break_2",
+  "production_order_details",
+  "section_break_4",
+  "item_wise_production_qty",
+  "section_break_6",
+  "today_produced_items"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_template",
+   "fieldtype": "Link",
+   "label": "Item Template",
+   "options": "Item",
+   "unique": 1
+  },
+  {
+   "fieldname": "section_break_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "production_order_details",
+   "fieldtype": "Table",
+   "label": "Production Order Details",
+   "options": "Production Item Order"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_wise_production_qty",
+   "fieldtype": "Table",
+   "label": "Item Wise Production Qty",
+   "options": "Item Wise Production Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "today_produced_items",
+   "fieldtype": "Table",
+   "label": "Today Produced Items",
+   "options": "Today Produced Items"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2023-05-16 12:58:17.418891",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Production Order",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_seen": 1
+}

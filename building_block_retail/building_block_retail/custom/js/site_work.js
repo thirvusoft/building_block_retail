@@ -89,6 +89,22 @@ frappe.ui.form.on("Project",{
 					}
 			}
         })
+		frm.set_query('item','finalised_job_worker_details', function(frm){
+			return {
+				filters:[
+					['item_code' ,'in', sw_items]
+				]
+			}
+		})
+
+        frm.set_query('name1','finalised_job_worker_details',function(frm){
+            return{
+                filters:
+					{
+						'designation': 'Job Worker'
+					}
+			}
+        })
         frm.set_query('supervisor', function(frm){
             return {
                 filters:{
@@ -270,7 +286,81 @@ function completed_bundle_calc(frm,cdt,cdn){
 	}
 }
 
+frappe.ui.form.on('Finalised Job Worker Details',{
+	rate: function(frm, cdt, cdn){
+		amount(frm, cdt, cdn)
+	},
+	completed_bundle: function(frm,cdt,cdn){
+		completed_bundle_calc(frm,cdt,cdn)
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
 
+	},
+	completed_pieces: function(frm,cdt,cdn){
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
+		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
+
+	},
+	item:function(frm,cdt,cdn){
+		completed_bundle_calc(frm,cdt,cdn)
+		let row = locals[cdt][cdn]
+		if(row.item){
+			frappe.db.get_value('Item', row.item, 'laying_cost').then( (data)=>{
+				frappe.model.set_value(cdt, cdn, 'rate', data.message.laying_cost)
+			})
+			}
+		let item_code = row.item
+		if (item_code){
+			frappe.call({
+				method:"building_block_retail.building_block_retail.custom.py.site_work.item_details_fetching_pavers",
+				args:{item_code},
+				callback(r)
+				{
+					frappe.model.set_value(cdt,cdn,"area_per_bundle",r['message'][0]?parseFloat(r["message"][0]):0)
+					// frappe.model.set_value(cdt,cdn,"rate",r["message"][1]?parseFloat(r["message"][1]):0)
+					frappe.model.set_value(cdt,cdn,"pieces_per_bundle",r["message"][2]?parseFloat(r["message"][2]):0)
+					frappe.model.set_value(cdt,cdn,"pcs_per_sqft",r["message"][3]?parseFloat(r["message"][3]):0)
+				}
+			})
+		}
+	},
+	sqft_allocated: function(frm, cdt, cdn){
+		var row = locals[cdt][cdn]
+		percent_complete(frm, cdt, cdn)
+		amount(frm, cdt, cdn)
+		if(row.area_per_bundle){
+			frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
+		}
+		else{
+			frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
+		}
+
+	},
+	job_worker_add: function(frm, cdt, cdn){
+		let work= cur_frm.doc.job_worker?cur_frm.doc.job_worker:[]
+		var name
+		var start_date
+		let rate
+		var date
+		for(let row=0;row<work.length;row++){
+			if(row){
+				name = cur_frm.doc.job_worker[row-1].name1
+				start_date = cur_frm.doc.job_worker[row-1].end_date?cur_frm.doc.job_worker[row-1].end_date:cur_frm.doc.job_worker[row-1].start_date
+				rate = cur_frm.doc.job_worker[row-1].rate
+				date = frappe.datetime.add_days(start_date,1)
+			}
+			else{
+				date = start_date
+			}
+		}
+		frappe.model.set_value(cdt,cdn,"name1",name)
+		frappe.model.set_value(cdt,cdn,"start_date",date)
+		frappe.model.set_value(cdt,cdn,"end_date",date)
+		frappe.model.set_value(cdt,cdn,"rate",rate)
+	},
+})
 
 frappe.ui.form.on('TS Job Worker Details',{
 	rate: function(frm, cdt, cdn){
@@ -280,6 +370,13 @@ frappe.ui.form.on('TS Job Worker Details',{
 		completed_bundle_calc(frm,cdt,cdn)
 		var row = locals[cdt][cdn]
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
+
+	},
+	completed_pieces: function(frm,cdt,cdn){
+		var row = locals[cdt][cdn]
+		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
+		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
 
 	},
 	item:function(frm,cdt,cdn){
