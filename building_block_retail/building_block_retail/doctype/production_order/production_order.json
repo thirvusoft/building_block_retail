@@ -9,7 +9,11 @@
  "field_order": [
   "item_template",
   "section_break_2",
-  "production_order_details"
+  "production_order_details",
+  "section_break_4",
+  "item_wise_production_qty",
+  "section_break_6",
+  "today_produced_items"
  ],
  "fields": [
   {
@@ -28,11 +32,32 @@
    "fieldtype": "Table",
    "label": "Production Order Details",
    "options": "Production Item Order"
+  },
+  {
+   "fieldname": "section_break_4",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "item_wise_production_qty",
+   "fieldtype": "Table",
+   "label": "Item Wise Production Qty",
+   "options": "Item Wise Production Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "today_produced_items",
+   "fieldtype": "Table",
+   "label": "Today Produced Items",
+   "options": "Today Produced Items"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-15 13:27:39.691102",
+ "modified": "2023-05-16 12:58:17.418891",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",
