@@ -8,7 +8,6 @@ from frappe.model.document import Document
 class ProductionOrder(Document):
 	def validate(self):
 		tot_qty = {}
-		tot = []
 		for i in self.production_order_details:
 			if i.item_code not in tot_qty:
 				tot_qty[i.item_code] = i.qty_to_produced
