@@ -47,7 +47,8 @@ def production_order_creation(doc,action):
                     "work_order":doc.name,
                     "qty_to_produced":doc.qty,
                     "color":j.attribute_value,
-                    "priority":doc.priority
+                    "priority":doc.priority,
+                    "item_code":doc.production_item
                 }]
                 })
                 new_doc.save()
@@ -61,7 +62,8 @@ def production_order_creation(doc,action):
                     "work_order":doc.name,
                     "qty_to_produced":doc.qty,
                     "color":j.attribute_value,
-                    "priority":doc.priority
+                    "priority":doc.priority,
+                    "item_code":doc.production_item
                 })
             
                 production_doc.save()
