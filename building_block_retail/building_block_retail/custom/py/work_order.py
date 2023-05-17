@@ -33,3 +33,39 @@ class TSWorkOrder(WorkOrder):
         
     def validate_work_order_against_so(self):
         return
+    
+def production_order_creation(doc,action):
+    item_doc=frappe.get_doc("Item",doc.production_item)
+    if not frappe.db.exists("Production Order",item_doc.variant_of):
+        new_doc=frappe.new_doc("Production Order")
+        item_doc=frappe.get_doc("Item",doc.production_item)
+        for j in item_doc.attributes:
+            if j.attribute =="Colour":
+                new_doc.update({
+                "item_template":item_doc.variant_of,
+                "production_order_details":[{
+                    "work_order":doc.name,
+                    "qty_to_produced":doc.qty,
+                    "color":j.attribute_value,
+                    "priority":doc.priority
+                }]
+                })
+                new_doc.save()
+        new_doc.save()
+    else:
+        item_doc=frappe.get_doc("Item",doc.production_item)
+        production_doc=frappe.get_doc("Production Order",item_doc.variant_of)
+        for j in item_doc.attributes:
+            if j.attribute =="Colour":
+                production_doc.append("production_order_details",{
+                    "work_order":doc.name,
+                    "qty_to_produced":doc.qty,
+                    "color":j.attribute_value,
+                    "priority":doc.priority
+                })
+            
+                production_doc.save()
+        production_doc.save()
+
+            
+      
