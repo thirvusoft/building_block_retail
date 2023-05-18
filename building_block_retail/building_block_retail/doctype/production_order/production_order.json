@@ -41,8 +41,7 @@
    "fieldname": "item_wise_production_qty",
    "fieldtype": "Table",
    "label": "Item Wise Production Qty",
-   "options": "Item Wise Production Qty",
-   "read_only": 1
+   "options": "Item Wise Production Qty"
   },
   {
    "fieldname": "section_break_6",
@@ -57,7 +56,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-16 12:58:17.418891",
+ "modified": "2023-05-17 15:27:25.888165",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",
