@@ -4,45 +4,13 @@ let workstation = '';
 let job_card_name = '';
 frappe.ui.form.on("Job Card",{
     refresh: function(frm){
+        frm.set_df_property('operation_row_number', 'hidden', 1)
         job_card_name = frm.doc.name
         if(!frm.is_new() && !([1,2],frm.doc.docstatus)){
-        frm.page.clear_primary_action();
-        frm.page.set_primary_action(__('Submit'), () => {
-            if (frm.doc.for_quantity && frm.doc.total_completed_qty != frm.doc.for_quantity && !frm.reason){
-                var d = new frappe.ui.Dialog({
-                    'fields': [
-                        {'fieldname': 'reason', 'label': __('Reason Box'),'fieldtype': 'Small Text',},
-                    ],
-                    primary_action: function(value){
-                        d.hide();
-                        cur_frm.set_value("reason",value.reason)
-                        frm.save('Submit')
-                    }
-                });
-                d.show();
-            }else{
-                frm.save('Submit')
-            }
-        })
-        frm.add_custom_button("Finish",()=>{
-            if(frm.doc.work_order){
-                tot_comp_qty = frm.doc.total_completed_qty
-                opr = frm.doc.operation
-                workstation = frm.doc.workstation
-            frappe.call({
-                method:"building_block_retail.building_block_retail.custom.py.job_card.get_workorder_doc",
-                args:{
-                    work_order:frm.doc.work_order,
-                    opr:frm.doc.operation,
-                    workstation:frm.doc.workstation,
-                    qty : frm.doc.total_completed_qty
-                    },
-                callback(r){
-                    make_se(tot_comp_qty,r.message, "Manufacture", frm)
-                }
-            })
+        if(!frm.is_dirty()){
+            frm.page.btn_primary[0].innerHTML  = '<span class="alt-underline">F</span>inish'
         }
-        }).addClass("btn-warning").css({'color':'white','background-color': '#4CBB17','box-shadow': '2px 2px 2px #4CBB17'});
+        
     }
         frm.set_query('employee','time_logs', function() {
             return {
@@ -58,93 +26,64 @@ frappe.ui.form.on("Job Card",{
                 }
             }
         });
+
+        frm.set_query('source_warehouse', ()=>{
+            return {
+                filters:{
+                    'is_group':0,
+                    'disabled':0,
+                    'company':frm.doc.company
+                }
+            }
+        })
+        frm.set_query('target_warehouse', ()=>{
+            return {
+                filters:{
+                    'is_group':0,
+                    'disabled':0,
+                    'company':frm.doc.company
+                }
+            }
+        })
+        if(frm.doc.docstatus == 1){
+            frappe.db.get_value("Stock Entry", {"ts_job_card":frm.doc.name, "docstatus":["!=", 2]}, "name").then(
+                (r)=>{
+                    if(!r.message.name){
+                        frm.add_custom_button("Make Stock Entry", ()=>{
+                            frappe.call({
+                                method: "building_block_retail.building_block_retail.custom.py.job_card.make_stock_entry",
+                                args: {
+                                    job_card: frm.doc.name,
+                                    qty: frm.doc.total_completed_qty,
+                                    purpose: "Manufacture"
+                                },
+                                callback(r){
+                                    if(r.message){
+                                        frappe.show_alert(`Stock Entry Created ${r.message}`);
+                                        frm.remove_custom_button("Make Stock Entry")
+                                        frm.refresh()
+                                    }
+                                }
+                            })
+                        })
+                    }
+                }
+            )
+        }
+        
     },
     onload: function(frm){
-        if(frm.doc.doc_onload == 0){
+        if(frm.doc.doc_onload == 0 && frm.is_new()){
         frm.set_value('time_logs',[])
         frm.set_value('doc_onload',1)
         frm.refresh()
-        frm.save()
+        // frm.save()
         }
     },
     before_save: function(frm){
         frm.set_value('max_qty', frm.doc.for_quantity)
-    }
+    },
+    toggle_operation_number(frm) {
+		frm.toggle_display("operation_row_number", !frm.doc.operation_id && frm.doc.operation);
+	}
 })
-
-
-function make_se (tot_comp_qty, frm, purpose, cur) {
-    show_prompt_for_qty_input(frm, purpose)
-        .then(data => {
-            if(data.qty<=0){return}
-            frappe.call({
-                method: 'building_block_retail.building_block_retail.custom.py.job_card.update_operation_completed_qty',
-                args:{work_order:frm.name,
-                    opr,
-                    workstation,
-                    qty : tot_comp_qty
-                    },
-                callback(){
-                    frappe.call({
-                        method: 'erpnext.manufacturing.doctype.work_order.work_order.make_stock_entry', 
-                        args:{
-                        'work_order_id': frm.name,
-                        'purpose': purpose,
-                        'qty': (data.qty)
-                        },
-                        callback(r){
-                            r.message.ts_job_card = cur.doc.name
-                            frappe.model.sync(r.message);
-                            frappe.set_route('Form', r.message.doctype, r.message.name);
-                        }
-                        });
-                }
-            })
-        });
-        
-
-}
-function show_prompt_for_qty_input(frm, purpose) {
-    let max = get_max_transferable_qty(frm, purpose);
-    return new Promise((resolve, reject) => {
-        frappe.prompt({
-            fieldtype: 'Float',
-            label: __('Qty {0}', [purpose]),
-            fieldname: 'qty',
-            description: __('Max: {0}', [max]),
-            default: max,
-            read_only:1,
-        }, data => {
-            max += (frm.qty * (frm.over_prdn_prcnt || 0.0)) / 100;
-            if (data.qty > max) {
-                frappe.msgprint(__('Quantity must not be more than {0}', [max]));
-                reject();
-            }
-            if(data.qty > cur_frm.doc.total_completed_qty)
-            data.purpose = purpose;
-            resolve(data);
-        }, __('Select Quantity'), __('Create'));
-    });
-}
-function get_max_transferable_qty (frm, purpose){
-    let max = 0;
-    if (frm.skip_transfer) {
-        frappe.call({
-            method:"building_block_retail.building_block_retail.custom.py.job_card.calculate_max_qty",
-            async:false,
-            args:{
-                job_card:job_card_name,
-                },
-            callback(r){
-                max = r.message
-            }
-        })
-    } else {
-        if (purpose === 'Manufacture') {
-            max = flt(frm.material_transferred_for_manufacturing) - flt(frm.produced_qty);
-        } else {
-            max = flt(frm.qty) - flt(frm.material_transferred_for_manufacturing);
-        }
-    }
-    return flt(max);
-}

@@ -102,59 +102,59 @@ def create_status():
     doc.save()
     frappe.db.commit()
     
-def create_je_for_er(doc):
-    if(doc.status == 'Completed' and doc.er_employee):
-        if(not frappe.db.exists('Journal Entry', {'er_site_work':doc.name, 'docstatus':['<', 2]})):
-            income_account = frappe.get_value("Employee",doc.er_employee,"contracter_expense_account")
-            per_emp = frappe.get_value("Employee",doc.er_employee,"employee_percentage") or 0
-            hike = doc.er_total_amount * per_emp / 100
-            amt =  hike + doc.er_total_amount
-            if income_account:
-                company = frappe.get_value('Employee', doc.er_employee, 'company')
-                default_employee_expenses_account = frappe.get_cached_value("Company", company, "default_employee_expenses_account")
-                def_cost_center = frappe.get_cached_value("Company", company, "cost_center")
-                branch = frappe.get_value('Accounting Dimension Detail',{'company':company}, 'default_dimension')
-                if default_employee_expenses_account:
-                    new_journal=frappe.get_doc({
-                        "doctype":"Journal Entry",
-                        "company":company,
-                        "posting_date":today(),
-                        "er_site_work":doc.name,
-                        "cost_center": def_cost_center,
-                        "branch":branch,
-                        "accounts":[
-                            {
-                                "account":default_employee_expenses_account,
-                                "credit_in_account_currency":amt,
-                                "cost_center": def_cost_center,
-                                "branch":branch
-                            },
-                            {
-                                "account":income_account,
-                                "debit_in_account_currency":amt,
-                                "cost_center": def_cost_center,
-                                "branch":branch
-                            },
-                        ],
-                    })
-                    new_journal.insert(ignore_mandatory=True)
-                    new_journal.submit()
-                else:
-                    linkto = get_link_to_form("Company", company)
-                    frappe.throw(
-                        ("Enter Default Employee Expenses Account in company => {}.").format(
-                            frappe.bold(linkto)
-                        )
-                    )
-            else:
-                linkto = get_link_to_form("Employee", doc.er_employee)
-                frappe.throw(
-                    ("Enter Salary Account for Contractor in {}.").format(
-                        frappe.bold(linkto)
-                    )
-                )
+# def create_je_for_er(doc):
+#     if(doc.status == 'Completed' and doc.er_employee):
+#         if(not frappe.db.exists('Journal Entry', {'er_site_work':doc.name, 'docstatus':['<', 2]})):
+#             income_account = frappe.get_value("Employee",doc.er_employee,"contracter_expense_account")
+#             per_emp = frappe.get_value("Employee",doc.er_employee,"employee_percentage") or 0
+#             hike = doc.er_total_amount * per_emp / 100
+#             amt =  hike + doc.er_total_amount
+#             if income_account:
+#                 company = frappe.get_value('Employee', doc.er_employee, 'company')
+#                 default_employee_expenses_account = frappe.get_cached_value("Company", company, "default_employee_expenses_account")
+#                 def_cost_center = frappe.get_cached_value("Company", company, "cost_center")
+#                 branch = frappe.get_value('Accounting Dimension Detail',{'company':company}, 'default_dimension')
+#                 if default_employee_expenses_account:
+#                     new_journal=frappe.get_doc({
+#                         "doctype":"Journal Entry",
+#                         "company":company,
+#                         "posting_date":today(),
+#                         "er_site_work":doc.name,
+#                         "cost_center": def_cost_center,
+#                         "branch":branch,
+#                         "accounts":[
+#                             {
+#                                 "account":default_employee_expenses_account,
+#                                 "credit_in_account_currency":amt,
+#                                 "cost_center": def_cost_center,
+#                                 "branch":branch
+#                             },
+#                             {
+#                                 "account":income_account,
+#                                 "debit_in_account_currency":amt,
+#                                 "cost_center": def_cost_center,
+#                                 "branch":branch
+#                             },
+#                         ],
+#                     })
+#                     new_journal.insert(ignore_mandatory=True)
+#                     new_journal.submit()
+#                 else:
+#                     linkto = get_link_to_form("Company", company)
+#                     frappe.throw(
+#                         ("Enter Default Employee Expenses Account in company => {}.").format(
+#                             frappe.bold(linkto)
+#                         )
+#                     )
+#             else:
+#                 linkto = get_link_to_form("Employee", doc.er_employee)
+#                 frappe.throw(
+#                     ("Enter Salary Account for Contractor in {}.").format(
+#                         frappe.bold(linkto)
+#                     )
+#                 )
 def validate(self,event):
-    create_je_for_er(self)
+    # create_je_for_er(self)
     validate_jw_qty(self)
     if(self.name not in frappe.get_all('Project', pluck="name")):
         return

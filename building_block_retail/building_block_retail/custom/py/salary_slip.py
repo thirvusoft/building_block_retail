@@ -126,11 +126,6 @@ def salary_slip_add_gross_pay(doc, event):
     if(doc.designation != 'Contractor'):
         set_net_pay(doc)
         return
-    stock_entry = frappe.get_all("Stock Entry", filters={'company':doc.company,'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'Name')
-    journal_entry = frappe.get_all("Journal Entry", filters={'stock_entry_linked': ['in', stock_entry]}, pluck='name')
-    emp_account = frappe.get_value("Employee", doc.employee, 'contracter_expense_account')
-    je = frappe.get_all("Journal Entry Account", fields=['account', 'debit_in_account_currency'], filters={'debit_in_account_currency':['>',0], 'parent': ['in',journal_entry]})
-    emp_amount = sum([i['debit_in_account_currency'] for i in  je if(i['account'] == emp_account)]) or 0
     table = get_employe_expense_report(doc)
     emp_amount = sum([i['expense'] for i in table])
     doc.total_expense = emp_amount
@@ -141,10 +136,7 @@ def salary_slip_add_gross_pay(doc, event):
     if "Basic" not in com:
         doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
     doc.gross_pay =sum([(i.amount or 0) for i in doc.earnings]) or 0
-    adv_acc = frappe.db.get_value('Company', doc.company, 'default_employee_advance_account')
-    if(not adv_acc):
-        url = get_link_to_form('Company', doc.company)
-        frappe.throw(f'Please fill the <b>Employee Advance Account</b> in {url}')
+
     com = [i.salary_component for i in doc.deductions]
 
     doc.net_pay = doc.gross_pay - doc.total_deduction
@@ -163,24 +155,22 @@ def salary_slip_add_gross_pay(doc, event):
     
 
 def get_employe_expense_report(doc):
-    work_order = frappe.get_all("Stock Entry", filters={'company':doc.company, 'stock_entry_type': 'Manufacture', 'docstatus':1, 'posting_date': ['between',(doc.start_date, doc.end_date)]}, pluck = 'work_order')
-    job_card = frappe.get_all("Job Card", filters={'work_order': ['in', work_order],  'company':doc.company, 'docstatus':1}, fields=['name', 'workstation', 'production_item', 'posting_date'])
-    jc_name = [i['name'] for i in job_card]
-    jc_details = {i['name']:[i['posting_date'], i['workstation'], i['production_item']] for i in job_card}
-    jc_data = {}
-    for i in frappe.get_all('Job Card Time Log', filters={'parent': ['in', jc_name], 'employee':doc.employee, 'docstatus':1}, fields=['completed_qty', 'parent']):
-        if(i['parent'] in list(jc_data.keys())):jc_data[i['parent']] += (i['completed_qty'] or 0)
-        else:jc_data[i['parent']]= i['completed_qty']
+    job_cards = frappe.db.get_all("Job Card", filters={'docstatus':1, "posting_date":['between', (doc.start_date, doc.end_date)], "company":doc.company}, fields=["name", "production_item", "workstation", "posting_date"])
+    item_production_cost = {i['production_item']:frappe.db.get_value("Item", i["production_item"], "employee_rate") for i in job_cards}
+    jc_wise_item = {i['name']:{"production_item":i['production_item'], "workstation":i['workstation'], "date":i['posting_date']} for i in job_cards}
+    job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "completed_qty"])
     final_data=[]
-    for i in jc_data:
-        row = {}
-        row['qty_produced'] = jc_data[i]
-        row['date'] = jc_details[i][0]
-        row['workstation'] = jc_details[i][1]
-        row['production_item'] = jc_details[i][2]
-        row['expense'], row['rate_per_piece'] = get_expense_from_stock_entry(i, doc.employee, jc_details[i][2])
-        # row['rate_per_piece'] = 10
-        final_data.append(row)
+    for i in job_cards:
+        prod_cost = item_production_cost[jc_wise_item[i['name']]['production_item']]
+        if(not prod_cost):
+            frappe.throw(f"""Please Enter Production Cost/Item in {get_link_to_form("Item", jc_wise_item[i['name']]['production_item'])}""")
+        final_data.append({
+            "workstation": jc_wise_item[i['name']]['workstation'],
+            "date": jc_wise_item[i['name']]['date'],
+            "qty_produced": i["completed_qty"],
+            "production_item": jc_wise_item[i['name']]['production_item'],
+            "expense": item_production_cost[jc_wise_item[i['name']]['production_item']] * i["completed_qty"]
+        })
     return final_data
 
 def get_expense_from_stock_entry(job_card, employee, item):
@@ -241,10 +231,12 @@ def employee_update(doc,action):
 
 def set_net_pay(self):
     earnings=self.earnings
-    if self.designation in ['Job Worker', 'Loader']:
+    if self.designation in ['Job Worker', 'Loader', 'Earth Rammer Contractor']:
         for row in range(len(earnings)):
             if(earnings[row].salary_component=='Basic'):
                 earnings[row].amount=self.total_paid_amount
+        if("Basic" not in [i.salary_component for i in self.earnings]):
+            self.append("earnings", {'salary_component': "Basic", 'amount':self.total_paid_amount})
         self.update({
             'earnings':earnings,
             'gross_pay':self.total_paid_amount,
@@ -264,6 +256,7 @@ def set_net_pay(self):
         
 def create_journal_entry(doc,action):
     if(doc.payroll_entry):return
+    make_bank_entry(doc)
     def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
     branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
     earn_component_list=[]
@@ -310,26 +303,24 @@ def create_journal_entry(doc,action):
     new_jv_doc.ts_salary_slip = doc.name
     new_jv_doc.insert()
     new_jv_doc.submit()
-    if(doc.designation in ["Contractor", "Earth Rammer Contractor"]):
-        journal_entry(doc)
-    elif(doc.designation in ['Job Worker', 'Loader']):
-        make_bank_entry(doc)
-
-def journal_entry(doc):
-    def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
-    branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
-    new_journel = frappe.new_doc("Journal Entry")
-    new_journel.company = doc.get("company")
-    new_journel.posting_date = doc.get("posting_date")
-    new_journel.accounts =  [] 
-
-    empaccount = frappe.get_value("Employee",doc.employee,"contracter_expense_account")
-   
-    new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
-    new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
-    new_journel.insert()
-    new_journel.submit()
     frappe.msgprint("Journal Entry Submitted")
+
+
+# def journal_entry(doc):
+#     def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
+#     branch = frappe.get_value('Accounting Dimension Detail',{'company':doc.company}, 'default_dimension')
+#     new_journel = frappe.new_doc("Journal Entry")
+#     new_journel.company = doc.get("company")
+#     new_journel.posting_date = doc.get("posting_date")
+#     new_journel.accounts =  [] 
+
+#     empaccount = frappe.get_value("Employee",doc.employee,"contracter_expense_account")
+   
+#     new_journel.append("accounts",{"account":empaccount,"credit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
+#     new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.net_pay, 'cost_center':def_cost_center, 'branch':branch})
+#     new_journel.insert()
+#     new_journel.submit()
+    
 
 def make_bank_entry(doc):
     def_cost_center = frappe.get_cached_value("Company", doc.company, "cost_center")
@@ -346,7 +337,7 @@ def make_bank_entry(doc):
     new_journel.append("accounts",{"account":frappe.db.get_value("Company",doc.company, "default_payroll_payable_account"),"debit_in_account_currency":doc.gross_pay, 'cost_center':def_cost_center, 'branch':branch})
     new_journel.insert()
     new_journel.submit()
-    frappe.msgprint("Journal Entry Submitted")
+    # frappe.msgprint("Journal Entry Submitted")
 
 @frappe.whitelist()
 def get_advance_amounts(employee):

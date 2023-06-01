@@ -175,15 +175,18 @@ doc_events = {
 					]
     },
 	"Job Card":{
-		'before_submit': "building_block_retail.building_block_retail.utils.manufacturing.job_card.job_card.before_submit",
+		'before_submit': "building_block_retail.building_block_retail.custom.py.job_card.before_submit",
 	},
 	"Work Order":{
         "before_submit":"building_block_retail.building_block_retail.custom.py.work_order.before_save",
-		"on_submit": "building_block_retail.building_block_retail.custom.py.work_order.production_order_creation"
+		"on_submit": "building_block_retail.building_block_retail.custom.py.work_order.production_order_creation",
+		"validate": "building_block_retail.building_block_retail.custom.py.work_order.validate",
+		"on_update_after_submit": "building_block_retail.building_block_retail.custom.py.work_order.validate",
     },
     "Stock Entry":{
-        "before_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.before_validate",
-        "on_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.after_submit"
+        "validate":["building_block_retail.building_block_retail.custom.py.stock_entry.validate",
+					"building_block_retail.building_block_retail.custom.py.stock_entry.update_production_order"],
+		"on_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.update_production_order",
     },
     'Salary Slip':{
 		'validate': 'building_block_retail.building_block_retail.custom.py.salary_slip.salary_slip_add_gross_pay',

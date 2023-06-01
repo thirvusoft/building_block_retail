@@ -1,17 +1,9 @@
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
-def create_contracter_expense_account():
+def employee_customisations():
     custom_fields = {
         "Employee":[
-            dict(fieldname='contracter_expense_account',
-                 label="Salary Account",
-                 fieldtype='Link', 
-                 insert_after='column_break_52', 
-                 options="Account", 
-                 description="Manufacturing cost for Contractor or Earth Rammer Cost of Site Work will add in this account.",
-                 mandatory_depends_on='eval:in_list(["Contractor","Earth Rammer Contractor"],doc.designation)'
-              ),
             dict(
                 fieldname = 'salary_balance',
                 label = 'Salary Balance',

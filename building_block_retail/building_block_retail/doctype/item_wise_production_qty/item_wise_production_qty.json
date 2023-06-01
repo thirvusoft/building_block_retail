@@ -8,7 +8,9 @@
  "field_order": [
   "item_code",
   "qty",
-  "color"
+  "color",
+  "qty_to_update_in_work_order",
+  "pending_qty_to_allocate_in_work_order"
  ],
  "fields": [
   {
@@ -22,19 +24,31 @@
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Qty"
+   "label": "Qty to Produce"
   },
   {
    "fieldname": "color",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Color"
+  },
+  {
+   "fieldname": "qty_to_update_in_work_order",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Total Qty to Allocate in Work Order"
+  },
+  {
+   "fieldname": "pending_qty_to_allocate_in_work_order",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Pending Qty to Allocate in Work Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-05-17 15:19:33.639271",
+ "modified": "2023-05-31 19:20:57.423955",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Item Wise Production Qty",
