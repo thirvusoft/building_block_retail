@@ -16,3 +16,21 @@ def get_parent_item_group(item_group):
     
 def item_validate(doc,action):
     doc.item_name=doc.item_code
+
+
+@frappe.whitelist()
+def item_list():
+    item_group = []
+    parent_grps = ['Products']   
+    for i in parent_grps:
+        item_group.extend(frappe.get_all('Item Group', filters={'parent_item_group':['in', i]}, pluck='name'))        
+        parent_grps.extend(frappe.get_all('Item Group', filters={'parent_item_group':['in', i], 'is_group':1}, pluck='name'))
+    item_group=item_group + parent_grps
+    item_list=frappe.get_list("Item",filters={"item_group":["in",item_group],"has_variants":0,"disabled":0},fields=["item_code"])
+    return item_list
+
+
+
+
+
+   
