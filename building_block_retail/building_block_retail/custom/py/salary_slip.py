@@ -158,7 +158,7 @@ def get_employe_expense_report(doc):
     job_cards = frappe.db.get_all("Job Card", filters={'docstatus':1, "posting_date":['between', (doc.start_date, doc.end_date)], "company":doc.company}, fields=["name", "production_item", "workstation", "posting_date"])
     item_production_cost = {i['production_item']:frappe.db.get_value("Item", i["production_item"], "employee_rate") for i in job_cards}
     jc_wise_item = {i['name']:{"production_item":i['production_item'], "workstation":i['workstation'], "date":i['posting_date']} for i in job_cards}
-    job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "completed_qty"])
+    job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "final_qty"])
     final_data=[]
     for i in job_cards:
         prod_cost = item_production_cost[jc_wise_item[i['name']]['production_item']]
@@ -167,9 +167,9 @@ def get_employe_expense_report(doc):
         final_data.append({
             "workstation": jc_wise_item[i['name']]['workstation'],
             "date": jc_wise_item[i['name']]['date'],
-            "qty_produced": i["completed_qty"],
+            "qty_produced": i["final_qty"],
             "production_item": jc_wise_item[i['name']]['production_item'],
-            "expense": item_production_cost[jc_wise_item[i['name']]['production_item']] * i["completed_qty"]
+            "expense": item_production_cost[jc_wise_item[i['name']]['production_item']] * i["final_qty"]
         })
     return final_data
 

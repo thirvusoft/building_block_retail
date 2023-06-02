@@ -19,7 +19,7 @@
   },
   {
    "fieldname": "qty_produced",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Qty Produced"
   },
@@ -34,7 +34,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-05-30 18:45:44.666288",
+ "modified": "2023-06-02 19:13:51.296441",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Work Order Produced Qty",

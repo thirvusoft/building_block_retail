@@ -95,7 +95,7 @@ def get_data(filters={}):
 				jc.workstation as workstation,
 				jct.employee as employee,
 				IFNULL(TIMESTAMPDIFF(MINUTE, jct.from_time, jct.to_time), 0)/60 as total_hrs,
-				IFNULL(jct.completed_qty, 0) as actual_qty
+				IFNULL(jct.final_qty, 0) as actual_qty
 			FROM
 				`tabJob Card` jc left join `tabJob Card Time Log` jct
 				on jc.name = jct.parent 

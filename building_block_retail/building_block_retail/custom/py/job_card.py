@@ -149,3 +149,7 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 	stock_entry.save()
 	frappe.msgprint(f"""Stock Entry Created: {get_link_to_form("Stock Entry" ,stock_entry.name)}""")
 	return
+
+def validate(doc, event):
+	for i in doc.time_logs:
+		i.final_qty = i.completed_qty - (i.get('excess_qty') or 0) + (i.get('shortage_qty') or 0)

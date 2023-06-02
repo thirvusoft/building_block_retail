@@ -58,7 +58,7 @@
   {
    "fieldname": "today_produced_items",
    "fieldtype": "Table",
-   "label": "Today Produced Items",
+   "label": "Items Produced Today",
    "options": "Today Produced Items"
   },
   {
@@ -69,6 +69,7 @@
    "default": "Working",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
    "options": "Working\nHold"
   },
@@ -107,7 +108,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-01 19:04:08.025793",
+ "modified": "2023-06-02 19:12:14.050981",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",

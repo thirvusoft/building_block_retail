@@ -136,4 +136,10 @@ def update_production_order(doc, event=None):
         for i in pro_doc.item_wise_production_qty:
             if( i.item_code == fg_item and event == "on_submit"):
                 i.qty_to_update_in_work_order += doc.fg_completed_qty
+                if(i.get("urgent_priority")):
+                    i.urgent_priority -= doc.fg_completed_qty
+                elif(i.get("high_priority")):
+                    i.high_priority -= doc.fg_completed_qty
+                elif(i.get("low_priority")):
+                    i.low_priority -= doc.fg_completed_qty
         pro_doc.save()

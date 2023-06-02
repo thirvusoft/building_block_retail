@@ -25,7 +25,6 @@ frappe.ui.form.on('Production Order', {
                             {fieldname:'workstation', label:'Workstation', fieldtype:'Link', options:'Workstation', reqd:1}
                         ],
                         primary_action(data){
-                            console.log(data)
                             frm.call({
                                 doc:frm.doc,
                                 method: 'make_job_card',
@@ -36,7 +35,9 @@ frappe.ui.form.on('Production Order', {
                                 callback(r){
                                     frm.reload_doc()
                                     d.hide()
-                                    frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message}</p>`)
+                                    if(r.message){
+                                        frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message}</p>`)
+                                    }
                                 }
                             })
                         }
@@ -73,7 +74,9 @@ frappe.ui.form.on('Production Order', {
     today_produced_item_filter: function(frm){
         let items =[];
         for(let i = 0; i<frm.doc.item_wise_production_qty.length; i++){
-            items.push(frm.doc.item_wise_production_qty[i].item_code)
+            if(frm.doc.item_wise_production_qty[i].qty){
+                items.push(frm.doc.item_wise_production_qty[i].item_code)
+            }
         }
         frm.set_query("item_code", "today_produced_items", function(){
             return {
@@ -127,13 +130,16 @@ frappe.ui.form.on("Production Order Item", {
 frappe.ui.form.on("Today Produced Items", {
     
     produced_qty(frm, cdt, cdn){
-        frm.events.calculate_final_qty(frm, cdt, cdn)
+        var row = locals[cdt][cdn]
+        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
     },
     excess_qty(frm, cdt, cdn){
-        frm.events.calculate_final_qty(frm, cdt, cdn)
+        var row = locals[cdt][cdn]
+        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
     },
     shortage_qty(frm, cdt, cdn){
-        frm.events.calculate_final_qty(frm, cdt, cdn)
+        var row = locals[cdt][cdn]
+        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
     }
 })
 

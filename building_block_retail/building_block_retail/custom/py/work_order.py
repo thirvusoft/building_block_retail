@@ -70,7 +70,7 @@ def production_order_creation(doc,action):
 
 def validate(doc, event):
     update_manufactured_qty(doc, event)
-    # update_production_order(doc)
+    update_status(doc, event)
 
 def update_manufactured_qty(doc, event):
     doc.produced_qty = 0
@@ -79,19 +79,14 @@ def update_manufactured_qty(doc, event):
         doc.produced_qty += (i.qty_produced or 0)
     if event == "on_update_after_submit":
         frappe.db.set_value("Work Order", doc.name, "produced_qty", doc.produced_qty)
+        frappe.db.set_value("Work Order Operation", {'parent': doc.name}, 'completed_qty', doc.produced_qty)
 
-# def update_production_order(doc):
-#     pro_ord = frappe.db.get_value("Production Order Item", {'work_order':doc.name}, 'parent')
-#     if(not pro_ord):
-#         return
-#     pro_doc = frappe.get_doc("Production Order", pro_ord)
-#     rows = []
-#     for i in pro_doc.production_order_details:
-#         if(i.work_order == doc.name and i.item_code == doc.production_item):
-#             i.qty_to_produced = doc.qty - doc.produced_qty
-#             if(i.qty_to_produced > 0):
-#                 rows.append(i)
-#         else:
-#             rows.append(i)
-#     pro_doc.production_order_details = rows
-#     pro_doc.save()
+def update_status(doc, event):
+    if(doc.produced_qty >= doc.qty):
+        doc.status = "Completed"
+    elif(doc.produced_qty  <= 0):
+        doc.status = "Not Started"
+    elif(doc.produced_qty < doc.qty):
+        doc.status = "In Process"
+    if event == "on_update_after_submit":
+        frappe.db.set_value("Work Order", doc.name, "status", doc.status)
