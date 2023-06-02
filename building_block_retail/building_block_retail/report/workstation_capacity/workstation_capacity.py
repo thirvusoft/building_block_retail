@@ -114,4 +114,5 @@ def get_data(filters={}):
 	for row in data:
 		row['expected_qty'] = row['total_hrs'] * workstation_capacity[row['workstation']].get(row['item_code'],0)
 		row['effective_percent'] = round(row['actual_qty']/row['expected_qty'] *100, 2) if row['expected_qty'] else 0
+		row['employee']=frappe.get_value("Employee",row['employee'],"first_name")
 	return data
