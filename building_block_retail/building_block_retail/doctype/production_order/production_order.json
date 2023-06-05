@@ -11,7 +11,6 @@
   "works",
   "section_break_3",
   "item_template",
-  "column_break_2",
   "status",
   "section_break_2",
   "production_order_details",
@@ -62,10 +61,6 @@
    "options": "Today Produced Items"
   },
   {
-   "fieldname": "column_break_2",
-   "fieldtype": "Column Break"
-  },
-  {
    "default": "Working",
    "fieldname": "status",
    "fieldtype": "Select",
@@ -108,7 +103,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-02 19:12:14.050981",
+ "modified": "2023-06-05 15:25:30.023536",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",

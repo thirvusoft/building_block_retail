@@ -175,7 +175,6 @@ doc_events = {
 					]
     },
 	"Job Card":{
-		"validate": "building_block_retail.building_block_retail.custom.py.job_card.validate",
 		'before_submit': "building_block_retail.building_block_retail.custom.py.job_card.before_submit",
 	},
 	"Work Order":{

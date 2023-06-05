@@ -131,6 +131,13 @@ class ProductionOrder(Document):
 					if(j.item_code == i.item_code):
 						j.excess_qty -= (i.excess_qty or 0)
 						j.shortage_qty -= (i.shortage_qty or 0)
+						comp_qty = frappe.db.get_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty")
+						if(not comp_qty):
+							comp_qty = frappe.db.get_value("Job Card Time Log", {"parent":j.from_job_card}, "completed_qty")
+						if(j.excess_qty):
+							frappe.db.set_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty", comp_qty-j.excess_qty)
+						if(j.shortage_qty):
+							frappe.db.set_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty", comp_qty+j.shortage_qty)
 						continue
 
 
@@ -155,7 +162,7 @@ class ProductionOrder(Document):
 				'operation': bom.operations[0].operation if len(bom.operations) else '',
 				'workstation': workstation,
 				'operation_row_number':1,
-				'time_logs':[{'employee':employee, 'completed_qty':items[i], "excess_qty":exc_shrt[i]['excess_qty'], "shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":final_qty}]
+				'time_logs':[{'employee':employee, 'completed_qty': final_qty, "excess_qty":exc_shrt[i]['excess_qty'], "shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":items[i]}]
 			})
 			job_card.flags.ignore_validate = True
 			job_card.flags.ignore_mandatory = True
@@ -167,10 +174,6 @@ class ProductionOrder(Document):
 	
 	@frappe.whitelist()
 	def update_work_order(self):
-		# if (sum([i.today_produced_qty or 0 for i in self.production_order_details]) <= 0):
-		# 	frappe.publish_realtime("no_qty_update_work_order")
-		# 	return
-
 		max_qty_for_items = {i.item_code:i.qty_to_update_in_work_order for i in self.item_wise_production_qty}
 		update_qty = {}
 		for i in self.production_order_details:
@@ -181,8 +184,8 @@ class ProductionOrder(Document):
 		for i in update_qty:
 			if(i not in max_qty_for_items):
 				frappe.throw(f"""Item {frappe.bold(i)} has no qty to update.""")
-			# elif( update_qty[i] > max_qty_for_items[i]):
-			# 	frappe.throw(f"""Item {frappe.bold(i)} has {max_qty_for_items[i]} Qty to update. But you try to update {update_qty[i]} Qty.""")
+			elif( update_qty[i] > max_qty_for_items[i]):
+				frappe.throw(f"""Item {frappe.bold(i)} has {max_qty_for_items[i]} Qty to update. But you try to update {update_qty[i]} Qty.""")
 		
 		for i in self.production_order_details:
 			if(i.today_produced_qty):
