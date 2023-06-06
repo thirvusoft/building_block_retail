@@ -41,7 +41,7 @@ class Jobcard(JobCard):
 			)
 
 		if self.for_quantity and self.total_completed_qty != self.for_quantity and not self.reason:
-   			pass
+			pass
 	def set_transferred_qty(self, update_status=False):
 		"Set total FG Qty in Job Card for which RM was transferred."
 		if not self.items:
@@ -124,6 +124,8 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 	job_card = frappe.get_doc("Job Card", job_card)
 	stock_entry = frappe.new_doc("Stock Entry")
 	stock_entry.update({
+		'posting_date': job_card.posting_date,
+		'set_posting_time':1,
 		'ts_job_card': job_card.name,
 		'production_order': job_card.production_order,
 		'purpose': purpose,
@@ -148,4 +150,7 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 	stock_entry.set_serial_no_batch_for_finished_good()
 	stock_entry.save()
 	frappe.msgprint(f"""Stock Entry Created: {get_link_to_form("Stock Entry" ,stock_entry.name)}""")
+	if(job_card.production_order):
+		po = frappe.get_doc("Production Order", job_card.production_order)
+		po.save()
 	return

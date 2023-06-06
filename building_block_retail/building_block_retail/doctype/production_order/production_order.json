@@ -19,8 +19,7 @@
   "section_break_6",
   "today_produced_items",
   "excess_and_shortage_section",
-  "excess_and_shortage",
-  "column_break_15"
+  "excess_and_shortage"
  ],
  "fields": [
   {
@@ -48,7 +47,8 @@
    "fieldname": "item_wise_production_qty",
    "fieldtype": "Table",
    "label": "Item Wise Qty to Produce",
-   "options": "Item Wise Production Qty"
+   "options": "Item Wise Production Qty",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_6",
@@ -88,22 +88,18 @@
   {
    "fieldname": "excess_and_shortage_section",
    "fieldtype": "Section Break",
-   "label": "Excess and Shortage"
+   "label": "Excess Items"
   },
   {
    "description": "Maintain Excess and Shortage qty for Each Item",
    "fieldname": "excess_and_shortage",
    "fieldtype": "Table",
    "options": "Production Order Excess and Shortage"
-  },
-  {
-   "fieldname": "column_break_15",
-   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-05 15:25:30.023536",
+ "modified": "2023-06-06 18:33:16.317900",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",

@@ -13,14 +13,22 @@ from frappe.utils import (
 
 
 class ProductionOrder(Document):
+	@frappe.whitelist()
+	def refresh_works(self):
+		self.save()
 	def validate(self):
 		self.get_todo()
 		self.update_item_wise_production_qty()
 		self.calculate_total_in_item_wise_prod()
 	
 	def calculate_total_in_item_wise_prod(self):
+		rows_to_remove = []
 		for i in self.item_wise_production_qty:
-			i.qty = (i.get("urgent_priority") or 0) + (i.get("high_priority") or 0) + (i.get("low_priority") or 0)
+			i.qty = ((i.get("urgent_priority") or 0) + (i.get("high_priority") or 0) + 
+					(i.get("low_priority") or 0) - (i.get('qty_to_update_in_work_order') or 0))
+			if(not i.qty and not i.qty_to_update_in_work_order):
+				rows_to_remove.append(i)
+		for i in rows_to_remove:self.item_wise_production_qty.remove(i)
 	def reload_doc(self):
 		frappe.publish_realtime('reload_doc')
 	def update_item_wise_production_qty(self):
@@ -52,12 +60,12 @@ class ProductionOrder(Document):
 				row.low_priority = item_details.get("low_priority") or 0
 
 				## Reduce Qty to Update in WorkOrder from Total Production Qty of that Item
-				if(row.get("urgent_priority")):
-					row.urgent_priority -= row.qty_to_update_in_work_order or 0
-				elif(row.get("high_priority")):
-					row.high_priority -= row.qty_to_update_in_work_order or 0
-				elif(row.get("low_priority")):
-					row.low_priority -= row.qty_to_update_in_work_order or 0
+				# if(row.get("urgent_priority")):
+				# 	row.urgent_priority -= row.qty_to_update_in_work_order or 0
+				# elif(row.get("high_priority")):
+				# 	row.high_priority -= row.qty_to_update_in_work_order or 0
+				# elif(row.get("low_priority")):
+				# 	row.low_priority -= row.qty_to_update_in_work_order or 0
 
 				self.append('item_wise_production_qty', row.as_dict())
 			else:
@@ -68,7 +76,7 @@ class ProductionOrder(Document):
 					low_priority = item_details.get("low_priority") or 0,
 					color=color
 				))
-		
+
 		for i in have_pending_qty_to_update_in_wo:
 			if(i not in [j.item_code for j in self.item_wise_production_qty]):	
 				row = have_pending_qty_to_update_in_wo[i]
@@ -76,10 +84,10 @@ class ProductionOrder(Document):
 					row.urgent_priority = tot_qty[i].get("urgent_priority") or 0
 					row.high_priority = tot_qty[i].get("high_priority") or 0
 					row.low_priority = tot_qty[i].get("low_priority") or 0
-				# else:
-				# 	row.urgent_priority = 0
-				# 	row.high_priority = 0
-				# 	row.low_priority = 0
+				else:
+					row.urgent_priority = 0
+					row.high_priority = 0
+					row.low_priority = 0
 				self.append("item_wise_production_qty", row.as_dict())
 		idx=1
 		for i in self.item_wise_production_qty:
@@ -96,7 +104,7 @@ class ProductionOrder(Document):
 		not_submitted_se = [i['name'] for i in stock_entry if(i['docstatus'] == 0)]
 
 		for i in se_not_created_jcs:
-			self.append('works', {'docname':i, 'description':f"""Need to Submit Job Card {frappe.bold(get_link_to_form("Job Card", i))}"""})
+			self.append('works', {'docname':i, 'description':f"""Need to Create Stock Entry/Submit Job Card {frappe.bold(get_link_to_form("Job Card", i))}"""})
 		for i in not_submitted_se:
 			self.append('works', {'docname':i, 'description':f"""Need to Submit Stock Entry {frappe.bold(get_link_to_form("Stock Entry", i))}"""})
 		for i in self.item_wise_production_qty:
@@ -110,6 +118,7 @@ class ProductionOrder(Document):
 			frappe.throw('Enter Today Produced Items with Qty')
 		items = {}
 		exc_shrt = {}
+		exc_shrt_jc_map = {}
 		for i in self.today_produced_items:
 			if(not i.produced_qty):
 				continue
@@ -119,18 +128,17 @@ class ProductionOrder(Document):
 			if(not wo):
 				frappe.throw(f"""Item {frappe.bold(i.item_code)} is not mentioned in {frappe.bold("Production Order Details")} table.""")
 			if(i.item_code not in items):
-				items[i.item_code] = i.produced_qty
+				items[i.item_code] = {"qty":i.produced_qty, "posting_date":i.date}
 				exc_shrt[i.item_code] = {"excess_qty":i.get("excess_qty") or 0, "shortage_qty":i.get("shortage_qty") or 0}
 			else:
-				items[i.item_code] += i.produced_qty
+				items[i.item_code]["qty"] += i.produced_qty
 				exc_shrt[i.item_code]["excess_qty"] += i.get("excess_qty") or 0
 				exc_shrt[i.item_code]["shortage_qty"] +=  i.get("shortage_qty") or 0
 
 			if(i.excess_qty or i.shortage_qty):
 				for j in self.excess_and_shortage:
+					exc_shrt_jc_map[j.item_code] = j.from_job_card
 					if(j.item_code == i.item_code):
-						j.excess_qty -= (i.excess_qty or 0)
-						j.shortage_qty -= (i.shortage_qty or 0)
 						comp_qty = frappe.db.get_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty")
 						if(not comp_qty):
 							comp_qty = frappe.db.get_value("Job Card Time Log", {"parent":j.from_job_card}, "completed_qty")
@@ -138,6 +146,11 @@ class ProductionOrder(Document):
 							frappe.db.set_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty", comp_qty-j.excess_qty)
 						if(j.shortage_qty):
 							frappe.db.set_value("Job Card Time Log", {"parent":j.from_job_card}, "final_qty", comp_qty+j.shortage_qty)
+						if(j.shortage_qty or j.excess_qty):
+							frappe.db.set_value("Job Card Time Log", {"parent":j.from_job_card}, "mistaken_data", 1)
+
+						j.excess_qty -= (i.excess_qty or 0)
+						j.shortage_qty -= (i.shortage_qty or 0)
 						continue
 
 
@@ -149,24 +162,33 @@ class ProductionOrder(Document):
 			if(not default_bom):
 				frappe.throw(f"""{frappe.bold("Default BOM")} not forund for Item {frappe.bold(i)}""")
 			job_card = frappe.new_doc('Job Card')
-			final_qty = items[i] - exc_shrt[i]['excess_qty'] + exc_shrt[i]['shortage_qty']
+			final_qty = items[i]["qty"] - exc_shrt[i]['excess_qty'] + exc_shrt[i]['shortage_qty']
 			job_card.update({	
 				'production_order':self.name,
 				'bom_no': default_bom,
 				'company': company,
-				'posting_date': today(),
+				'posting_date': items[i]["posting_date"],
 				'production_item':i,
-				'for_quantity':items[i],
-				'total_completed_qty':items[i],	
-				'qty_to_manufacture': items[i],
+				'for_quantity':items[i]["qty"],
+				'total_completed_qty':items[i]["qty"],	
+				'qty_to_manufacture': items[i]["qty"],
 				'operation': bom.operations[0].operation if len(bom.operations) else '',
 				'workstation': workstation,
 				'operation_row_number':1,
-				'time_logs':[{'employee':employee, 'completed_qty': final_qty, "excess_qty":exc_shrt[i]['excess_qty'], "shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":items[i]}]
+				'time_logs':[{	
+					'employee':employee, 
+					'completed_qty': final_qty, 
+					"excess_qty":exc_shrt[i]['excess_qty'], 
+					"shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":items[i]["qty"], 
+					"mistaken_from":exc_shrt_jc_map.get(i)
+						}]
 			})
 			job_card.flags.ignore_validate = True
 			job_card.flags.ignore_mandatory = True
 			job_card.save()
+			for i in job_card.time_logs:
+				if(i.mistaken_from):
+					frappe.db.set_value("Job Card Time Log", {"parent":i.mistaken_from}, "mistaken_from", job_card.name)
 			jc_links.append(get_link_to_form("Job Card", job_card.name))
 		self.today_produced_items = []
 		self.save()

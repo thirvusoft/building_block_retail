@@ -29,6 +29,7 @@
   {
    "fieldname": "shortage_qty",
    "fieldtype": "Int",
+   "hidden": 1,
    "in_list_view": 1,
    "label": "Shortage Qty"
   },
@@ -44,7 +45,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-05 15:13:49.637206",
+ "modified": "2023-06-06 18:32:44.819088",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order Excess and Shortage",

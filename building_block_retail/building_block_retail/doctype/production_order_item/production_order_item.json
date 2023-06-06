@@ -19,7 +19,8 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Work Order",
-   "options": "Work Order"
+   "options": "Work Order",
+   "read_only": 1
   },
   {
    "fetch_from": "work_order.production_item",
@@ -36,7 +37,8 @@
    "fieldname": "qty_to_produced",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Qty To Produced (In Pcs)"
+   "label": "Qty To Produced (In Pcs)",
+   "read_only": 1
   },
   {
    "description": "In Pieces",
@@ -49,7 +51,8 @@
    "fieldname": "color",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Color"
+   "label": "Color",
+   "read_only": 1
   },
   {
    "fetch_from": "work_order.priority",
@@ -64,7 +67,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-02 18:21:48.835352",
+ "modified": "2023-06-06 13:06:54.598353",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order Item",

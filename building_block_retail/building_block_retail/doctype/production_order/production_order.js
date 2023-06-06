@@ -3,11 +3,33 @@
 
 frappe.ui.form.on('Production Order', {
 	refresh: function(frm) {
+        var button = cur_frm.fields_dict.works.grid.add_custom_button("Refresh", ()=>{
+            frm.call({
+                doc:frm.doc,
+                method: 'refresh_works',
+                callback(r){
+                    frm.reload_doc()
+                }
+            })
+        })
+        button[0].style.backgroundColor = '#2490ef' 
+        button[0].style.color = 'white' 
         frm.events.today_produced_item_filter(frm)
         frm.set_query("item_template", function () {
             return {
                 filters: {
                     has_variants:1
+                }
+            }
+        })
+        let items =[];
+        for(let i = 0; i<frm.doc.production_order_details.length; i++){
+                items.push(frm.doc.production_order_details[i].item_code)
+        }
+        frm.set_query("from_job_card", "excess_and_shortage", function () {
+            return {
+                filters: {
+                    production_item:['in', items]
                 }
             }
         })
@@ -85,6 +107,13 @@ frappe.ui.form.on('Production Order', {
                 }
             }
         })
+        frm.set_query("item_code", "excess_and_shortage", function(){
+            return {
+                filters:{
+                    'name':['in', items]
+                }
+            }
+        })
     },
     calculate_final_qty: function(frm, cdt, cdn){
         var row = locals[cdt][cdn]
@@ -94,6 +123,12 @@ frappe.ui.form.on('Production Order', {
 
 frappe.ui.form.on("Item Wise Production Qty", {
     item_code: function(frm){
+        frm.events.today_produced_item_filter(frm)
+    },
+    item_wise_production_qty_add: function(frm){
+        frm.events.today_produced_item_filter(frm)
+    },
+    item_wise_production_qty_remove: function(frm){
         frm.events.today_produced_item_filter(frm)
     }
 })
@@ -128,18 +163,42 @@ frappe.ui.form.on("Production Order Item", {
 
 
 frappe.ui.form.on("Today Produced Items", {
-    
-    produced_qty(frm, cdt, cdn){
+    item_code: function(frm, cdt, cdn){
+        let row = locals[cdt][cdn]
+        let items = {}
+        if(!frm.doc.excess_and_shortage){
+            return
+        }
+        for(let i=0; i<frm.doc.excess_and_shortage.length; i++){
+            if(Object.keys(items).includes(frm.doc.excess_and_shortage[i].item_code)){
+                items[frm.doc.excess_and_shortage[i].item_code]['excess_qty'] += (frm.doc.excess_and_shortage[i].excess_qty || 0)
+                items[frm.doc.excess_and_shortage[i].item_code]['shortage_qty'] += (frm.doc.excess_and_shortage[i].shortage_qty || 0)
+            }
+            else{
+                items[frm.doc.excess_and_shortage[i].item_code] = {
+                    "excess_qty":(frm.doc.excess_and_shortage[i].excess_qty || 0),
+                    "shortage_qty":(frm.doc.excess_and_shortage[i].shortage_qty || 0)
+                }
+            }
+        }
+        if(Object.keys(items).includes(row.item_code)){
+            frappe.model.set_value(cdt, cdn, "excess_qty", items[row.item_code]["excess_qty"])
+            frappe.model.set_value(cdt, cdn, "shortage_qty", items[row.item_code]["shortage_qty"])
+        }
+    }
+})
+
+
+frappe.ui.form.on("Production Order Excess and Shortage", {
+    item_code: function(frm, cdt, cdn){
         var row = locals[cdt][cdn]
-        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
-    },
-    excess_qty(frm, cdt, cdn){
-        var row = locals[cdt][cdn]
-        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
-    },
-    shortage_qty(frm, cdt, cdn){
-        var row = locals[cdt][cdn]
-        frappe.model.set_value(cdt, cdn, 'final_qty', (row.produced_qty || 0) - (row.excess_qty || 0) + (row.shortage_qty || 0))
+        frm.set_query("from_job_card", "excess_and_shortage", function () {
+            return {
+                filters: {
+                    production_item:row.item_code
+                }
+            }
+        })
     }
 })
 
