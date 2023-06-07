@@ -11,6 +11,7 @@
   "works",
   "section_break_3",
   "item_template",
+  "is_template",
   "status",
   "section_break_2",
   "production_order_details",
@@ -95,11 +96,19 @@
    "fieldname": "excess_and_shortage",
    "fieldtype": "Table",
    "options": "Production Order Excess and Shortage"
+  },
+  {
+   "default": "0",
+   "fetch_from": "item_template.has_variants",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-06 18:33:16.317900",
+ "modified": "2023-06-07 13:21:55.234704",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",

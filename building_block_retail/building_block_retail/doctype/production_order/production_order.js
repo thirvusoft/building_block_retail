@@ -23,7 +23,7 @@ frappe.ui.form.on('Production Order', {
             }
         })
         let items =[];
-        for(let i = 0; i<frm.doc.production_order_details.length; i++){
+        for(let i = 0; i<(frm.doc.production_order_details || []).length; i++){
                 items.push(frm.doc.production_order_details[i].item_code)
         }
         frm.set_query("from_job_card", "excess_and_shortage", function () {
@@ -95,11 +95,14 @@ frappe.ui.form.on('Production Order', {
 	},
     today_produced_item_filter: function(frm){
         let items =[];
-        for(let i = 0; i<frm.doc.item_wise_production_qty.length; i++){
-            if(frm.doc.item_wise_production_qty[i].qty){
-                items.push(frm.doc.item_wise_production_qty[i].item_code)
+        if(frm.doc.item_wise_production_qty){
+            for(let i = 0; i<frm.doc.item_wise_production_qty.length; i++){
+                if(frm.doc.item_wise_production_qty[i].qty){
+                    items.push(frm.doc.item_wise_production_qty[i].item_code)
+                }
             }
         }
+       
         frm.set_query("item_code", "today_produced_items", function(){
             return {
                 filters:{
@@ -107,13 +110,25 @@ frappe.ui.form.on('Production Order', {
                 }
             }
         })
-        frm.set_query("item_code", "excess_and_shortage", function(){
-            return {
-                filters:{
-                    'name':['in', items]
+        if(frm.doc.is_template){
+            frm.set_query("item_code", "excess_and_shortage", function(){
+                return {
+                    filters:{
+                        'variant_of':frm.doc.name
+                    }
                 }
-            }
-        })
+            })
+        }
+        else{
+            frm.set_query("item_code", "excess_and_shortage", function(){
+                return {
+                    filters:{
+                        'name':frm.doc.name
+                    }
+                }
+            })
+        }
+        
     },
     calculate_final_qty: function(frm, cdt, cdn){
         var row = locals[cdt][cdn]

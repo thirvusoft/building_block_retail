@@ -99,7 +99,7 @@
    "modified": "2023-05-16 12:42:21.178292",
    "modified_by": "Administrator",
    "name": "Work Order-produced_quantity",
-   "no_copy": 0,
+   "no_copy": 1,
    "non_negative": 0,
    "options": "Work Order Produced Qty",
    "owner": "Administrator",
