@@ -18,7 +18,8 @@ frappe.ui.form.on('Production Order', {
         frm.set_query("item_template", function () {
             return {
                 filters: {
-                    has_variants:1
+                    has_variants:1,
+                    disabled:0
                 }
             }
         })
@@ -29,7 +30,8 @@ frappe.ui.form.on('Production Order', {
         frm.set_query("from_job_card", "excess_and_shortage", function () {
             return {
                 filters: {
-                    production_item:['in', items]
+                    production_item:['in', items],
+                    docstatus:1
                 }
             }
         })
@@ -106,7 +108,8 @@ frappe.ui.form.on('Production Order', {
         frm.set_query("item_code", "today_produced_items", function(){
             return {
                 filters:{
-                    'name':['in', items]
+                    'name':['in', items],
+                    "disabled":0
                 }
             }
         })
@@ -114,7 +117,8 @@ frappe.ui.form.on('Production Order', {
             frm.set_query("item_code", "excess_and_shortage", function(){
                 return {
                     filters:{
-                        'variant_of':frm.doc.name
+                        'variant_of':frm.doc.name,
+                        "disabled":0
                     }
                 }
             })
@@ -123,7 +127,8 @@ frappe.ui.form.on('Production Order', {
             frm.set_query("item_code", "excess_and_shortage", function(){
                 return {
                     filters:{
-                        'name':frm.doc.name
+                        'name':frm.doc.name,
+                        "disabled":0
                     }
                 }
             })

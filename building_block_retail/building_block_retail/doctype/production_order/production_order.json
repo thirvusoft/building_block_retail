@@ -106,9 +106,10 @@
    "label": "Is Template"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-06-07 13:21:55.234704",
+ "modified": "2023-06-07 15:37:38.406409",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",
