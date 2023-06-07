@@ -19,7 +19,7 @@ function setquery(frm,cdt,cdn){
 });
 }
 
-
+var update_value=true
 
 function calc_er_cost(frm){
 	var er_cost_sqft = frm.doc.er_cost_sqft?frm.doc.er_cost_sqft:0
@@ -291,15 +291,22 @@ frappe.ui.form.on('Finalised Job Worker Details',{
 		amount(frm, cdt, cdn)
 	},
 	completed_bundle: function(frm,cdt,cdn){
-		completed_bundle_calc(frm,cdt,cdn)
+		// completed_bundle_calc(frm,cdt,cdn)
 		var row = locals[cdt][cdn]
-		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
-		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
+		
+		if (update_value==true){
+			frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
+			frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
+		}
+		
 
 	},
 	completed_pieces: function(frm,cdt,cdn){
 		var row = locals[cdt][cdn]
+		
+		if (update_value==true){
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
+		}
 		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
 
 	},
@@ -326,16 +333,26 @@ frappe.ui.form.on('Finalised Job Worker Details',{
 			})
 		}
 	},
-	sqft_allocated: function(frm, cdt, cdn){
+	sqft_allocated:async function(frm, cdt, cdn){
 		var row = locals[cdt][cdn]
 		percent_complete(frm, cdt, cdn)
 		amount(frm, cdt, cdn)
-		if(row.area_per_bundle){
-			frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
-		}
-		else{
-			frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
-		}
+		if (update_value==true){
+			update_value=false;
+			if(row.area_per_bundle){
+				await frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
+		
+			}
+			else{
+				await frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
+			}
+			
+			await frappe.model.set_value(cdt, cdn, 'completed_pieces', row.sqft_allocated*row.pcs_per_sqft)
+			
+		update_value=true;
+	}
+	
+	
 
 	},
 	job_worker_add: function(frm, cdt, cdn){
@@ -369,15 +386,17 @@ frappe.ui.form.on('TS Job Worker Details',{
 	completed_bundle: function(frm,cdt,cdn){
 		completed_bundle_calc(frm,cdt,cdn)
 		var row = locals[cdt][cdn]
+		if (update_value==true){
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_bundle*row.area_per_bundle)
 		frappe.model.set_value(cdt, cdn, 'completed_pieces', row.completed_bundle*row.pieces_per_bundle)
-
+		}
 	},
 	completed_pieces: function(frm,cdt,cdn){
 		var row = locals[cdt][cdn]
+		if (update_value==true){
 		frappe.model.set_value(cdt, cdn, 'sqft_allocated', row.completed_pieces/row.pcs_per_sqft)
 		// frappe.model.set_value(cdt, cdn, 'completed_bundle', row.completed_pieces*row.pcs_per_sqft)
-
+		}
 	},
 	item:function(frm,cdt,cdn){
 		completed_bundle_calc(frm,cdt,cdn)
@@ -402,16 +421,23 @@ frappe.ui.form.on('TS Job Worker Details',{
 			})
 		}
 	},
-	sqft_allocated: function(frm, cdt, cdn){
+	sqft_allocated: async function(frm, cdt, cdn){
 		var row = locals[cdt][cdn]
 		percent_complete(frm, cdt, cdn)
 		amount(frm, cdt, cdn)
+		if (update_value==true){
+			update_value=false;
 		if(row.area_per_bundle){
-			frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
+			await frappe.model.set_value(cdt, cdn, 'completed_bundle', row.sqft_allocated/row.area_per_bundle)
 		}
 		else{
-			frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
+			await frappe.model.set_value(cdt, cdn, 'completed_bundle', 0)
 		}
+		
+		await frappe.model.set_value(cdt, cdn, 'completed_pieces', row.sqft_allocated*row.pcs_per_sqft)
+	
+		update_value=true;
+	}
 
 	},
 	job_worker_add: function(frm, cdt, cdn){

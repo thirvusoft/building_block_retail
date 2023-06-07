@@ -13,6 +13,13 @@ frappe.ui.form.on('Quotation', {
                 }
             }
         })
+        frm.set_query('item','service_item',function(frm){
+            return {
+                filters:{
+                    'item_group':'Labour Work',
+                }
+            }
+        })
     },
     refresh:function(frm){
         frm.set_query('item','raw_materials',function(frm){
@@ -107,6 +114,9 @@ frappe.ui.form.on("Quotation", {
         }
     },
     validate(frm){
+        if(!frm.doc.pavers){
+            frm.doc.pavers = []
+        }
         frm.doc.pavers.forEach(d=>{
             frappe.model.set_value(d.doctype, d.name, 'work', frm.doc.work)
         })
@@ -208,6 +218,34 @@ frappe.ui.form.on("Quotation", {
                 method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
                 args:{
                     'doctype':frm.doc.raw_materials[row].item,
+                },
+                callback: function(r){
+                    message=r.message;
+                    new_row.item_name=message['item_name']
+                    new_row.description=message['description']
+                }
+            })
+            new_row.conversion_factor=1
+            new_row.warehouse=frm.doc.set_warehouse
+            new_row.delivery_date=frm.doc.delivery_date
+            
+        }
+
+        let srv= frm.doc.service_item?frm.doc.service_item:[]
+        for(let row=0;row<srv.length;row++){
+            // if(!frm.doc.service_item[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
+            var message;
+            var new_row = frm.add_child("items");
+            new_row.is_service_item = 1
+            new_row.item_code=frm.doc.service_item[row].item
+            new_row.qty=1
+            new_row.uom='Nos'
+            new_row.rate=frm.doc.service_item[row].rate
+            new_row.amount=frm.doc.service_item[row].rate
+            await frappe.call({
+                method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
+                args:{
+                    'doctype':frm.doc.service_item[row].item,
                 },
                 callback: function(r){
                     message=r.message;

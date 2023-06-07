@@ -156,6 +156,9 @@ def create_je_for_er(doc):
 def validate(self,event):
     create_je_for_er(self)
     validate_jw_qty(self)
+    self.total_completed_qty = 0
+    for i in self.finalised_job_worker_details:
+        self.total_completed_qty += sqft_allocated
     if(self.name not in frappe.get_all('Project', pluck="name")):
         return
     amount=0
