@@ -3,6 +3,13 @@
 
 frappe.ui.form.on('Production Order', {
 	refresh: function(frm) {
+        frm.set_query("from_job_card", "excess_and_shortage", function (doc, cdt, cdn) {
+            return {
+                filters: {
+                    production_item:locals[cdt][cdn].item_code
+                }
+            }
+        })
         var button = cur_frm.fields_dict.works.grid.add_custom_button("Refresh", ()=>{
             frm.call({
                 doc:frm.doc,
@@ -27,14 +34,7 @@ frappe.ui.form.on('Production Order', {
         for(let i = 0; i<(frm.doc.production_order_details || []).length; i++){
                 items.push(frm.doc.production_order_details[i].item_code)
         }
-        frm.set_query("from_job_card", "excess_and_shortage", function () {
-            return {
-                filters: {
-                    production_item:['in', items],
-                    docstatus:1
-                }
-            }
-        })
+
         if(!frm.is_new()){
             frm.add_custom_button('Make Job Card', function(){
                 if(!frm.doc.today_produced_items || !frm.doc.today_produced_items.length){
@@ -42,30 +42,164 @@ frappe.ui.form.on('Production Order', {
                     frm.scroll_to_field('today_produced_items')
                 }
                 else{
+                    var data = []
+                    for(let i=0; i<frm.doc.today_produced_items.length; i++){
+                        data.push({
+                            item_code: frm.doc.today_produced_items[i].item_code,
+                            produced_qty: frm.doc.today_produced_items[i].produced_qty,
+                            excess_qty: frm.doc.today_produced_items[i].excess_qty,
+                            date: frm.doc.today_produced_items[i].date,
+                            from_time:frm.doc.today_produced_items[i].from_time,
+                            employee:frm.doc.today_produced_items[i].employee,
+                            workstation:frm.doc.today_produced_items[i].workstation,
+                            to_time:frm.doc.today_produced_items[i].to_time
+                        })
+                    }
+                    var table_fields = [
+                        {
+                            fieldname:"item_code",
+                            fieldtype:"Link",
+                            options:"Item",
+                            label:"Item",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:4
+                        },
+                        {
+                            fieldname:"employee",
+                            fieldtype:"Link",
+                            options:"Employee",
+                            label:"Employee",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:2
+                        },
+                        {
+                            fieldname:"workstation",
+                            fieldtype:"Link",
+                            options:"Workstation",
+                            label:"Workstation",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:2
+                        },
+                        {
+                            fieldname:"from_time",
+                            fieldtype:"Datetime",
+                            label:"From Time",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:1
+                        },
+                        {
+                            fieldname:"to_time",
+                            fieldtype:"Datetime",
+                            label:"To Time",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:1
+                        },
+                        {
+                            fieldname:"date",
+                            fieldtype:"Date",
+                            label:"Date",
+                            in_list_view: 0,
+                            hidden:1
+                        },
+                        {
+                            fieldname:"produced_qty",
+                            fieldtype:"Int",
+                            label:"Produced Qty",
+                            in_list_view: 0,
+                            hidden:1
+                        },
+                        {
+                            fieldname:"excess_qty",
+                            fieldtype:"Int",
+                            label:"Excess Qty",
+                            in_list_view: 0,
+                            hidden:1
+                        },
+                    ]
                     var d = new frappe.ui.Dialog({
                         title:'Select Employee',
+                        size:"extra-large",
                         fields:[
-                            {fieldname:'employee', label:'Employee', fieldtype:'Link', options:'Employee', reqd:1},
-                            {fieldname:'workstation', label:'Workstation', fieldtype:'Link', options:'Workstation', reqd:1}
+                            {
+                                fieldname: "jobcard_data",
+                                fieldtype: "Table",
+                                fields:table_fields,
+                                in_place_edit: true,
+                                cannot_add_rows:false,
+                                data:data,
+                            }
                         ],
-                        primary_action(data){
+                        primary_action (data){
+                            function validate_mandatory(dialog, data){
+                                if(!data.jobcard_data){
+                                    return
+                                }
+                                let message = "";
+                                let reqd_df = dialog.fields_dict.jobcard_data.df.fields.filter(df=>{return df.reqd});
+                                let reqd_fields = reqd_df.map(value => value.fieldname);
+                                for(let i=0; i<data.jobcard_data.length; i++){
+                                    var keys = Object.keys(data.jobcard_data[i]);
+                                    for(let j=0; j<reqd_fields.length; j++){
+                                        if(!keys.includes(reqd_fields[j])){
+                                            message +=`<p>Row #${data.jobcard_data[i].idx}: Missing <b>${table_fields.find(df=> df.fieldname == reqd_fields[j]).label}</b></p>`
+                                        }
+                                    }
+                                }
+                                if(message){
+                                    frappe.throw({title:"Missing Mandatory Field", message:message})
+                                }
+
+                            }
+                            function set_data(frm, data){
+                                if(!data.jobcard_data){
+                                    return
+                                }
+                                for(let i=0; i<data.jobcard_data.length; i++){
+                                    var keys = Object.keys(data.jobcard_data[i]);
+                                    var row = frm.doc.today_produced_items[data.jobcard_data[i].idx-1]
+                                    for(let j=0; j<keys.length; j++){
+                                        if(!row[keys[j]]){
+                                            row[keys[j]] = data.jobcard_data[i][keys[j]]
+                                        }
+                                    }
+                                }
+                            }
+                            validate_mandatory(d, data)
+                            set_data(frm, data)
+                            frm.refresh_field("today_produced_items")
                             frm.call({
                                 doc:frm.doc,
                                 method: 'make_job_card',
-                                args: {
-                                    'employee':data.employee,
-                                    'workstation':data.workstation
-                                },
                                 callback(r){
                                     frm.reload_doc()
                                     d.hide()
-                                    if(r.message){
-                                        frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message}</p>`)
+                                    if(r.message[0]){
+                                        frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message[0]}</p>`)
+                                    }
+                                    if(r.message[1])
+                                    {
+                                        if(r.message[1].length==1){
+                                            frappe.set_route("Form", "Stock Entry", r.message[1][0])
+                                        }
+                                        else{
+                                            frappe.set_route("List", "Stock Entry", {'name':['in', r.message[1]]})
+                                        }
                                     }
                                 }
                             })
                         }
                     })
+                    
+                    d.$wrapper.find(".modal-header")[0].id = "mydivheader"
+                    d.$wrapper.find(".modal-content")[0].id = "mydiv"
+                    d.$wrapper.find(".modal-content")[0].style.resize = "both"
+                    // d.$wrapper.find(".modal-content")[0].style.overflow = "auto"
+                    dragElement(d)
                     d.show()
                 }
             })
@@ -208,19 +342,6 @@ frappe.ui.form.on("Today Produced Items", {
     }
 })
 
-
-frappe.ui.form.on("Production Order Excess and Shortage", {
-    item_code: function(frm, cdt, cdn){
-        var row = locals[cdt][cdn]
-        frm.set_query("from_job_card", "excess_and_shortage", function () {
-            return {
-                filters: {
-                    production_item:row.item_code
-                }
-            }
-        })
-    }
-})
 
 
 // Code Reference : https://www.w3schools.com/howto/tryit.asp?filename=tryhow_js_draggable

@@ -10,7 +10,11 @@
   "item_code",
   "produced_qty",
   "excess_qty",
-  "shortage_qty"
+  "shortage_qty",
+  "from_time",
+  "to_time",
+  "workstation",
+  "employee"
  ],
  "fields": [
   {
@@ -46,12 +50,33 @@
    "in_list_view": 1,
    "label": "Date",
    "reqd": 1
+  },
+  {
+   "fieldname": "from_time",
+   "fieldtype": "Datetime",
+   "label": "From Time"
+  },
+  {
+   "fieldname": "to_time",
+   "fieldtype": "Datetime",
+   "label": "To Time"
+  },
+  {
+   "fieldname": "workstation",
+   "fieldtype": "Data",
+   "label": "Workstation"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-06 18:32:09.713330",
+ "modified": "2023-06-08 19:06:48.184720",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Today Produced Items",

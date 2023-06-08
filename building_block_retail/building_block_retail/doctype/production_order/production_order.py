@@ -17,6 +17,8 @@ class ProductionOrder(Document):
 	def refresh_works(self):
 		self.save()
 	def validate(self):
+		self.validate_excess_qty_with_its_jobcard()
+		self.validate_excess_qty()
 		self.get_todo()
 		self.update_item_wise_production_qty()
 		self.calculate_total_in_item_wise_prod()
@@ -32,6 +34,7 @@ class ProductionOrder(Document):
 				rows_to_remove.append(i)
 		for i in rows_to_remove:self.item_wise_production_qty.remove(i)
 	def reload_doc(self):
+		self = frappe.get_doc(self.doctype, self.name)
 		frappe.publish_realtime('reload_doc')
 	def update_item_wise_production_qty(self):
 		tot_qty = {}
@@ -60,14 +63,6 @@ class ProductionOrder(Document):
 				row.urgent_priority = item_details.get("urgent_priority") or 0
 				row.high_priority = item_details.get("high_priority") or 0
 				row.low_priority = item_details.get("low_priority") or 0
-
-				## Reduce Qty to Update in WorkOrder from Total Production Qty of that Item
-				# if(row.get("urgent_priority")):
-				# 	row.urgent_priority -= row.qty_to_update_in_work_order or 0
-				# elif(row.get("high_priority")):
-				# 	row.high_priority -= row.qty_to_update_in_work_order or 0
-				# elif(row.get("low_priority")):
-				# 	row.low_priority -= row.qty_to_update_in_work_order or 0
 
 				self.append('item_wise_production_qty', row.as_dict())
 			else:
@@ -115,7 +110,9 @@ class ProductionOrder(Document):
 			
 		
 	@frappe.whitelist()
-	def make_job_card(self, employee, workstation):
+	def make_job_card(self):
+		self.save()
+		self.reload_doc()
 		if not self.today_produced_items:
 			frappe.throw('Enter Today Produced Items with Qty')
 		self.validate_excess_qty_with_its_jobcard()
@@ -127,12 +124,12 @@ class ProductionOrder(Document):
 			if(not i.produced_qty):
 				continue
 			if(i.produced_qty < 0):
-				frappe.throw(f"""<p><b>{frappe.get_meta("Production Order").get_field("today_produced_items").label}</b></p>Row#{i.idx}: Produced Qty Must be Positive""")
+				frappe.throw(f"""<p><b>{frappe.get_meta("Production Order").get_field("today_produced_items").label}</b></p>Row #{i.idx}: Produced Qty Must be Positive""")
 			wo = frappe.db.get_value('Production Order Item', {'item_code':i.item_code, 'parent':self.name}, 'work_order')
 			if(not wo):
 				frappe.throw(f"""Item {frappe.bold(i.item_code)} is not mentioned in {frappe.bold("Production Order Details")} table.""")
 			if(i.item_code not in items):
-				items[i.item_code] = {"qty":i.produced_qty, "posting_date":i.date}
+				items[i.item_code] = {"qty":i.produced_qty, "posting_date":i.date, "from_time":i.from_time, "to_time":i.to_time, "employee":i.employee, "workstation":i.workstation}
 				exc_shrt[i.item_code] = {"excess_qty":i.get("excess_qty") or 0, "shortage_qty":i.get("shortage_qty") or 0}
 			else:
 				items[i.item_code]["qty"] += i.produced_qty
@@ -164,6 +161,7 @@ class ProductionOrder(Document):
 
 		company = erpnext.get_default_company(frappe.session.user)
 		jc_links = []
+		jc_name = []
 		self.validate_excess_and_shortage_qty(exc_shrt, items)
 		for i in items:
 			default_bom = get_default_bom(i)
@@ -182,26 +180,32 @@ class ProductionOrder(Document):
 				'total_completed_qty':items[i]["qty"],	
 				'qty_to_manufacture': items[i]["qty"],
 				'operation': bom.operations[0].operation if len(bom.operations) else '',
-				'workstation': workstation,
+				'workstation': items[i]["workstation"],
 				'operation_row_number':1,
 				'time_logs':[{	
-					'employee':employee, 
+					'employee':items[i]["employee"], 
+					"from_time":items[i]["from_time"],
+					"to_time":items[i]["to_time"],
 					'completed_qty': final_qty, 
 					"excess_qty":exc_shrt[i]['excess_qty'], 
 					"shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":items[i]["qty"], 
 					"mistaken_from":exc_shrt_jc_map.get(i) if(exc_shrt[i]['excess_qty'] or exc_shrt[i]['shortage_qty']) else None
 						}]
 			})
-			job_card.flags.ignore_validate = True
-			job_card.flags.ignore_mandatory = True
 			job_card.save()
+			job_card.submit()
 			for i in job_card.time_logs:
 				if(i.mistaken_from):
 					frappe.db.set_value("Job Card Time Log", {"parent":i.mistaken_from}, "excess_qty_moved_to", job_card.name)
+					old_moved_excess_qty = frappe.db.get_value("Job Card Time Log", {"parent":i.mistaken_from}, "moved_excess_qty") or 0
+					frappe.db.set_value("Job Card Time Log", {"parent":i.mistaken_from}, "moved_excess_qty", old_moved_excess_qty + exc_shrt[job_card.production_item]['excess_qty'])
 			jc_links.append(get_link_to_form("Job Card", job_card.name))
+			jc_name.append(job_card.name)
+		self.reload()
 		self.today_produced_items = []
 		self.save()
-		return ", ".join(jc_links)
+		se_created = frappe.get_all("Stock Entry", filters={"ts_job_card":["in", jc_name]}, pluck="name")
+		return ", ".join(jc_links), se_created
 	
 	def validate_excess_and_shortage_qty(self, exc_shrt, prod_items):
 		for i in exc_shrt:
@@ -228,7 +232,7 @@ class ProductionOrder(Document):
 				if(excess[items][jc]['excess_qty']):
 					salary_qty = frappe.db.get_value("Job Card Time Log", {'parent':jc}, "final_qty")
 					if(salary_qty < excess[items][jc]['excess_qty']):
-						frappe.throw(f"""<p>In Excess Items Table</p>Row#{i.idx}: Existing Qty for Salary: {salary_qty}. But You enter {excess[items][jc]['excess_qty']} qty as Excess.""")
+						frappe.throw(f"""<p>In Excess Items Table</p>Row #{i.idx}: Existing Qty for Salary: {salary_qty}. But You enter {excess[items][jc]['excess_qty']} qty as Excess.""")
 
 	def validate_excess_qty(self):
 		excess = {}
@@ -242,12 +246,12 @@ class ProductionOrder(Document):
 			if i.item_code in excess:
 				if(i.excess_qty and i.excess_qty > excess[i.item_code]["excess_qty"]):
 					frappe.throw(f"""<p>In <b>{frappe.get_meta("Production Order").get_field("today_produced_items").label}</b> table</p>
-									<p>Row#{i.idx}: Excess Qty Exceeds for Item <b>{i.item_code}</b></p>
+									<p>Row #{i.idx}: Excess Qty Exceeds for Item <b>{i.item_code}</b></p>
 									<p>Mentioned Qty: {excess[i.item_code]["excess_qty"]}</p>
 									<p>But Taken Qty: {i.excess_qty}</p>""")
 				if(i.shortage_qty and i.shortage_qty > excess[i.item_code]["shortage_qty"]):
 					frappe.throw(f"""<p>In <b>{frappe.get_meta("Production Order").get_field("today_produced_items").label}</b> table</p>
-									<p>Row#{i.idx}: Shortage Qty Exceeds for Item <b>{i.item_code}</b></p>""")
+									<p>Row #{i.idx}: Shortage Qty Exceeds for Item <b>{i.item_code}</b></p>""")
 	@frappe.whitelist()
 	def update_work_order(self):
 		max_qty_for_items = {i.item_code:i.qty_to_update_in_work_order for i in self.item_wise_production_qty}

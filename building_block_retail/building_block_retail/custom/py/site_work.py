@@ -236,3 +236,61 @@ def validate_jw_qty(self):
             wrong_items.append(frappe.bold(item))
     if(wrong_items):
         frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
+
+
+def set_status(document, event):
+    doc=document
+    if(document.doctype in ["Sales Order", "Sales Invoice", "Delivery Note"]):
+        if(document.get("site_work")):
+            doc=frappe.get_doc("Project", document.site_work)
+    if(not doc.get("doctype")=="Project"):
+        return
+    linked_dn = frappe.get_all("Delivery Note", filters={'docstatus':1, 'site_work':doc.name}, pluck="name")
+    dn_items = frappe.db.sql(f"""
+            Select 
+                dni.item_code, dni.stock_qty
+            From
+                `tabDelivery Note` dn
+                left outer join `tabDelivery Note Item` dni
+                on dni.parent = dn.name
+            where
+                dn.docstatus = 1 AND
+                dn.site_work = "{doc.name}"       
+        """, as_dict=1)
+
+    inv_items = frappe.db.sql(f"""
+        Select 
+            sii.item_code, sii.stock_qty
+        From
+            `tabSales Invoice` si
+            left outer join `tabSales Invoice Item` sii
+            on sii.parent = si.name
+        where
+            si.docstatus = 1 AND
+            si.site_work = "{doc.name}"       
+    """, as_dict=1)
+
+    delivered_items = {}
+    for i in dn_items:
+        if(i.item_code in delivered_items):
+            delivered_items[i.item_code] += i.stock_qty
+        else:
+            delivered_items[i.item_code] = i.stock_qty
+
+    invoiced_items = {}
+    for i in inv_items:
+        if(i.item_code in invoiced_items):
+            invoiced_items[i.item_code] += i.stock_qty
+        else:
+            invoiced_items[i.item_code] = i.stock_qty
+    
+
+    total_delivered_qty = sum(delivered_items.values())
+    total_invoiced_qty = sum(invoiced_items.values())
+    invoiced_percent = (total_invoiced_qty/total_delivered_qty)*100
+    frappe.db.set_value("Project", doc.name, 'invoiced', invoiced_percent)
+
+    invoiced_amt, outstanding_amt = frappe.db.get_value("Sales Invoice", {'docstatus':1, 'site_work':doc.name}, ["(sum(rounded_total))", "sum(outstanding_amount)"])
+    outstanding_percent = (outstanding_amt/invoiced_amt)*100
+    paid_percent = 100 - outstanding_percent
+    frappe.db.set_value("Project", doc.name, 'payment', paid_percent)

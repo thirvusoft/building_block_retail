@@ -149,7 +149,6 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 	stock_entry.get_items()
 	stock_entry.set_serial_no_batch_for_finished_good()
 	stock_entry.save()
-	frappe.msgprint(f"""Stock Entry Created: {get_link_to_form("Stock Entry" ,stock_entry.name)}""")
 	if(job_card.production_order):
 		po = frappe.get_doc("Production Order", job_card.production_order)
 		po.save()
