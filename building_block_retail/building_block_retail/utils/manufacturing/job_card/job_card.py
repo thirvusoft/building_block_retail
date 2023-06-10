@@ -62,6 +62,3 @@ def create_property_setter():
     make_property_setter(doctype, 'wip_warehouse', 'hidden', '1', 'Check')
     make_property_setter(doctype, 'quality_inspection', 'hidden', '1', 'Check')
     
-def before_submit(self, event):
-    se_qty = sum(frappe.db.get_all("Stock Entry", filters={'ts_job_card':self.name,'docstatus':1},pluck="fg_completed_qty"))
-    if(se_qty != self.total_completed_qty):frappe.throw("Please click <b>Finish</b> button to create stock entry and then submit this.")

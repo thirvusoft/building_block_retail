@@ -387,7 +387,9 @@ def make_work_orders(items, sales_order, company, project=None):
         ).insert()
         work_order.set_work_order_operations()
         work_order.flags.ignore_mandatory = True
+        work_order.flags.ignore_permissions = True
         work_order.save()
+        work_order.submit()
         out.append(work_order)
 
     return [p.name for p in out]

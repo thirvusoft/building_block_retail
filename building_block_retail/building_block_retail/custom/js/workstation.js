@@ -14,6 +14,22 @@ frappe.ui.form.on("Workstation", {
     },
     refresh:function(frm){
         frm.trigger('setup')
+        frm.set_query('source_warehouse', ()=>{
+            return {
+                filters:{
+                    'is_group':0,
+                    'disabled':0,
+                }
+            }
+        })
+        frm.set_query('target_warehouse', ()=>{
+            return {
+                filters:{
+                    'is_group':0,
+                    'disabled':0,
+                }
+            }
+        })
     }
 })
 

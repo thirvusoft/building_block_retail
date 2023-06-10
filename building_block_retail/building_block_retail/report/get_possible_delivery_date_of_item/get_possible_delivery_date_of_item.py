@@ -99,7 +99,6 @@ def get_data(filters, call_from_report = 1, check_warehouse=[]):
 	weekdays = {'Monday':0, 'Tuesday':1, 'Wednesday':2, 'Thursday':3, 'Friday':4, 'Saturday':5, 'Sunday':6}
 	leave_days = list(set([weekdays[i.description] for i in holiday.holidays]))
 	if(not max_qty):
-		frappe.errprint('err')
 		frappe.publish_realtime('show_poss_del_date_error', filters["item_code"])
 		# frappe.msgprint(f'Enter Daily maximum production qty in Item <b>{filters["item_code"]}</b>')
 		return

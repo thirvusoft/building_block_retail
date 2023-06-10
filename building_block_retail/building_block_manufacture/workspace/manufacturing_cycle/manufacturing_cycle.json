@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2022-11-26 10:04:55.751463",
+ "modified": "2023-06-07 15:43:36.111614",
  "modified_by": "Administrator",
  "module": "Building Block Manufacture",
  "name": "Manufacturing Cycle",
@@ -44,6 +44,12 @@
    "doc_view": "List",
    "label": "Work Order",
    "link_to": "Work Order",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Production Order",
+   "link_to": "Production Order",
    "type": "DocType"
   },
   {

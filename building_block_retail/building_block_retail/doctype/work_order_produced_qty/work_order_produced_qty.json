@@ -7,9 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "date",
-  "job_card",
-  "employee",
-  "qty_produced"
+  "qty_produced",
+  "production_order"
  ],
  "fields": [
   {
@@ -19,30 +18,23 @@
    "label": "Date"
   },
   {
-   "fieldname": "job_card",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Job Card",
-   "options": "Job Card"
-  },
-  {
-   "fieldname": "employee",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Employee",
-   "options": "Employee"
-  },
-  {
    "fieldname": "qty_produced",
-   "fieldtype": "Float",
+   "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Qty Produced"
+  },
+  {
+   "fieldname": "production_order",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Production Order",
+   "options": "Production Order"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-05-16 12:34:26.413777",
+ "modified": "2023-06-02 19:13:51.296441",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Work Order Produced Qty",

@@ -7,13 +7,20 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "todo_section",
+  "works",
+  "section_break_3",
   "item_template",
+  "is_template",
+  "status",
   "section_break_2",
   "production_order_details",
   "section_break_4",
   "item_wise_production_qty",
   "section_break_6",
-  "today_produced_items"
+  "today_produced_items",
+  "excess_and_shortage_section",
+  "excess_and_shortage"
  ],
  "fields": [
   {
@@ -31,7 +38,7 @@
    "fieldname": "production_order_details",
    "fieldtype": "Table",
    "label": "Production Order Details",
-   "options": "Production Item Order"
+   "options": "Production Order Item"
   },
   {
    "fieldname": "section_break_4",
@@ -40,8 +47,9 @@
   {
    "fieldname": "item_wise_production_qty",
    "fieldtype": "Table",
-   "label": "Item Wise Production Qty",
-   "options": "Item Wise Production Qty"
+   "label": "Item Wise Qty to Produce",
+   "options": "Item Wise Production Qty",
+   "read_only": 1
   },
   {
    "fieldname": "section_break_6",
@@ -50,13 +58,58 @@
   {
    "fieldname": "today_produced_items",
    "fieldtype": "Table",
-   "label": "Today Produced Items",
+   "label": "Items Produced Today",
    "options": "Today Produced Items"
+  },
+  {
+   "default": "Working",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Working\nHold"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "todo_section",
+   "fieldtype": "Section Break",
+   "label": "ToDo"
+  },
+  {
+   "fieldname": "works",
+   "fieldtype": "Table",
+   "label": "Works",
+   "options": "Work To Done",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "excess_and_shortage_section",
+   "fieldtype": "Section Break",
+   "label": "Excess Items"
+  },
+  {
+   "description": "Maintain Excess and Shortage qty for Each Item",
+   "fieldname": "excess_and_shortage",
+   "fieldtype": "Table",
+   "options": "Production Order Excess and Shortage"
+  },
+  {
+   "default": "0",
+   "fetch_from": "item_template.has_variants",
+   "fieldname": "is_template",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Is Template"
   }
  ],
+ "in_create": 1,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2023-05-17 15:27:25.888165",
+ "modified": "2023-06-07 15:37:38.406409",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Production Order",
