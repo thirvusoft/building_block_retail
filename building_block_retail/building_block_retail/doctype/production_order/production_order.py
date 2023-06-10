@@ -158,10 +158,13 @@ class ProductionOrder(Document):
 				if(i.item_code == j.item_code):
 					j.excess_qty -= (i.excess_qty or 0)
 					j.shortage_qty -= (i.shortage_qty or 0)
+					i.excess_qty=0
+					i.shortage_qty=0
 
 		company = erpnext.get_default_company(frappe.session.user)
 		jc_links = []
 		jc_name = []
+		self.save()
 		self.validate_excess_and_shortage_qty(exc_shrt, items)
 		for i in items:
 			default_bom = get_default_bom(i)
