@@ -207,7 +207,6 @@ frappe.ui.form.on("Item Detail Pavers", {
 			let tot_amount = data.rate * allocated_paver
 			frappe.model.set_value(cdt,cdn,"amount",tot_amount?tot_amount:0)
 			get_possible_delivery_date(frm, data)
-			console.log('call')
 			
 	},
 	rate : function(frm,cdt,cdn) {
@@ -527,7 +526,6 @@ function customer_query(){
 	})
 }
 frappe.realtime.on('show_poss_del_date_error', (item)=>{
-	console.log('call')
 	frappe.show_alert({'message':`Enter Daily maximum production qty in Item <b>${item}</b>`,'indicator':'red'}) 
 })
 var get_possible_delivery_date = function(frm, row){

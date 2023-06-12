@@ -97,7 +97,7 @@ def get_data(filters):
 			jc_filter['from_time'] = ['between', (filters.get('from_date'), filters.get('to_date'))]
 			jc_filter['to_time'] = ['between', (filters.get('from_date'), filters.get('to_date'))]
 		
-		jc_time_logs = frappe.db.get_all('Job Card Time Log', filters=jc_filter, fields=['sum(completed_qty) as today_prod_qty', 'parent', 'cast(from_time as date) as date'], )
+		jc_time_logs = frappe.db.get_all('Job Card Time Log', filters=jc_filter, fields=['sum(final_qty) as today_prod_qty', 'parent', 'cast(from_time as date) as date'], )
 		for jc in jc_time_logs:
 			data = frappe.db.get_all('Work Order', filters={'name':wo}, fields=['name', 'sales_order', 'qty as total_planned_qty', 'produced_qty as total_prod_qty', 'production_item as item'])
 			for i in data:

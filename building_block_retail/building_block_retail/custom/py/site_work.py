@@ -102,59 +102,59 @@ def create_status():
     doc.save()
     frappe.db.commit()
     
-def create_je_for_er(doc):
-    if(doc.status == 'Completed' and doc.er_employee):
-        if(not frappe.db.exists('Journal Entry', {'er_site_work':doc.name, 'docstatus':['<', 2]})):
-            income_account = frappe.get_value("Employee",doc.er_employee,"contracter_expense_account")
-            per_emp = frappe.get_value("Employee",doc.er_employee,"employee_percentage") or 0
-            hike = doc.er_total_amount * per_emp / 100
-            amt =  hike + doc.er_total_amount
-            if income_account:
-                company = frappe.get_value('Employee', doc.er_employee, 'company')
-                default_employee_expenses_account = frappe.get_cached_value("Company", company, "default_employee_expenses_account")
-                def_cost_center = frappe.get_cached_value("Company", company, "cost_center")
-                branch = frappe.get_value('Accounting Dimension Detail',{'company':company}, 'default_dimension')
-                if default_employee_expenses_account:
-                    new_journal=frappe.get_doc({
-                        "doctype":"Journal Entry",
-                        "company":company,
-                        "posting_date":today(),
-                        "er_site_work":doc.name,
-                        "cost_center": def_cost_center,
-                        "branch":branch,
-                        "accounts":[
-                            {
-                                "account":default_employee_expenses_account,
-                                "credit_in_account_currency":amt,
-                                "cost_center": def_cost_center,
-                                "branch":branch
-                            },
-                            {
-                                "account":income_account,
-                                "debit_in_account_currency":amt,
-                                "cost_center": def_cost_center,
-                                "branch":branch
-                            },
-                        ],
-                    })
-                    new_journal.insert(ignore_mandatory=True)
-                    new_journal.submit()
-                else:
-                    linkto = get_link_to_form("Company", company)
-                    frappe.throw(
-                        ("Enter Default Employee Expenses Account in company => {}.").format(
-                            frappe.bold(linkto)
-                        )
-                    )
-            else:
-                linkto = get_link_to_form("Employee", doc.er_employee)
-                frappe.throw(
-                    ("Enter Salary Account for Contractor in {}.").format(
-                        frappe.bold(linkto)
-                    )
-                )
+# def create_je_for_er(doc):
+#     if(doc.status == 'Completed' and doc.er_employee):
+#         if(not frappe.db.exists('Journal Entry', {'er_site_work':doc.name, 'docstatus':['<', 2]})):
+#             income_account = frappe.get_value("Employee",doc.er_employee,"contracter_expense_account")
+#             per_emp = frappe.get_value("Employee",doc.er_employee,"employee_percentage") or 0
+#             hike = doc.er_total_amount * per_emp / 100
+#             amt =  hike + doc.er_total_amount
+#             if income_account:
+#                 company = frappe.get_value('Employee', doc.er_employee, 'company')
+#                 default_employee_expenses_account = frappe.get_cached_value("Company", company, "default_employee_expenses_account")
+#                 def_cost_center = frappe.get_cached_value("Company", company, "cost_center")
+#                 branch = frappe.get_value('Accounting Dimension Detail',{'company':company}, 'default_dimension')
+#                 if default_employee_expenses_account:
+#                     new_journal=frappe.get_doc({
+#                         "doctype":"Journal Entry",
+#                         "company":company,
+#                         "posting_date":today(),
+#                         "er_site_work":doc.name,
+#                         "cost_center": def_cost_center,
+#                         "branch":branch,
+#                         "accounts":[
+#                             {
+#                                 "account":default_employee_expenses_account,
+#                                 "credit_in_account_currency":amt,
+#                                 "cost_center": def_cost_center,
+#                                 "branch":branch
+#                             },
+#                             {
+#                                 "account":income_account,
+#                                 "debit_in_account_currency":amt,
+#                                 "cost_center": def_cost_center,
+#                                 "branch":branch
+#                             },
+#                         ],
+#                     })
+#                     new_journal.insert(ignore_mandatory=True)
+#                     new_journal.submit()
+#                 else:
+#                     linkto = get_link_to_form("Company", company)
+#                     frappe.throw(
+#                         ("Enter Default Employee Expenses Account in company => {}.").format(
+#                             frappe.bold(linkto)
+#                         )
+#                     )
+#             else:
+#                 linkto = get_link_to_form("Employee", doc.er_employee)
+#                 frappe.throw(
+#                     ("Enter Salary Account for Contractor in {}.").format(
+#                         frappe.bold(linkto)
+#                     )
+#                 )
 def validate(self,event):
-    create_je_for_er(self)
+    # create_je_for_er(self)
     validate_jw_qty(self)
     self.total_completed_qty = 0
     for i in self.finalised_job_worker_details:
@@ -239,3 +239,63 @@ def validate_jw_qty(self):
             wrong_items.append(frappe.bold(item))
     if(wrong_items):
         frappe.throw("Job Worker completed qty cannot be greater than Delivered Qty for the following items "+' '.join(wrong_items))
+
+
+def set_status(document, event):
+    doc=document
+    if(document.doctype in ["Sales Order", "Sales Invoice", "Delivery Note"]):
+        if(document.get("site_work")):
+            doc=frappe.get_doc("Project", document.site_work)
+    if(not doc.get("doctype")=="Project"):
+        return
+    linked_dn = frappe.get_all("Delivery Note", filters={'docstatus':1, 'site_work':doc.name}, pluck="name")
+    dn_items = frappe.db.sql(f"""
+            Select 
+                dni.item_code, dni.stock_qty
+            From
+                `tabDelivery Note` dn
+                left outer join `tabDelivery Note Item` dni
+                on dni.parent = dn.name
+            where
+                dn.docstatus = 1 AND
+                dn.site_work = "{doc.name}"       
+        """, as_dict=1)
+
+    inv_items = frappe.db.sql(f"""
+        Select 
+            sii.item_code, sii.stock_qty
+        From
+            `tabSales Invoice` si
+            left outer join `tabSales Invoice Item` sii
+            on sii.parent = si.name
+        where
+            si.docstatus = 1 AND
+            si.site_work = "{doc.name}"       
+    """, as_dict=1)
+
+    delivered_items = {}
+    for i in dn_items:
+        if(i.item_code in delivered_items):
+            delivered_items[i.item_code] += i.stock_qty
+        else:
+            delivered_items[i.item_code] = i.stock_qty
+
+    invoiced_items = {}
+    for i in inv_items:
+        if(i.item_code in invoiced_items):
+            invoiced_items[i.item_code] += i.stock_qty
+        else:
+            invoiced_items[i.item_code] = i.stock_qty
+    
+
+    total_delivered_qty = sum(delivered_items.values())
+    total_invoiced_qty = sum(invoiced_items.values())
+    if(not total_delivered_qty):
+        return
+    invoiced_percent = (total_invoiced_qty/total_delivered_qty)*100
+    frappe.db.set_value("Project", doc.name, 'invoiced', invoiced_percent)
+
+    invoiced_amt, outstanding_amt = frappe.db.get_value("Sales Invoice", {'docstatus':1, 'site_work':doc.name}, ["(sum(rounded_total))", "sum(outstanding_amount)"])
+    outstanding_percent = (outstanding_amt/invoiced_amt)*100
+    paid_percent = 100 - outstanding_percent
+    frappe.db.set_value("Project", doc.name, 'payment', paid_percent)

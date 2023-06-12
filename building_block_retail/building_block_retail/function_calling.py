@@ -11,7 +11,7 @@ from building_block_retail.building_block_retail.utils.buying.supplier_quotation
 from building_block_retail.building_block_retail.utils.crm.customer.customer import customer_customizations
 from building_block_retail.building_block_retail.utils.crm.lead.lead import lead_customisation
 from building_block_retail.building_block_retail.utils.crm.customer.address import address_customization
-from building_block_retail.building_block_retail.utils.hr.employee.employee import create_contracter_expense_account
+from building_block_retail.building_block_retail.utils.hr.employee.employee import employee_customisations
 from building_block_retail.building_block_retail.utils.hr.employee.employee_advance import employee_advance_customization
 from building_block_retail.building_block_retail.utils.hr.payroll.payroll_entry import payroll_entry_customization
 from building_block_retail.building_block_retail.utils.hr.role.roles import create_role
@@ -61,7 +61,7 @@ def function_calling():
     quotation_customization()
     workflow_document_creation()
     create_role()
-    create_contracter_expense_account()
+    employee_customisations()
     work_order_custom()
     create_role()
     create_job_card_custom_fields()

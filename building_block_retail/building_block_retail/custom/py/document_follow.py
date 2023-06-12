@@ -16,6 +16,7 @@ def get_follow_up_settings(doctype):
     return settings.get(field)
 
 def check_doc_follow_up(doc, event=None):
+    return
     validate = get_follow_up_settings(doc.doctype)
     if(not validate):return
     if(doc.doctype == 'Opportunity'):
