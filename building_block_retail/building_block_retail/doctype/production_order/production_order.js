@@ -5,8 +5,9 @@ frappe.ui.form.on('Production Order', {
 	refresh: function(frm) {
         frm.set_query("from_job_card", "excess_and_shortage", function (doc, cdt, cdn) {
             return {
+                query:"building_block_retail.building_block_retail.custom.py.job_card.job_card_search",
                 filters: {
-                    production_item:locals[cdt][cdn].item_code
+                    production_item:locals[cdt][cdn].item_code || null
                 }
             }
         })

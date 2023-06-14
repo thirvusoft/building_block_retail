@@ -153,3 +153,41 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 		po = frappe.get_doc("Production Order", job_card.production_order)
 		po.save()
 	return
+
+from erpnext.controllers.queries import get_fields
+from frappe.desk.reportview import get_filters_cond, get_match_cond
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def job_card_search(doctype, txt, searchfield, start, page_len, filters):
+	doctype = "Job Card"
+	conditions = []
+	fields = get_fields(doctype)
+	searchfields = list(set(frappe.get_meta(doctype).get_search_fields() + ["name", "production_item", "workstation"]))
+	searchfields = " or ".join(f""" `tabJob Card`.{field}""" + " like %(txt)s" for field in searchfields)
+
+	return frappe.db.sql(
+		"""select {fields} , `tabJob Card`.production_item, Concat("\nQty: ", sum(`tabJob Card Time Log`.final_qty)) as completed_qty from `tabJob Card`
+		left outer join `tabJob Card Time Log` on `tabJob Card Time Log`.parent = `tabJob Card`.name
+		where `tabJob Card`.docstatus < 2
+			and ({scond})
+			{fcond} {mcond}
+		group by
+			`tabJob Card Time Log`.parent
+		order by
+			if(locate(%(_txt)s, `tabJob Card`.name), locate(%(_txt)s, `tabJob Card`.name), 99999),
+			if(locate(%(_txt)s, `tabJob Card`.production_item), locate(%(_txt)s, `tabJob Card`.production_item), 99999),
+			`tabJob Card`.idx desc,
+			`tabJob Card`.name, `tabJob Card`.production_item
+		
+		limit %(start)s, %(page_len)s""".format(
+			**{
+				"fields": ", ".join([f""" `tabJob Card`.{field}"""  for field in fields]),
+				"scond": searchfields,
+				"mcond": get_match_cond(doctype),
+				"fcond": get_filters_cond(doctype, filters, conditions).replace("%", "%%"),
+			}
+		),
+		{"txt": "%%%s%%" % txt, "_txt": txt.replace("%", ""), "start": start, "page_len": page_len},
+	)
