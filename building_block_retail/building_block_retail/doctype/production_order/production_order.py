@@ -129,7 +129,16 @@ class ProductionOrder(Document):
 			if(not wo):
 				frappe.throw(f"""Item {frappe.bold(i.item_code)} is not mentioned in {frappe.bold("Production Order Details")} table.""")
 			if(i.item_code not in items):
-				items[i.item_code] = {"qty":i.produced_qty, "posting_date":i.date, "from_time":i.from_time, "to_time":i.to_time, "employee":i.employee, "workstation":i.workstation}
+				items[i.item_code] = {
+					"qty":i.produced_qty, 
+					"posting_date":i.date, 
+					"from_time":i.from_time, 
+					"to_time":i.to_time, 
+					"employee":i.employee, 
+					"workstation":i.workstation,
+					"source_warehouse":i.source_warehouse,
+					"target_warehouse":i.target_warehouse
+					}
 				exc_shrt[i.item_code] = {"excess_qty":i.get("excess_qty") or 0, "shortage_qty":i.get("shortage_qty") or 0}
 			else:
 				items[i.item_code]["qty"] += i.produced_qty
@@ -193,7 +202,9 @@ class ProductionOrder(Document):
 					"excess_qty":exc_shrt[i]['excess_qty'], 
 					"shortage_qty":exc_shrt[i]['shortage_qty'], "final_qty":items[i]["qty"], 
 					"mistaken_from":exc_shrt_jc_map.get(i) if(exc_shrt[i]['excess_qty'] or exc_shrt[i]['shortage_qty']) else None
-						}]
+						}],
+				'source_warehouse':items[i]["source_warehouse"],
+				'target_warehouse':items[i]["target_warehouse"]
 			})
 			job_card.save()
 			job_card.submit()

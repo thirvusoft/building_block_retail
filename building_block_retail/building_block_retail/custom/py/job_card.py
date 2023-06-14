@@ -9,7 +9,7 @@ from erpnext.manufacturing.doctype.job_card.job_card import JobCard
 
 class Jobcard(JobCard):
 	def validate(self):
-		self.validate_time_logs()
+		# self.validate_time_logs()
 		self.set_status()
 		self.validate_operation_id()
 		self.validate_sequence_id()
