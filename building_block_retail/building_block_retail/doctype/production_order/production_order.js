@@ -63,7 +63,7 @@ frappe.ui.form.on('Production Order', {
                             label:"Item",
                             reqd:1,
                             in_list_view: 1,
-                            columns:4
+                            columns:2
                         },
                         {
                             fieldname:"employee",
@@ -72,7 +72,7 @@ frappe.ui.form.on('Production Order', {
                             label:"Employee",
                             reqd:1,
                             in_list_view: 1,
-                            columns:2
+                            columns:1
                         },
                         {
                             fieldname:"workstation",
@@ -81,7 +81,7 @@ frappe.ui.form.on('Production Order', {
                             label:"Workstation",
                             reqd:1,
                             in_list_view: 1,
-                            columns:2
+                            columns:1
                         },
                         {
                             fieldname:"from_time",
@@ -98,6 +98,24 @@ frappe.ui.form.on('Production Order', {
                             reqd:1,
                             in_list_view: 1,
                             columns:1
+                        },
+                        {
+                            fieldname:"source_warehouse",
+                            fieldtype:"Link",
+                            label:"Source Warehouse",
+                            options: "Warehouse",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:2
+                        },
+                        {
+                            fieldname:"target_warehouse",
+                            fieldtype:"Link",
+                            label:"Target Warehouse",
+                            options: "Warehouse",
+                            reqd:1,
+                            in_list_view: 1,
+                            columns:2
                         },
                         {
                             fieldname:"date",
@@ -124,6 +142,7 @@ frappe.ui.form.on('Production Order', {
                     var d = new frappe.ui.Dialog({
                         title:'Select Employee',
                         size:"extra-large",
+                        static:true,
                         fields:[
                             {
                                 fieldname: "jobcard_data",
@@ -192,6 +211,10 @@ frappe.ui.form.on('Production Order', {
                                     }
                                 }
                             })
+                        },
+                        secondary_action_label:"Close",
+                        secondary_action(){
+                            d.hide();
                         }
                     })
                     

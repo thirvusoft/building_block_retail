@@ -232,17 +232,17 @@ doc_events = {
 	'*' : {
 		'validate': 'building_block_retail.building_block_retail.custom.py.document_follow.check_doc_follow_up'
 	},
-	(	
-	"Sales Order",
-	"Sales Invoice",
-	"Delivery Note",
-	"Project"): {
-		"validate":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
-		"on_submit":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
-		"on_cancel":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
-		"on_update":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
-		"on_change":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
-	}
+	# (	
+	# "Sales Order",
+	# "Sales Invoice",
+	# "Delivery Note",
+	# "Project"): {
+	# 	"validate":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	# 	"on_submit":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	# 	"on_cancel":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	# 	"on_update":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	# 	"on_change":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	# }
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status",
   			"building_block_retail.building_block_retail.function_calling.function_calling"]

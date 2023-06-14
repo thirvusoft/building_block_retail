@@ -11,10 +11,13 @@
   "produced_qty",
   "excess_qty",
   "shortage_qty",
+  "dialog_data_section",
   "from_time",
   "to_time",
   "workstation",
-  "employee"
+  "employee",
+  "source_warehouse",
+  "target_warehouse"
  ],
  "fields": [
   {
@@ -54,29 +57,53 @@
   {
    "fieldname": "from_time",
    "fieldtype": "Datetime",
-   "label": "From Time"
+   "label": "From Time",
+   "read_only": 1
   },
   {
    "fieldname": "to_time",
    "fieldtype": "Datetime",
-   "label": "To Time"
+   "label": "To Time",
+   "read_only": 1
   },
   {
    "fieldname": "workstation",
    "fieldtype": "Data",
-   "label": "Workstation"
+   "label": "Workstation",
+   "read_only": 1
   },
   {
    "fieldname": "employee",
    "fieldtype": "Link",
    "label": "Employee",
-   "options": "Employee"
+   "options": "Employee",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "dialog_data_section",
+   "fieldtype": "Section Break",
+   "label": "Dialog Data"
+  },
+  {
+   "fieldname": "source_warehouse",
+   "fieldtype": "Link",
+   "label": "Source Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  },
+  {
+   "fieldname": "target_warehouse",
+   "fieldtype": "Link",
+   "label": "Target Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2023-06-08 19:06:48.184720",
+ "modified": "2023-06-14 11:29:36.413023",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Today Produced Items",

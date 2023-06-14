@@ -672,7 +672,7 @@ function make_work_order(frm) {
                                         items: data,
                                         company: so.message.company,
                                         sales_order: so.message.name,
-                                        project: so.message.site_work
+                                        project: frm.doc.site_work
                                     },
                                     freeze: true,
                                     callback: function(r) {
