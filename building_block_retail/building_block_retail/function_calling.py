@@ -36,9 +36,11 @@ from building_block_retail.building_block_retail.utils.property_setter import cr
 from building_block_retail.building_block_retail.utils.hr.driver.driver import driver_customization
 from building_block_retail.building_block_retail.utils.hr.vehicle_log.vehicle_log import vehicle_log_customization
 from building_block_retail.building_block_retail.utils.selling.sales_order.sales_order import item_details_pavers_customization
+from building_block_retail.building_block_retail.utils.manufacturing.manufacturing_setting.manufacturing_settings import manufacturing_setting_custom_fields
 def function_calling():
     payroll_entry_customization()
     create_defaults()
+    manufacturing_setting_custom_fields()
     create_salary_custom_field()
     employee_advance_customization()
     address_customization()
