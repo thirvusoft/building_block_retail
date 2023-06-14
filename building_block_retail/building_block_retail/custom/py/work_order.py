@@ -109,3 +109,22 @@ def update_status(doc, event):
         doc.status = "In Process"
     if event == "on_update_after_submit":
         frappe.db.set_value("Work Order", doc.name, "status", doc.status)
+
+
+def on_change(doc, event=None):
+    update_sales_order(doc)
+    update_site_work(doc)
+
+def update_sales_order(doc):
+    if(doc.sales_order):
+        work_orders = frappe.db.get_all("Work Order", filters={'sales_order':doc.sales_order, 'docstatus':1}, fields=["sum(qty) as qty_to_manufacture", "sum(produced_qty) as produced_qty"], group_by="sales_order")
+        if(len(work_orders)):
+            produced_percent = round((work_orders[0]["produced_qty"] / work_orders[0]["qty_to_manufacture"]) * 100, 2)
+            frappe.db.set_value("Sales Order", doc.sales_order, "per_produced", produced_percent)
+
+def update_site_work(doc):
+    if(doc.project):
+        work_orders = frappe.db.get_all("Work Order", filters={'project':doc.project, 'docstatus':1}, fields=["sum(qty) as qty_to_manufacture", "sum(produced_qty) as produced_qty"], group_by="project")
+        if(len(work_orders)):
+            produced_percent = round((work_orders[0]["produced_qty"] / work_orders[0]["qty_to_manufacture"]) * 100, 2)
+            frappe.db.set_value("Project", doc.project, "per_produced", produced_percent)

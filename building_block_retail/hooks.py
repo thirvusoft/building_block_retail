@@ -182,6 +182,7 @@ doc_events = {
 		"on_submit": "building_block_retail.building_block_retail.custom.py.work_order.production_order_creation",
 		"validate": "building_block_retail.building_block_retail.custom.py.work_order.validate",
 		"on_update_after_submit": "building_block_retail.building_block_retail.custom.py.work_order.validate",
+        "on_change": "building_block_retail.building_block_retail.custom.py.work_order.on_change",
     },
     "Stock Entry":{
         "validate":["building_block_retail.building_block_retail.custom.py.stock_entry.validate",
