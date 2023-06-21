@@ -24,6 +24,10 @@ function setquery(frm){
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
+        if(frm.is_new()){
+            frm.trigger("type")
+        }
+        
         setTimeout(() => {   
             frm.remove_custom_button('Pick List', "Create");
             frm.remove_custom_button('Material Request', "Create");
@@ -290,11 +294,7 @@ frappe.ui.form.on('Sales Order',{
             }
         }
         
-        frm.doc.items.forEach(r => {
-            if(item.includes(r.item_code)){
-                r.prevdoc_docname = qtn_item[r.item_code]
-            }
-        })
+       
         let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
         for(let row=0;row<rm.length;row++){
             if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
@@ -323,7 +323,11 @@ frappe.ui.form.on('Sales Order',{
             
         }
        
-            
+        frm.doc.items.forEach(r => {
+            if(item.includes(r.item_code)){
+                r.prevdoc_docname = qtn_item[r.item_code]
+            }
+        })
            
         refresh_field("items");
         
@@ -561,7 +565,8 @@ function fill_paver_compound_table_from_item(frm){
         })
     }
     }
-    frm.refresh()
+    frm.refresh_field("pavers")
+    frm.refresh_field("compoun_walls")
 }
 
 function make_work_order(frm) {
