@@ -11,3 +11,6 @@ def update_customer(self,event):
                 frappe.db.set(doc, "customer", cus)
 
 
+def validate_tax_inclusive(doc, event=None):
+    for i in (doc.taxes or []):
+        i.included_in_print_rate = doc.set_inclusive_tax

@@ -160,7 +160,8 @@ doc_events = {
 	},
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
-                        'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
+                        'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+                        'building_block_retail.building_block_retail.custom.py.sales_invoice.validate_tax_inclusive'],
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
