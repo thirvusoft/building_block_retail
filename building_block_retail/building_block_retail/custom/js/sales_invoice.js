@@ -140,9 +140,9 @@ frappe.ui.form.on('Sales Invoice', {
     },
     set_inclusive_tax: function(frm, cdt, cdn) {
         let row = locals[cdt][cdn];
-        if (frm.doc.set_inclusive_tax == 1 && frm.doc.taxes) {
+        if (frm.doc.taxes) {
             for (var i = 0; i < frm.doc.taxes.length; i++) {
-                frappe.model.set_value(frm.doc.taxes[i].doctype, frm.doc.taxes[i].name, 'included_in_print_rate', 1);
+                frappe.model.set_value(frm.doc.taxes[i].doctype, frm.doc.taxes[i].name, 'included_in_print_rate', frm.doc.set_inclusive_tax );
             }
         }
     }
