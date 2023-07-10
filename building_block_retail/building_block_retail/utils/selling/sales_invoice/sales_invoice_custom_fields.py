@@ -145,6 +145,12 @@ def sales_invoice_custom_field():
                 no_copy = 1,
                 fetch_from = 'site_work.measured_qty'
             ),
+            dict(
+                fieldname= "set_inclusive_tax",
+                fieldtype= "Check",
+                insert_after= "return_against",
+                label= "Set Inclusive Tax",
+            ),
             
         
         ],
