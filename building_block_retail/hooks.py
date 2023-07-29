@@ -160,8 +160,7 @@ doc_events = {
 	},
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
-                        'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
-                        'building_block_retail.building_block_retail.custom.py.sales_invoice.validate_tax_inclusive'],
+                        'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
@@ -234,6 +233,14 @@ doc_events = {
 	'*' : {
 		'validate': 'building_block_retail.building_block_retail.custom.py.document_follow.check_doc_follow_up'
 	},
+    (
+	"Quotation",
+	"Sales Order",
+	"Sales Invoice",
+	"Delivery Note",
+	):{
+      "before_validate": 'building_block_retail.building_block_retail.custom.py.sales_invoice.validate_tax_inclusive' 
+	},
 	(	
 	"Sales Order",
 	"Sales Invoice",
@@ -255,15 +262,19 @@ doctype_js = {
 				"Sales Order": [
 								"/building_block_retail/custom/js/site_work.js",
 								"/building_block_retail/custom/js/sales_order.js",
+                                "/building_block_retail/custom/js/set_inclusive_tax.js",
 								],
 				"Vehicle":"/building_block_retail/custom/js/vehicle.js",
 				"Purchase Receipt":"/building_block_retail/custom/js/purchase_receipt.js",
 				"Purchase Order": "/building_block_retail/custom/js/purchase_order.js",
-				"Delivery Note": "/building_block_retail/custom/js/delivery_note.js",
-				"Sales Invoice": "/building_block_retail/custom/js/sales_invoice.js",
+				"Delivery Note": ["/building_block_retail/custom/js/delivery_note.js",
+                      				"/building_block_retail/custom/js/set_inclusive_tax.js"],
+				"Sales Invoice": ["/building_block_retail/custom/js/sales_invoice.js",
+                      			"/building_block_retail/custom/js/set_inclusive_tax.js",],
 				"Vehicle Log":"/building_block_retail/custom/js/vehicle_log.js",
 				"Job Card": "/building_block_retail/custom/js/job_card.js",
-				"Quotation":"/building_block_retail/custom/js/quotation.js",
+				"Quotation":["/building_block_retail/custom/js/quotation.js",
+                 			"/building_block_retail/custom/js/set_inclusive_tax.js"],
     			"Work Order":"/building_block_retail/custom/js/work_order.js",
     			"Company":"/building_block_retail/custom/js/company.js",
 				"Payroll Entry": "/building_block_retail/custom/js/payroll_entry.js",
@@ -273,7 +284,10 @@ doctype_js = {
 				"Driver": "/building_block_retail/custom/js/driver.js",
                 "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js",
 				"Workstation": "/building_block_retail/custom/js/workstation.js",
-				"BOM":"/building_block_retail/custom/js/bom.js"
+				"BOM":"/building_block_retail/custom/js/bom.js",
+                (
+                    "Quotation", "Sales Order", "Sales Invoice", "Delivery Note"
+				):"/building_block_retail/custom/js/set_inclusive_tax.js"
 			 }
 # doctype_list_js = {"Work Order": "/building_block_retail/custom/js/work_order.js",}
 # Scheduled Tasks

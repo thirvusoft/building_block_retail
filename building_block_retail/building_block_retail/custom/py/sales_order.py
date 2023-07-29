@@ -31,7 +31,7 @@ def get_item_value(doctype):
     return res
     
 @frappe.whitelist()
-def create_site(doc):
+def create_site(doc, on_update=0):
     doc=json.loads(doc)
     create=False
     if(doc['type']=='Pavers'):
@@ -79,6 +79,17 @@ def create_site(doc):
                 'sales_order':doc['name']
                 } for row in doc['raw_materials']]
         site_work=frappe.get_doc('Project',doc['site_work'])
+        if on_update:
+            updated_item_details = []
+            idx=1
+            for i in site_work.item_details:
+                if(doc["name"] != i.get("sales_order")):
+                    i.idx = idx
+                    updated_item_details.append(i)
+                    idx += 1
+            site_work.update({
+                "item_details":updated_item_details
+            })
         total_area=0
         completed_area=0
         
