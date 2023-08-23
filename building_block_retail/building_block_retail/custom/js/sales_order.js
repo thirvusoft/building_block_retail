@@ -97,7 +97,8 @@ frappe.ui.form.on('Sales Order',{
                 frappe.call({
                     method:'building_block_retail.building_block_retail.custom.py.sales_order.get_stock_availability',
                     args:{
-                        items: frm.doc.items
+                        items: frm.doc.items,
+                        sales_order: frm.doc.name
                     },
                     callback(r){
                         frm.set_value("available_qty", r.message)
@@ -632,6 +633,13 @@ function make_work_order(frm) {
                                 },
                                 {
                                     fieldtype: 'Read Only',
+                                    fieldname: 'actual_stock',
+                                    label: 'Actual Stock',
+                                    in_list_view: 1,
+                                    columns: 1
+                                },
+                                {
+                                    fieldtype: 'Read Only',
                                     fieldname: 'stock_taken',
                                     label: 'Stock Taken',
                                     // in_list_view: 1,
@@ -657,7 +665,8 @@ function make_work_order(frm) {
                                     fieldname: 'priority',
                                     label: 'Priority',
                                     in_list_view: 1,
-                                    options: 'Low Priority\nHigh Priority\nUrgent Priority'
+                                    options: 'Low Priority\nHigh Priority\nUrgent Priority',
+                                    columns: 1,
                                 }
                                      ],
                             data: r.message,
@@ -668,7 +677,7 @@ function make_work_order(frm) {
                         var d = new frappe.ui.Dialog({
                             title: __('Items to Manufacture'),
                             fields: fields,
-                            size: 'large',
+                            size: 'extra-large',
                             primary_action: function() {
                                 var data = {items: d.fields_dict.items.grid.data};
                                 frappe.call({
