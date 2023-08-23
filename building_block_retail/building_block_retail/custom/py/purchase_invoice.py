@@ -34,6 +34,16 @@ def make_vehicle_log(doc, data, vehicles):
         vehicles = eval(vehicles)
     doc = frappe.get_doc(doc)
     docnames = []
+    
+    vehicle_logs = frappe.get_all("Vehicle Log", {"docstatus": 1, "invoice": doc.name})
+    if vehicle_logs:
+        frappe.throw(title="Vehicle Log Already Created.", msg=f"""
+        Vehicle Log was already created against this purchase invoice.
+        <ul>
+        {"".join([f'''<li><a href='/app/vehicle-log/{vl.name}'>{vl.name}</a></li>''' for vl in vehicle_logs])}
+        </ul>
+        """)
+    
     for count, vehicle in enumerate(vehicles):
         qty = sum([i.qty for i in doc.items if(i.item_group=='Fuel' and i.vehicle == vehicle)])
         rate = sum([i.rate for i in doc.items if(i.item_group=='Fuel' and i.vehicle == vehicle)])
@@ -47,7 +57,7 @@ def make_vehicle_log(doc, data, vehicles):
             'select_purpose':'Fuel',
             'ts_total_cost':amount,
             'fuel_qty':qty,
-            'fuel_price':rate,
+            'price':rate,
             'invoice':doc.name,
             'supplier':doc.supplier
         })
@@ -55,4 +65,12 @@ def make_vehicle_log(doc, data, vehicles):
         vl.insert()
         vl.submit()
         docnames.append(vl.name)
+
+    frappe.msgprint(title="Vehicle Log Created", indicator="green", msg=f"""
+        Vehicle Log was created successfully.
+        <ul>
+        {"".join([f'''<li><a href='/app/vehicle-log/{name}'>{name}</a></li>''' for name in docnames])}
+        </ul>
+        """)
+    
     return docnames

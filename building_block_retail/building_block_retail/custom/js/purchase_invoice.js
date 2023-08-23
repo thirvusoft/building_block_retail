@@ -18,7 +18,8 @@ frappe.ui.form.on("Purchase Invoice",{
                 }
             })
         }
-        if(items_list.length ){
+        let vl = await frappe.db.get_list("Vehicle Log", {filters: {'invoice': frm.doc.name, 'docstatus': 1}})
+        if(items_list.length && !vl.length && frm.doc.docstatus == 1){
             frm.add_custom_button('Make Vehicle Log', async ()=>{
                 let fields = [], vehicles = [];
                 frm.doc.items.forEach((row)=>{
@@ -41,9 +42,9 @@ frappe.ui.form.on("Purchase Invoice",{
                     title:'Select Driver and Current Odometer Value',
                     size: 'large',
                     fields:fields,
-                    primary_action(data){
+                    async primary_action(data) {
                         dialog.hide()
-                        frappe.call({
+                        await frappe.call({
                             method:'building_block_retail.building_block_retail.custom.py.purchase_invoice.make_vehicle_log',
                             args:{
                                 doc: frm.doc,
@@ -63,6 +64,7 @@ frappe.ui.form.on("Purchase Invoice",{
                             
                             `,
                             callback(r){
+                                frm.reload_doc();
                             }
                         })
                     }
