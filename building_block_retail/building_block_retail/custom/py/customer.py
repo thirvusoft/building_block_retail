@@ -7,7 +7,7 @@ def autoname(doc, event):
 
 @frappe.whitelist()
 def customer_outstanding_amount(company, customer):
-	info = get_dashboard_info("Customer", customer)
-	for i in info:
-		if(i.get("company") == company):
-			return fmt_money(amount = i.get("total_unpaid"), currency=i.get('currency')) or 0
+    info = get_dashboard_info("Customer", customer)
+    for i in info:
+        if(i.get("company") == company):
+            return fmt_money(amount = i.get("total_unpaid"), currency=i.get('currency')) or 0
