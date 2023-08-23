@@ -1,0 +1,5 @@
+{
+    "building_block_retail.min.js": [
+        "public/js/customer_payment_details.js"
+    ]
+}

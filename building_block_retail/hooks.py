@@ -14,7 +14,7 @@ app_license = "MIT"
 jenv = jenvs
 # include js, css files in header of desk.html
 app_include_css = "/assets/building_block_retail/css/building_block_retail.css"
-# app_include_js = "/assets/building_block_retail/js/building_block_retail.js"
+app_include_js = "/assets/building_block_retail.min.js"
 
 # include js, css files in header of web template
 # web_include_css = "/assets/building_block_retail/css/building_block_retail.css"
