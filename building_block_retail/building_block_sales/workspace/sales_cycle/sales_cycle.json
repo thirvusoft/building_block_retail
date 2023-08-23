@@ -14,7 +14,7 @@
  "is_standard": 1,
  "label": "Sales Cycle",
  "links": [],
- "modified": "2022-11-22 14:33:52.040965",
+ "modified": "2023-08-02 11:09:52.706393",
  "modified_by": "Administrator",
  "module": "Building Block Sales",
  "name": "Sales Cycle",
@@ -52,6 +52,12 @@
    "label": "Building Block Sales",
    "link_to": "Building Block Sales",
    "type": "DocType"
+  },
+  {
+   "doc_view": "",
+   "label": "Delivery Report",
+   "link_to": "Delivery Report",
+   "type": "Report"
   }
  ]
 }
