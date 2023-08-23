@@ -234,8 +234,9 @@ frappe.ui.form.on('Delivery Note', {
                     }
                 }
                 cur_frm.refresh();
-                
-                
+                setTimeout(() => {
+                    frm.trigger("calculate_again");
+                }, 500);
                 }
             
                 setTimeout(() => {
@@ -246,7 +247,7 @@ frappe.ui.form.on('Delivery Note', {
                     frm.remove_custom_button('Installation Note', "Create");
                     frm.remove_custom_button('Delivery Trip', "Create");
                     frm.remove_custom_button('Subscription', "Create");
-                }, 500);    
+                }, 500);
     },
     work: function(frm){
         frm.doc.items.forEach( m => {
@@ -340,10 +341,10 @@ function get_items_for_loading(frm){
     frm.doc.items.forEach(itm => {
         if(!itm.dont_include_in_loadman_cost){
             if(!in_list(Object.keys(items), itm.item_code)){
-                items[itm.item_code] = Math.round(itm.stock_qty)
+                items[itm.item_code] = Math.abs(Math.round(itm.stock_qty))
             }
             else{
-                items[itm.item_code] += Math.round(itm.stock_qty)
+                items[itm.item_code] += Math.abs(Math.round(itm.stock_qty))
             }
         }
     })
