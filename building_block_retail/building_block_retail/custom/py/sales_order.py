@@ -8,7 +8,13 @@ from frappe.utils.csvutils import getlink
 from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
 from erpnext.stock.stock_ledger import get_previous_sle
+from frappe.model.naming import parse_naming_series, make_autoname
 
+
+def autoname(doc, event=None):
+    if(doc.branch == "SVPB"):
+        doc.name = make_autoname("SVPB-PI-.####", doc=doc)
+        doc.naming_series = "SVPB-PI-.####"
 
 @frappe.whitelist()
 def get_item_value(doctype):

@@ -135,6 +135,7 @@ doc_events = {
 		"after_insert":"building_block_retail.building_block_retail.custom.py.site_work.validate"
 	},
 	"Sales Order":{
+		"autoname":"building_block_retail.building_block_retail.custom.py.sales_order.autoname",
      	"before_validate":'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
         "validate" : 'building_block_retail.building_block_retail.custom.py.sales_order.add_price_list',
 		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields",
