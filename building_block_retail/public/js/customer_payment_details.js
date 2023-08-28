@@ -47,12 +47,10 @@ vb.showCustomerPaymentInfo = async function ({ customer, company }) {
             customer: customer
         },
         callback(r) {
-            if (r.message) {
                 cur_frm.dashboard.add_comment(`
                     <div><a href='/app/customer/${customer}'><b>${customer}</b></a><div>
-                    <div><b>Total Unpaid Amount: ${r.message}</b></div>
+                    <div><b>Total Unpaid Amount: ${r.message || 0}</b></div>
                 `, 'blue', true);
-            }
         }
     });
 }

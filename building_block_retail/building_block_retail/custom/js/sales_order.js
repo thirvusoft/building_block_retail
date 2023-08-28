@@ -85,6 +85,15 @@ frappe.ui.form.on('Sales Order',{
                 }
             }
         })
+        frm.set_query('site_work',function(frm){
+            return {
+                filters:{
+                    'customer': cur_frm.doc.customer,
+                    'status': 'Open',
+                    'is_multi_customer':cur_frm.doc.is_multi_customer
+                }
+            }
+        })
         if(cur_frm.doc.docstatus==0){
             cur_frm.fields_dict.site_work.$input.on("click", function() {
                 if(!cur_frm.doc.customer && !cur_frm.doc.is_multi_customer){

@@ -226,7 +226,7 @@ def employee_update(doc,action):
         else:
             employee_doc.salary_balance+=doc.total_unpaid_amount
     elif(doc.designation in ['Contractor']):
-        employee_doc.salary_balance += (doc.total_expense-doc.contractor_to_pay)
+        employee_doc.salary_balance = (doc.total_expense + employee_doc.salary_balance)- sum([i.amount for i in doc.earnings])
     employee_doc.save()
 
 def set_net_pay(self):

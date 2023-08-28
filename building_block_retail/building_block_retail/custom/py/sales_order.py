@@ -8,7 +8,13 @@ from frappe.utils.csvutils import getlink
 from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
 from erpnext.stock.stock_ledger import get_previous_sle
+from frappe.model.naming import parse_naming_series, make_autoname
 
+
+def autoname(doc, event=None):
+    if(doc.branch == "SVPB"):
+        doc.name = make_autoname("SVPB-PI-.####", doc=doc)
+        doc.naming_series = "SVPB-PI-.####"
 
 @frappe.whitelist()
 def get_item_value(doctype):
@@ -236,27 +242,17 @@ def get_item_rate(item='', uom=None, selling=1, check_for_uom=None):
     
         
 @frappe.whitelist()
-def get_stock_availability(items, sales_order=None):
-    date = frappe.utils.nowdate()
-    time = frappe.utils.nowtime()
-    if sales_order:
-        date = str(frappe.db.get_value("Sales Order", sales_order, "transaction_date"))
-        time = str(frappe.db.get_value("Sales Order", sales_order, "creation").time())
-            
+def get_stock_availability(items, sales_order):
     items = json.loads(items)
     stock_availability = []
+    date = str(frappe.db.get_value("Sales Order", sales_order, "transaction_date"))
+    time = str(frappe.db.get_value("Sales Order", sales_order, "creation").time())
     for i in items:
         if(frappe.get_value('Item', i.get('item_code'),'item_group') != "Raw Material"):
             conv=1
-            reserved_qty = get_reserved_qty(i.get('item_code'), i.get('warehouse'), date, time, sales_order) or 0
-            actual_stock = get_previous_sle({
-                                'item_code': i.get('item_code'),
-                                'warehouse': i.get('warehouse'),
-                                'posting_date': date,
-                                'posting_time': time
-                            })
-            res_qty, act_qty = reserved_qty, actual_stock.get('qty_after_transaction', 0) or 0
-
+            reserved_stock = get_reserved_qty(i.get('item_code'), i.get('warehouse'), date, time, sales_order) or 0
+            res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
+            res_qty = reserved_stock
             qty, planned_production_qty = 0, 0
             planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
             currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
@@ -327,19 +323,10 @@ def get_stock_and_priority(items, sales_order):
     idx=0
     date = str(frappe.db.get_value("Sales Order", sales_order, "transaction_date"))
     time = str(frappe.db.get_value("Sales Order", sales_order, "creation").time())
-    frappe.errprint(len(items))
     for row in items:
         conv=1
         if(frappe.get_value('Item', row.get('item_code'),'item_group') != "Raw Material"):
-            actual_stock = get_previous_sle({
-                            'item_code': row.get('item_code'),
-                            'warehouse': row.get('warehouse'),
-                            'posting_date': date,
-                            'posting_time': time
-                        }).get("qty_after_transaction") or 0
-             
             reserved_stock = get_reserved_qty(row.get('item_code'), row.get('warehouse'), date, time, sales_order) or 0
-
             buffer = frappe.get_value("Item",row['item_code'], 'over_production_allowance')
             order_qty = frappe.get_value("Sales Order Item",row['name'], 'stock_qty')
             stock = frappe.get_all("Bin", filters={'item_code': row['item_code'], 'warehouse':row.get('warehouse')},fields=['reserved_qty', 'actual_qty'])
@@ -349,13 +336,15 @@ def get_stock_and_priority(items, sales_order):
             for i in stock:
                 res+=i['reserved_qty']
                 avail_qty+=i['actual_qty']
+            res = reserved_stock
+  
             act_qty = avail_qty - res - se_completed_qty
             if(act_qty<=0):
                 act_qty=0
                 stock_taken=0
                 req_qty=row['req_qty']
                 priority = 'Urgent Priority'
-            if(act_qty>row['req_qty']):
+            if(act_qty>=row['req_qty']):
                 stock_taken = row['req_qty']
                 req_qty = row['req_qty']
                 priority = 'Low Priority'
@@ -367,17 +356,17 @@ def get_stock_and_priority(items, sales_order):
                 row['req_qty'] *= conv
                 row['req_qty'] = round(row['req_qty'])
                 new_row=copy(row)
-                new_row['stock_availability'] = actual_stock - reserved_stock            
-                new_row['actual_stock'] = actual_stock
+                new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
+                new_row['actual_stock'] = avail_qty
                 new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv)
                 new_row['buffer_qty'] = round(round((copy_req_qty - act_qty)*conv)*buffer/100)
                 new_row['priority'] = 'Urgent Priority'
                 item.append(new_row)
                 row['req_qty'] = copy_req_qty
-
-            items[idx]['stock_availability'] = actual_stock - reserved_stock            
-            items[idx]['actual_stock'] = actual_stock
+                
+            items[idx]['stock_availability'] = round(act_qty*conv)
+            items[idx]['actual_stock'] = avail_qty
             items[idx]['stock_taken'] = round(stock_taken*conv)
             items[idx]['pending_qty'] = round(req_qty*conv) 
             items[idx]['buffer_qty'] = round(round(req_qty*conv) * buffer/100)

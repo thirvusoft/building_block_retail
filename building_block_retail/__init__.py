@@ -10,7 +10,9 @@ def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None,
 		posting_date = frappe.utils.nowdate()
 	if not posting_time:
 		posting_time = "23:59:59"
-		
+
+	posting_time = (posting_time or '').split('.')[0]
+
 	reserved_qty = frappe.db.sql("""
 		select
 			sum(dnpi_qty * ((so_item_qty - so_item_delivered_qty) / so_item_qty))
@@ -38,7 +40,7 @@ def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None,
 					and item_code != parent_item
 					and exists (select * from `tabSales Order` so
 					where name = dnpi_in.parent and docstatus = 1 and status != 'Closed'
-			        and DATE(so.transaction_date) <= %(posting_date)s AND TIME(so.creation) <= %(posting_time)s AND so.name != %(ignored_sales_order)s )
+			       	and TIMESTAMP(so.transaction_date, TIME(so.creation)) < TIMESTAMP(DATE(%(posting_date)s), TIME(%(posting_time)s)) AND so.name != %(ignored_sales_order)s )
 				) dnpi)
 			union
 				(select stock_qty as dnpi_qty, qty as so_item_qty,
@@ -49,7 +51,7 @@ def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None,
 				and exists(select * from `tabSales Order` so
 					where so.name = so_item.parent and so.docstatus = 1
 					and so.status != 'Closed'
-                    and DATE(so.transaction_date) <= %(posting_date)s AND TIME(so.creation) <= %(posting_time)s AND so.name != %(ignored_sales_order)s ))
+                   	and TIMESTAMP(so.transaction_date, TIME(so.creation)) < TIMESTAMP(DATE(%(posting_date)s), TIME(%(posting_time)s)) AND so.name != %(ignored_sales_order)s ))
 			) tab
 		where
 			so_item_qty >= so_item_delivered_qty
