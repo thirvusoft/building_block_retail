@@ -222,6 +222,8 @@ frappe.ui.form.on('Salary Slip',{
                         row.amount += frm.doc.salary_balance
                     }
                 })
+                console.log("1")
+                frm.refresh_field('earnings')
             }
             frm.set_value('salary_balance',0)
         }
@@ -239,6 +241,8 @@ frappe.ui.form.on('Salary Slip',{
                                 row.amount -= frm.doc.salary_balance
                             }
                         })
+                        console.log("2")
+                        frm.refresh_field('earnings')
                     }                
                 });
         }
@@ -257,6 +261,7 @@ frappe.ui.form.on('Salary Slip',{
                 frappe.model.set_value(earnings[data].doctype,earnings[data].name,'amount',frm.doc.total_paid_amount)
                 exit=1
             }
+            console.log("3")
             cur_frm.refresh_field("earnings")
         }   
         if(exit==0){
@@ -264,6 +269,7 @@ frappe.ui.form.on('Salary Slip',{
             frappe.model.set_value(child.doctype, child.name, "salary_component",'Basic') 
             setTimeout(() => {    
                 frappe.model.set_value(child.doctype, child.name, "amount",frm.doc.total_paid_amount)
+                console.log("4")
                 cur_frm.refresh_field("earnings")            }, 100);
         }   
     },
@@ -339,7 +345,8 @@ frappe.ui.form.on('Salary Slip',{
                 new_row.amount += salary_balance
             }
         }
-        frm.refresh()
+        console.log("5")
+        frm.refresh_field('earnings')
     }
 })
 
