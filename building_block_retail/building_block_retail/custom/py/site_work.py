@@ -301,6 +301,15 @@ def set_status(document, event):
             outstanding_percent = (outstanding_amt/invoiced_amt)*100
             paid_percent = 100 - outstanding_percent
             frappe.db.set_value("Project", doc.name, 'payment', paid_percent)
+        
+        required_area = sum([i.required_area for i in doc.item_details])
+        jw_completed = sum([i.sqft_allocated for i in doc.job_worker])
+        finalized_completed = sum([i.sqft_allocated for i in doc.finalised_job_worker_details])
+        if len(doc.finalised_job_worker_details):
+            frappe.db.set_value("Project", doc.name, 'completed', finalized_completed/required_area*100)
+        elif(jw_completed):
+            frappe.db.set_value("Project", doc.name, 'completed', jw_completed/required_area*100)
+
     except Exception as e:
         msg = f"Doc:\n{frappe.as_json(document)}\n\nEvent: {event}\n\nException:\n{e}\n\nTraceback:\n{frappe.get_traceback()}"
         frappe.log_error(title="Site Work Update Error", message=msg)

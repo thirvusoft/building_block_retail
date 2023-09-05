@@ -159,12 +159,29 @@ function amount(frm,cdt,cdn){
 
 frappe.ui.form.on('Sales Invoice',{
     refresh:function(frm){
+        if(frm.is_new()){
+            frm.events.get_measured_qty(frm)
+        }
+        frm.events.get_measured_qty(frm)
         if(cur_frm.doc.docstatus==0){
             cur_frm.fields_dict.site_work.$input.on("click", function() {
                 if(!cur_frm.doc.customer){
                     frappe.throw('Please Select Customer')
                 }
             });
+        }
+    },
+    site_work: function(frm){
+        frm.events.get_measured_qty(frm)
+    },
+    get_measured_qty: function(frm){
+        if(!frm.doc.site_work){
+            frm.set_value("measured_qty", 0)
+        }
+        else{
+            frappe.db.get_value("Project", frm.doc.site_work, "measured_qty").then((r)=>{
+                frm.set_value("measured_qty", r.message.measured_qty)
+            })
         }
     },
     customer:function(frm){

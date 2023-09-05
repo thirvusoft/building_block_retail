@@ -27,6 +27,40 @@ frappe.ui.form.on('Sales Order',{
         if(frm.is_new()){
             frm.trigger("type")
         }
+        else{
+            if (frm.doc.items){
+                let qtyTable = `<p style="font-size:15px;font-weight:bold;">Delivered Qty Details</p><table><thead><tr><th style="width: 06%">{%= __("Item") %}</th><th style="width: 3%">{%= __("Qty") %}</th>
+                <th style="width: 3%">{%= __("🚚Delivered Qty") %}</th><th style="width: 3%">{%= __("Pending Qty") %}</th></tr></thead><tbody>`;
+    
+                let hasPendingQty = false; 
+
+                frm.doc.items.forEach(d => {
+                    let pending_qty = Math.round(d.conversion_factor*(d.qty - d.delivered_qty));
+                    let qty= Math.round(d.conversion_factor*(d.qty));
+                    let del_qty= Math.round(d.conversion_factor*(d.delivered_qty));
+
+                    if (1 < pending_qty ) {
+                        hasPendingQty = true; 
+                        qtyTable += `<tr>
+                                        <td>${d.item_code}</td>
+                                        <td>${qty}</td>
+                                        <td>${del_qty}</td>
+                                        <td>${pending_qty}</td>
+                                    </tr>`;
+                    }
+                });
+
+                qtyTable += '</tbody></table>';
+
+                if (hasPendingQty) {
+                    frm.set_df_property('delivered_qty_details', 'options', qtyTable);
+                } else {
+                    frm.set_df_property('delivered_qty_details', 'hidden', 1); 
+                }
+
+            }
+
+        }
         
         setTimeout(() => {   
             frm.remove_custom_button('Pick List', "Create");
