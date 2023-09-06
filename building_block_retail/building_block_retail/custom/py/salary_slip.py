@@ -98,6 +98,28 @@ def get_earth_rammer_cost(doc):
 
 #validate   
 def salary_slip_add_gross_pay(doc, event):
+    doc.ot_hours=0
+    ot_amount=0
+    ot_details=get_ot_hours_details(doc)
+    doc.ot_hours=ot_details[0]["ot_hours"] or 0
+    ot_amount=ot_details[0]["ot_amount"] or 0
+    if frappe.db.exists("Salary Component","Over Time"):
+        com = [i.salary_component for i in doc.earnings]
+        if "Over Time" not in com:
+                doc.append('earnings',{'salary_component':'Over Time', 'amount':ot_amount})
+    else:
+        salary_component=frappe.new_doc("Salary Component")
+        salary_component.update({
+            "salary_component":"Over Time",
+            "salary_component_abbr":"OT",
+            "type":"Earning"
+
+        })
+        salary_component.save(ignore_permissions=True)
+        com = [i.salary_component for i in doc.earnings]
+        if "Over Time" not in com:
+                doc.append('earnings',{'salary_component':'Over Time', 'amount':ot_amount})
+    doc.gross_pay+=ot_amount
     if(doc.is_new() and doc.get('payroll_entry')):
         pe = frappe.get_doc('Payroll Entry', doc.payroll_entry)
         for row in pe.employees:
@@ -125,6 +147,18 @@ def salary_slip_add_gross_pay(doc, event):
             }) 
     if(doc.designation != 'Contractor'):
         set_net_pay(doc)
+        doc.gross_pay =sum([(i.amount or 0) for i in doc.earnings]) or 0
+
+        com = [i.salary_component for i in doc.deductions]
+
+        doc.net_pay = doc.gross_pay - doc.total_deduction
+        doc.rounded_total = round(doc.net_pay)
+        doc.compute_year_to_date()
+            
+        #Calculation of Month to date
+        doc.compute_month_to_date()
+        doc.compute_component_wise_year_to_date()
+        doc.set_net_total_in_words()
         return
     table = get_employe_expense_report(doc)
     emp_amount = sum([i['expense'] for i in table])
@@ -389,3 +423,25 @@ def on_cancel(doc, action):
         if(i.employee_advance):
             amt = frappe.db.get_value('Employee Advance', i.employee_advance, 'remaining_amount')
             frappe.db.set_value('Employee Advance', i.employee_advance, 'remaining_amount', amt+i.amount)
+
+
+def get_ot_hours_details(doc):
+   
+    return frappe.db.sql("""
+		select
+			sum(at.ot_hours) as ot_hours,sum(at.ot_amount) as ot_amount
+		from
+			`tabAttendance` at
+			
+		where
+			at.attendance_date between '{0}' and '{1}' and
+            at.employee='{2}' and
+            at.docstatus=1
+	""".format(
+			doc.start_date,doc.end_date,doc.employee
+		),
+		as_dict=1,
+	)
+
+
+
