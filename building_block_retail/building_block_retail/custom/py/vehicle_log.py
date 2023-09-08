@@ -81,6 +81,8 @@ def validate(self, event):
         frappe.throw(f"Please don't choose both {frappe.bold('Delivery Note')} and {frappe.bold('Sales Invoice')} under {frappe.bold('Purpose')}")
     if(self.select_purpose=='Raw Material' and self.purchase_invoice and self.purchase_receipt):
         frappe.throw(f"Please don't choose both {frappe.bold('Purchase Receipt')} and {frappe.bold('Purchase Invoice')} under {frappe.bold('Purpose')}")
+    if self.get("odometer") and self.get("last_odometer"):
+        self.today_odometer_value = self.get("odometer")-self.get("last_odometer")
 
 def update_transport_cost(self, event):
     sw=''
@@ -107,24 +109,22 @@ def update_transport_cost(self, event):
 def vehicle_log_creation(self, event):
     if(self.own_vehicle_no and self.current_odometer_value):
         last_odo_value=frappe.get_last_doc("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]},order_by="posting_date desc")
-        frappe.errprint(last_odo_value.name)
         distance=0
         if last_odo_value:
             
             if not frappe.db.exists('Vehicle Log',{"delivery_note":last_odo_value.name,"license_plate":self.own_vehicle_no}):
-                frappe.errprint(last_odo_value.current_odometer_value)
                 distance=self.current_odometer_value - last_odo_value.current_odometer_value
-                frappe.errprint(distance)
                 vehicle_log=frappe.new_doc('Vehicle Log')
                 vehicle_log.update({
                     'license_plate':self.own_vehicle_no,
-                    'employee':self.employee,
-                    "date":self.posting_date,
+                    'employee':last_odo_value.employee,
+                    "date":last_odo_value.posting_date,
                     "odometer":self.current_odometer_value,
                     "last_odometer":last_odo_value.current_odometer_value,
                     "select_purpose":"Goods Supply",
                     "delivery_note":last_odo_value.name,
-                    "today_odometer_value":distance
+                    "today_odometer_value":distance,
+                    "driver":last_odo_value.driver_name2
                 })
                 vehicle_log.flags.ignore_permissions=True
                 vehicle_log.save()
