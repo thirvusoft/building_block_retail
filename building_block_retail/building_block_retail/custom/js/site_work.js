@@ -529,10 +529,12 @@ frappe.realtime.on('show_poss_del_date_error', (item)=>{
 	frappe.show_alert({'message':`Enter Daily maximum production qty in Item <b>${item}</b>`,'indicator':'red'}) 
 })
 var get_possible_delivery_date = function(frm, row){
-    var child = []
+    var child = frm.doc.possible_delivery_dates || []
+	var child_items = []
+	child.forEach((a)=>{
+		child_items.push(a.item)
+	})
 	
-	
-    // frm.doc.pavers.forEach(row => {
         if(row.item && row.req_pcs){
             frappe.call({
                 method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
@@ -541,11 +543,22 @@ var get_possible_delivery_date = function(frm, row){
                     call_from_report : 0
                 },
                 callback(r){
-                    child.push({'item':row.item, 'possible_delivery_date':r.message})
-                    frm.set_value('possible_delivery_dates', child)
-                    frm.refresh_field('possible_delivery_dates')
+					if(!child_items.includes(row.item)){
+						child_items.push(row.item)
+						var new_child = frm.add_child("possible_delivery_dates")
+						new_child.item = row.item
+						new_child.possible_delivery_date = r.message
+						frm.refresh_field('possible_delivery_dates')
+					}
+					else{
+						frm.doc.possible_delivery_dates.forEach((a)=>{
+							if(a.item == row.item){
+								frappe.model.set_value(a.doctype, a.name, "possible_delivery_date", r.message)
+								frm.refresh_field('possible_delivery_dates')
+							}
+						})
+					}
                 }
             })
         }
-    // })
 }
