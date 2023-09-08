@@ -255,10 +255,11 @@ def employee_update(doc,action):
     update_employee_advance(doc)
     employee_doc = frappe.get_doc('Employee',doc.employee)
     if(doc.designation in ['Loader', 'Job Worker']):
-        if(doc.get('pay_the_balance')):
-            employee_doc.salary_balance=doc.total_unpaid_amount
-        else:
-            employee_doc.salary_balance+=doc.total_unpaid_amount
+        employee_doc.salary_balance = (doc.total_amount + employee_doc.salary_balance)- sum([i.amount for i in doc.earnings])
+        # if(doc.get('pay_the_balance')):
+        #     employee_doc.salary_balance=doc.total_unpaid_amount
+        # else:
+        #     employee_doc.salary_balance+=doc.total_unpaid_amount
     elif(doc.designation in ['Contractor']):
         employee_doc.salary_balance = (doc.total_expense + employee_doc.salary_balance)- sum([i.amount for i in doc.earnings])
     employee_doc.save()

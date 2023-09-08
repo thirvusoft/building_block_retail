@@ -8,6 +8,7 @@
  "field_order": [
   "item",
   "warehouse",
+  "actual_qty",
   "qty",
   "ordered_qty",
   "planned_production_qty",
@@ -30,6 +31,7 @@
    "options": "Warehouse"
   },
   {
+   "columns": 1,
    "fieldname": "qty",
    "fieldtype": "Float",
    "in_list_view": 1,
@@ -61,12 +63,19 @@
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Currently Produced qty"
+  },
+  {
+   "columns": 1,
+   "fieldname": "actual_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Actual Qty"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2022-07-15 13:30:16.344746",
+ "modified": "2023-09-06 14:40:56.448723",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "TS Availbale Qty",

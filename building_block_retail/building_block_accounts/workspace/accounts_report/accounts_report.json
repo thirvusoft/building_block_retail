@@ -19,7 +19,7 @@
  "is_standard": 1,
  "label": "Accounts Report",
  "links": [],
- "modified": "2022-11-26 09:53:12.216269",
+ "modified": "2023-08-25 17:01:30.613824",
  "modified_by": "Administrator",
  "module": "Building Block Accounts",
  "name": "Accounts Report",
@@ -67,6 +67,18 @@
    "doc_view": "",
    "label": "Accounts Payable",
    "link_to": "Accounts Payable",
+   "type": "Report"
+  },
+  {
+   "doc_view": "",
+   "label": "Customer Ledger Summary",
+   "link_to": "Customer Ledger Summary",
+   "type": "Report"
+  },
+  {
+   "doc_view": "",
+   "label": "Supplier Ledger Summary",
+   "link_to": "Supplier Ledger Summary",
    "type": "Report"
   }
  ]

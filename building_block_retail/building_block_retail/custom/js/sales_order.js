@@ -30,21 +30,22 @@ frappe.ui.form.on('Sales Order',{
         }
         else{
             if (frm.doc.items){
-                 
-                let qtyTable = `<h1>Delivered Qty Details</h1><table><thead><tr><th style="width: 06%">{%= __("Item") %}</th><th style="width: 3%">{%= __("Qty") %}</th>
+                let qtyTable = `<p style="font-size:15px;font-weight:bold;">Delivered Qty Details</p><table><thead><tr><th style="width: 06%">{%= __("Item") %}</th><th style="width: 3%">{%= __("Qty") %}</th>
                 <th style="width: 3%">{%= __("🚚Delivered Qty") %}</th><th style="width: 3%">{%= __("Pending Qty") %}</th></tr></thead><tbody>`;
     
                 let hasPendingQty = false; 
 
                 frm.doc.items.forEach(d => {
-                    let pending_qty = d.qty - d.delivered_qty;
+                    let pending_qty = Math.round(d.conversion_factor*(d.qty - d.delivered_qty));
+                    let qty= Math.round(d.conversion_factor*(d.qty));
+                    let del_qty= Math.round(d.conversion_factor*(d.delivered_qty));
 
                     if (1 < pending_qty ) {
                         hasPendingQty = true; 
                         qtyTable += `<tr>
                                         <td>${d.item_code}</td>
-                                        <td>${d.qty}</td>
-                                        <td>${d.delivered_qty}</td>
+                                        <td>${qty}</td>
+                                        <td>${del_qty}</td>
                                         <td>${pending_qty}</td>
                                     </tr>`;
                     }
@@ -61,7 +62,7 @@ frappe.ui.form.on('Sales Order',{
             }
 
         }
-   
+        
         setTimeout(() => {   
             frm.remove_custom_button('Pick List', "Create");
             frm.remove_custom_button('Material Request', "Create");
