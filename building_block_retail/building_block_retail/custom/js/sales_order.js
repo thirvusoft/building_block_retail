@@ -24,10 +24,44 @@ function setquery(frm){
 var prop_name;
 frappe.ui.form.on('Sales Order',{
     refresh:function(frm){
+
         if(frm.is_new()){
             frm.trigger("type")
         }
-        
+        else{
+            if (frm.doc.items){
+                 
+                let qtyTable = `<h1>Delivered Qty Details</h1><table><thead><tr><th style="width: 06%">{%= __("Item") %}</th><th style="width: 3%">{%= __("Qty") %}</th>
+                <th style="width: 3%">{%= __("🚚Delivered Qty") %}</th><th style="width: 3%">{%= __("Pending Qty") %}</th></tr></thead><tbody>`;
+    
+                let hasPendingQty = false; 
+
+                frm.doc.items.forEach(d => {
+                    let pending_qty = d.qty - d.delivered_qty;
+
+                    if (1 < pending_qty ) {
+                        hasPendingQty = true; 
+                        qtyTable += `<tr>
+                                        <td>${d.item_code}</td>
+                                        <td>${d.qty}</td>
+                                        <td>${d.delivered_qty}</td>
+                                        <td>${pending_qty}</td>
+                                    </tr>`;
+                    }
+                });
+
+                qtyTable += '</tbody></table>';
+
+                if (hasPendingQty) {
+                    frm.set_df_property('delivered_qty_details', 'options', qtyTable);
+                } else {
+                    frm.set_df_property('delivered_qty_details', 'hidden', 1); 
+                }
+
+            }
+
+        }
+   
         setTimeout(() => {   
             frm.remove_custom_button('Pick List', "Create");
             frm.remove_custom_button('Material Request', "Create");
