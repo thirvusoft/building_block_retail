@@ -162,7 +162,7 @@ frappe.ui.form.on('Sales Invoice',{
         if(frm.is_new()){
             frm.events.get_measured_qty(frm)
         }
-        frm.events.get_measured_qty(frm)
+        // frm.events.get_measured_qty(frm)
         if(cur_frm.doc.docstatus==0){
             cur_frm.fields_dict.site_work.$input.on("click", function() {
                 if(!cur_frm.doc.customer){

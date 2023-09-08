@@ -257,7 +257,11 @@ def get_stock_availability(items, sales_order):
             planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
             currently_produced_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='produced_qty'))
             if(res_qty<act_qty):qty = qty = act_qty-res_qty
-            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':float(qty or 0)*conv,'ordered_qty':round(float(i.get('stock_qty') or 0))*conv,'stock_uom':i.get('stock_uom'),'planned_production_qty':float(planned_production_qty or 0)*conv, 'currently_produced_qty':float(currently_produced_qty or 0)*conv})
+            stock = frappe.get_all("Bin", filters={'item_code': i.get('item_code'), 'warehouse':i.get('warehouse')},fields=['sum(actual_qty) as actual_qty'])
+            avail_qty=0
+            if len(stock) and stock[0].get("actual_qty"):
+                avail_qty = stock[0]["actual_qty"]
+            stock_availability.append({'item':i.get('item_code'),'warehouse':i.get('warehouse'),'qty':float(qty or 0)*conv,'ordered_qty':round(float(i.get('stock_qty') or 0))*conv,'stock_uom':i.get('stock_uom'),'planned_production_qty':float(planned_production_qty or 0)*conv, 'currently_produced_qty':float(currently_produced_qty or 0)*conv, "actual_qty":round(avail_qty)})
     return stock_availability
 
 @frappe.whitelist()
@@ -358,7 +362,7 @@ def get_stock_and_priority(items, sales_order):
                 new_row=copy(row)
                 new_row['stock_availability'] = 0
                 new_row['stock_taken'] = 0
-                new_row['actual_stock'] = avail_qty
+                new_row['actual_stock'] = round(avail_qty)
                 new_row['pending_qty'] = round((copy_req_qty - act_qty)*conv)
                 new_row['buffer_qty'] = round(round((copy_req_qty - act_qty)*conv)*buffer/100)
                 new_row['priority'] = 'Urgent Priority'
@@ -366,7 +370,7 @@ def get_stock_and_priority(items, sales_order):
                 row['req_qty'] = copy_req_qty
                 
             items[idx]['stock_availability'] = round(act_qty*conv)
-            items[idx]['actual_stock'] = avail_qty
+            items[idx]['actual_stock'] = round(avail_qty)
             items[idx]['stock_taken'] = round(stock_taken*conv)
             items[idx]['pending_qty'] = round(req_qty*conv) 
             items[idx]['buffer_qty'] = round(round(req_qty*conv) * buffer/100)

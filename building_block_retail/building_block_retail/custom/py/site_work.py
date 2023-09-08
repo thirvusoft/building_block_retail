@@ -293,22 +293,23 @@ def set_status(document, event):
         total_invoiced_qty = sum(invoiced_items.values())
         if(total_delivered_qty):
             invoiced_percent = (total_invoiced_qty/total_delivered_qty)*100
-            frappe.db.set_value("Project", doc.name, 'invoiced', invoiced_percent)
+            frappe.db.set_value("Project", doc.name, 'invoiced', invoiced_percent, update_modified=False)
         
 
-        invoiced_amt, outstanding_amt = frappe.db.get_value("Sales Invoice", {'docstatus':1, 'site_work':doc.name}, ["(sum(rounded_total))", "sum(outstanding_amount)"])
-        if(invoiced_amt):
-            outstanding_percent = (outstanding_amt/invoiced_amt)*100
-            paid_percent = 100 - outstanding_percent
-            frappe.db.set_value("Project", doc.name, 'payment', paid_percent)
+        paid_amount = frappe.db.get_value("Payment Entry", {'docstatus':1, 'site_work':doc.name}, "sum(paid_amount)")
+        outstanding_amt = frappe.db.get_value("Delivery Note", {'docstatus':1, 'site_work':doc.name}, "sum(rounded_total)")
+        if(paid_amount and outstanding_amt):
+            # outstanding_percent = (outstanding_amt/invoiced_amt)*100
+            paid_percent = paid_amount/(outstanding_amt or 1) * 100
+            frappe.db.set_value("Project", doc.name, 'payment', paid_percent, update_modified=False)
         
         required_area = sum([i.required_area for i in doc.item_details])
         jw_completed = sum([i.sqft_allocated for i in doc.job_worker])
         finalized_completed = sum([i.sqft_allocated for i in doc.finalised_job_worker_details])
         if len(doc.finalised_job_worker_details):
-            frappe.db.set_value("Project", doc.name, 'completed', finalized_completed/required_area*100)
+            frappe.db.set_value("Project", doc.name, 'completed', finalized_completed/required_area*100, update_modified=False)
         elif(jw_completed):
-            frappe.db.set_value("Project", doc.name, 'completed', jw_completed/required_area*100)
+            frappe.db.set_value("Project", doc.name, 'completed', jw_completed/required_area*100, update_modified=False)
 
     except Exception as e:
         msg = f"Doc:\n{frappe.as_json(document)}\n\nEvent: {event}\n\nException:\n{e}\n\nTraceback:\n{frappe.get_traceback()}"
