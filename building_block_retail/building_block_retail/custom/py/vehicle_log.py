@@ -105,24 +105,31 @@ def update_transport_cost(self, event):
         doc.save()
 
 def vehicle_log_creation(self, event):
-    if(self.own_vehicle_no and self.return_odometer_value):
-        if not frappe.db.exists('Vehicle Log',{"delivery_note":self.name,"license_plate":self.own_vehicle_no}):
-            vehicle_log=frappe.new_doc('Vehicle Log')
-            vehicle_log.update({
-                'license_plate':self.own_vehicle_no,
-                'employee':self.employee,
-                "date":self.lr_date,
-                "odometer":self.return_odometer_value,
-                "last_odometer":self.current_odometer_value,
-                "select_purpose":"Goods Supply",
-                "delivery_note":self.name,
-                "today_odometer_value":(self.return_odometer_value-self.current_odometer_value)
-            })
-            vehicle_log.flags.ignore_permissions=True
-            vehicle_log.save()
-            vehicle_log.submit()
-        else:
-            frappe.msgprint("Return odometer value already updated!")
+    if(self.own_vehicle_no and self.current_odometer_value):
+        last_odo_value=frappe.get_last_doc("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]},order_by="posting_date desc")
+        frappe.errprint(last_odo_value.name)
+        distance=0
+        if last_odo_value:
+            
+            if not frappe.db.exists('Vehicle Log',{"delivery_note":last_odo_value.name,"license_plate":self.own_vehicle_no}):
+                frappe.errprint(last_odo_value.current_odometer_value)
+                distance=self.current_odometer_value - last_odo_value.current_odometer_value
+                frappe.errprint(distance)
+                vehicle_log=frappe.new_doc('Vehicle Log')
+                vehicle_log.update({
+                    'license_plate':self.own_vehicle_no,
+                    'employee':self.employee,
+                    "date":self.posting_date,
+                    "odometer":self.current_odometer_value,
+                    "last_odometer":last_odo_value.current_odometer_value,
+                    "select_purpose":"Goods Supply",
+                    "delivery_note":last_odo_value.name,
+                    "today_odometer_value":distance
+                })
+                vehicle_log.flags.ignore_permissions=True
+                vehicle_log.save()
+                vehicle_log.submit()
+  
 
 def vehicle_log_draft(self, event):
     vehicle_draft=frappe.get_all("Vehicle Log",filters={"docstatus":0,"license_plate":self.license_plate})

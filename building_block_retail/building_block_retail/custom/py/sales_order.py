@@ -464,3 +464,4 @@ def branch_list(company):
         branch_filter.append(rows.default_dimension)
    
     return branch_filter
+
