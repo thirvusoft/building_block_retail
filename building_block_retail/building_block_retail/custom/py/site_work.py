@@ -155,6 +155,9 @@ def create_status():
 #                 )
 def validate(self,event):
     # create_je_for_er(self)
+    if not self.is_new():
+        validate_status(self)
+        close_pending_sales_orders(self)
     validate_jw_qty(self)
     self.total_completed_qty = 0
     for i in self.finalised_job_worker_details:
@@ -314,3 +317,16 @@ def set_status(document, event):
     except Exception as e:
         msg = f"Doc:\n{frappe.as_json(document)}\n\nEvent: {event}\n\nException:\n{e}\n\nTraceback:\n{frappe.get_traceback()}"
         frappe.log_error(title="Site Work Update Error", message=msg)
+
+
+def validate_status(doc):
+    old_status = frappe.get_value("Project", doc.name, "status")
+    if old_status == "Completed" and doc.status != old_status:
+        frappe.throw(f"Not allowed to change status from {old_status} to {doc.status}")
+
+def close_pending_sales_orders(doc):
+    from erpnext.selling.doctype.sales_order.sales_order import update_status
+    if doc.status == "Completed":
+        linked_so = frappe.get_all("Sales Order", filters={"docstatus":1, "site_work":doc.name, "status":["not in", ["Completed", "Closed"]]}, pluck="name")
+        for i in linked_so:
+            update_status("Closed", i)

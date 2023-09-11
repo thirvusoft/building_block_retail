@@ -48,7 +48,6 @@ def update_qty_sitework(self,event):
                         'per_delivered':per_delivered or 0
                     })
                     doc.save()
-        frappe.db.commit()
 
 
 
@@ -89,7 +88,6 @@ def reduce_qty_sitework(self,event):
                     })
                     doc.flags.ignore_validate = True
                     doc.save()
-        frappe.db.commit()
 
 
 
@@ -130,7 +128,6 @@ def update_return_qty_sitework(self,event):
                         'delivery_detail': delivery_detail
                     })
                     doc.save()
-        frappe.db.commit()
 
 
 
@@ -171,7 +168,6 @@ def reduce_return_qty_sitework(self,event):
                         'delivery_detail': delivery_detail
                     })
                     doc.save()
-        frappe.db.commit()
 
 
 
@@ -186,11 +182,16 @@ def update_customer(self,event):
 
 def validate(doc,action):
     validate_loadman_qty(doc)
+    validate_odometer_value(doc)
     for d in doc.items:
         if d.pieces:
             doc.value_pieces = True
         if d.ts_qty:
             doc.value_bundle = True
+
+def validate_odometer_value(doc):
+    if doc.get("own_vehicle_no") and not doc.get("current_odometer_value"):
+        frappe.throw("Field <b>Current Odometer Value</b> in Transporter Info should be greater than 0")
 
 def validate_loadman_qty(doc):
     item_qty = {}

@@ -11,8 +11,8 @@
  "is_standard": "Yes",
  "json": "{\"filters\":[[\"Item Wise Production Qty\",\"qty_to_update_in_work_order\",\">\",0,false],[\"Item Wise Production Qty\",\"qty\",\"=\",0,false]],\"fields\":[[\"name\",\"Production Order\"],[\"docstatus\",\"Production Order\"],[\"status\",\"Production Order\"],[\"item_code\",\"Item Wise Production Qty\"],[\"qty_to_update_in_work_order\",\"Item Wise Production Qty\"]],\"order_by\":\"`tabProduction Order`.`modified` desc\",\"add_totals_row\":0,\"page_length\":20,\"column_widths\":{\"name\":175,\"status\":120,\"Item Wise Production Qty:item_code\":188,\"Item Wise Production Qty:qty_to_update_in_work_order\":194},\"group_by\":null}",
  "letter_head": "Shri Velavaa Paver Bricks",
- "modified": "2023-06-12 16:24:22.428621",
- "modified_by": "subash@svb.com",
+ "modified": "2023-09-11 12:10:05.023481",
+ "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Unallocated Items Report",
  "owner": "subash@svb.com",
@@ -20,5 +20,9 @@
  "ref_doctype": "Production Order",
  "report_name": "Unallocated Items Report",
  "report_type": "Report Builder",
- "roles": []
+ "roles": [
+  {
+   "role": "All"
+  }
+ ]
 }

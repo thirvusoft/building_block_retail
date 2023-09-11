@@ -1660,7 +1660,7 @@
    "modified_by": "Administrator",
    "name": "Delivery Note-current_odometer_value",
    "no_copy": 0,
-   "non_negative": 0,
+   "non_negative": 1,
    "options": null,
    "owner": "Administrator",
    "parent": null,
