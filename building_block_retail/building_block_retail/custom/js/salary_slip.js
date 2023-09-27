@@ -1,6 +1,12 @@
 var salary_balance,standard_hrs=0;
 frappe.ui.form.on('Salary Slip',{
-    refresh: function(frm){
+    refresh: async function(frm){
+        let default_salary_component;
+        await frappe.db.get_single_value("Thirvu HR Settings", "default_salary_component").then(r => {
+            
+            default_salary_component = r;
+            
+        });
         cur_frm.set_df_property('total_amount', 'read_only', 1)
         frm.set_query("payment_account", function () {
 			var account_types = ["Bank", "Cash"];
@@ -218,7 +224,7 @@ frappe.ui.form.on('Salary Slip',{
             }
             else{
                 frm.doc.earnings.forEach( (row)=>{
-                    if(row.salary_component == 'Basic'){
+                    if(row.salary_component == default_salary_component){
                         row.amount += frm.doc.salary_balance
                     }
                 })
@@ -237,7 +243,7 @@ frappe.ui.form.on('Salary Slip',{
                     }
                     else{
                         frm.doc.earnings.forEach( (row)=>{
-                            if(row.salary_component == 'Basic'){
+                            if(row.salary_component == default_salary_component){
                                 row.amount -= frm.doc.salary_balance
                             }
                         })
@@ -257,7 +263,7 @@ frappe.ui.form.on('Salary Slip',{
         
         var exit=0
         for (let data in earnings){
-            if(earnings[data].salary_component=='Basic'){
+            if(earnings[data].salary_component==default_salary_component){
                 frappe.model.set_value(earnings[data].doctype,earnings[data].name,'amount',frm.doc.total_paid_amount)
                 exit=1
             }
@@ -266,7 +272,7 @@ frappe.ui.form.on('Salary Slip',{
         }   
         if(exit==0){
             var child = cur_frm.add_child("earnings");
-            frappe.model.set_value(child.doctype, child.name, "salary_component",'Basic') 
+            frappe.model.set_value(child.doctype, child.name, "salary_component",default_salary_component) 
             setTimeout(() => {    
                 frappe.model.set_value(child.doctype, child.name, "amount",frm.doc.total_paid_amount)
                 console.log("4")
@@ -329,7 +335,7 @@ frappe.ui.form.on('Salary Slip',{
         var added = 0
         for(let i=0; i<frm.doc.earnings.length; i++){
             var row = frm.doc.earnings[i]
-            if(row.salary_component == 'Basic'){
+            if(row.salary_component == default_salary_component){
                 added = 1
                 row.amount = frm.doc.contractor_to_pay
                 if(frm.doc.pay_the_balance == 1){
@@ -339,7 +345,7 @@ frappe.ui.form.on('Salary Slip',{
         }
         if(!added){
             var new_row = frm.add_child('earnings')
-            new_row.salary_component == 'Basic';
+            new_row.salary_component == default_salary_component;
             new_row.amount = frm.doc.contractor_to_pay;
             if(frm.doc.pay_the_balance == 1){
                 new_row.amount += salary_balance
