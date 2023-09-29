@@ -11,6 +11,8 @@ from frappe.utils import (
 )
 from frappe.utils.data import flt, today
 from numpy import average
+
+
 @frappe.whitelist()
 def get_start_end_dates(payroll_frequency, start_date=None, company=None):
     if payroll_frequency == "Monthly" or payroll_frequency == "Bimonthly" or payroll_frequency == "":
@@ -98,6 +100,9 @@ def get_earth_rammer_cost(doc):
 
 #validate   
 def salary_slip_add_gross_pay(doc, event):
+    default_salary_component="Basic"
+    if(doc.designation in ["Job Worker", "Loader", "Contractor"]):
+        default_salary_component=frappe.db.get_value("Thirvu HR Settings","Thirvu HR Settings" , "default_salary_component")
     doc.ot_hours=0
     ot_amount=0
     ot_details=get_ot_hours_details(doc)
@@ -146,7 +151,7 @@ def salary_slip_add_gross_pay(doc, event):
                 'total_unpaid_amount': amt
             }) 
     if(doc.designation != 'Contractor'):
-        set_net_pay(doc)
+        set_net_pay(doc,default_salary_component)
         doc.gross_pay =sum([(i.amount or 0) for i in doc.earnings]) or 0
 
         com = [i.salary_component for i in doc.deductions]
@@ -167,8 +172,8 @@ def salary_slip_add_gross_pay(doc, event):
     if(not doc.contractor_to_pay):
         doc.contractor_to_pay = emp_amount
     com = [i.salary_component for i in doc.earnings]
-    if "Basic" not in com:
-        doc.append('earnings',{'salary_component':'Basic', 'amount':doc.total_expense})
+    if default_salary_component not in com:
+        doc.append('earnings',{'salary_component':default_salary_component, 'amount':doc.total_expense})
     doc.gross_pay =sum([(i.amount or 0) for i in doc.earnings]) or 0
 
     com = [i.salary_component for i in doc.deductions]
@@ -264,14 +269,14 @@ def employee_update(doc,action):
         employee_doc.salary_balance = (doc.total_expense + employee_doc.salary_balance)- sum([i.amount for i in doc.earnings])
     employee_doc.save()
 
-def set_net_pay(self):
+def set_net_pay(self,default_salary_component):
     earnings=self.earnings
     if self.designation in ['Job Worker', 'Loader', 'Earth Rammer Contractor']:
         for row in range(len(earnings)):
-            if(earnings[row].salary_component=='Basic'):
+            if(earnings[row].salary_component==default_salary_component):
                 earnings[row].amount=self.total_paid_amount
-        if("Basic" not in [i.salary_component for i in self.earnings]):
-            self.append("earnings", {'salary_component': "Basic", 'amount':self.total_paid_amount})
+        if(default_salary_component not in [i.salary_component for i in self.earnings]):
+            self.append("earnings", {'salary_component':default_salary_component, 'amount':self.total_paid_amount})
         self.update({
             'earnings':earnings,
             'gross_pay':self.total_paid_amount,

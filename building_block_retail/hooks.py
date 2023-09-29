@@ -288,6 +288,7 @@ doctype_js = {
                 "Purchase Invoice":"/building_block_retail/custom/js/purchase_invoice.js",
 				"Workstation": "/building_block_retail/custom/js/workstation.js",
 				"BOM":"/building_block_retail/custom/js/bom.js",
+                "Supplier":"/building_block_retail/custom/js/supplier.js",
                 (
                     "Quotation", "Sales Order", "Sales Invoice", "Delivery Note"
 				):"/building_block_retail/custom/js/set_inclusive_tax.js"
