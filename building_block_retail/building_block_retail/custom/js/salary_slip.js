@@ -1,12 +1,8 @@
 var salary_balance,standard_hrs=0;
 frappe.ui.form.on('Salary Slip',{
-    refresh: async function(frm){
-        let default_salary_component;
-        await frappe.db.get_single_value("Thirvu HR Settings", "default_salary_component").then(r => {
-            
-            default_salary_component = r;
-            
-        });
+    refresh: function(frm){
+
+        frm.events.get_default_salary_component(frm);
         cur_frm.set_df_property('total_amount', 'read_only', 1)
         frm.set_query("payment_account", function () {
 			var account_types = ["Bank", "Cash"];
@@ -19,6 +15,19 @@ frappe.ui.form.on('Salary Slip',{
 			};
 		});
     },
+    get_default_salary_component:async function(frm){
+        frm.default_salary_component="Basic";
+        if(frm.doc.designation =='Job Worker' || frm.doc.designation == "Loader" || frm.doc.designation == "Contractor"){
+            await frappe.db.get_single_value("Thirvu HR Settings", "default_salary_component").then(r => {
+            
+                frm.default_salary_component = r;
+                
+            });
+        }
+        else{
+            frm.default_salary_component = "Basic"
+        }
+    },
     validate:function(frm,cdt,cdn){
         if(frm.doc.total_unpaid_amount<0){
             cur_frm.scroll_to_field('total_paid_amount')
@@ -27,6 +36,7 @@ frappe.ui.form.on('Salary Slip',{
         }
     },
     employee:function(frm,cdt,cdn){
+        frm.events.get_default_salary_component(frm);
         if(frm.doc.designation=='Job Worker' || frm.doc.designation == "Loader" || frm.doc.designation == "Contractor"){
             frappe.db.get_doc('Employee', frm.doc.employee).then((doc) => {
                 salary_balance=doc.salary_balance
@@ -218,17 +228,16 @@ frappe.ui.form.on('Salary Slip',{
     },
     pay_the_balance:function(frm){
         if(frm.doc.pay_the_balance==1){
-            if(frm.doc.designation != "Contractor")
-            {frm.set_value('total_paid_amount',frm.doc.total_paid_amount+frm.doc.salary_balance)
+            if(frm.doc.designation != "Contractor"){
+            frm.set_value('total_paid_amount',frm.doc.total_paid_amount+frm.doc.salary_balance)
             frm.set_value('total_amount',frm.doc.total_amount+frm.doc.salary_balance)
             }
             else{
                 frm.doc.earnings.forEach( (row)=>{
-                    if(row.salary_component == default_salary_component){
+                    if(row.salary_component == frm.default_salary_component){
                         row.amount += frm.doc.salary_balance
                     }
                 })
-                console.log("1")
                 frm.refresh_field('earnings')
             }
             frm.set_value('salary_balance',0)
@@ -243,11 +252,10 @@ frappe.ui.form.on('Salary Slip',{
                     }
                     else{
                         frm.doc.earnings.forEach( (row)=>{
-                            if(row.salary_component == default_salary_component){
+                            if(row.salary_component == frm.default_salary_component){
                                 row.amount -= frm.doc.salary_balance
                             }
                         })
-                        console.log("2")
                         frm.refresh_field('earnings')
                     }                
                 });
@@ -263,19 +271,17 @@ frappe.ui.form.on('Salary Slip',{
         
         var exit=0
         for (let data in earnings){
-            if(earnings[data].salary_component==default_salary_component){
+            if(earnings[data].salary_component==frm.default_salary_component){
                 frappe.model.set_value(earnings[data].doctype,earnings[data].name,'amount',frm.doc.total_paid_amount)
                 exit=1
             }
-            console.log("3")
             cur_frm.refresh_field("earnings")
         }   
         if(exit==0){
             var child = cur_frm.add_child("earnings");
-            frappe.model.set_value(child.doctype, child.name, "salary_component",default_salary_component) 
+            frappe.model.set_value(child.doctype, child.name, "salary_component",frm.default_salary_component) 
             setTimeout(() => {    
                 frappe.model.set_value(child.doctype, child.name, "amount",frm.doc.total_paid_amount)
-                console.log("4")
                 cur_frm.refresh_field("earnings")            }, 100);
         }   
     },
@@ -335,7 +341,7 @@ frappe.ui.form.on('Salary Slip',{
         var added = 0
         for(let i=0; i<frm.doc.earnings.length; i++){
             var row = frm.doc.earnings[i]
-            if(row.salary_component == default_salary_component){
+            if(row.salary_component == frm.default_salary_component){
                 added = 1
                 row.amount = frm.doc.contractor_to_pay
                 if(frm.doc.pay_the_balance == 1){
@@ -345,13 +351,12 @@ frappe.ui.form.on('Salary Slip',{
         }
         if(!added){
             var new_row = frm.add_child('earnings')
-            new_row.salary_component == default_salary_component;
+            new_row.salary_component == frm.default_salary_component;
             new_row.amount = frm.doc.contractor_to_pay;
             if(frm.doc.pay_the_balance == 1){
                 new_row.amount += salary_balance
             }
         }
-        console.log("5")
         frm.refresh_field('earnings')
     }
 })

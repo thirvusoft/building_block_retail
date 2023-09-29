@@ -100,7 +100,9 @@ def get_earth_rammer_cost(doc):
 
 #validate   
 def salary_slip_add_gross_pay(doc, event):
-    default_salary_component=frappe.db.get_value("Thirvu HR Settings","Thirvu HR Settings" , "default_salary_component")
+    default_salary_component="Basic"
+    if(doc.designation in ["Job Worker", "Loader", "Contractor"]):
+        default_salary_component=frappe.db.get_value("Thirvu HR Settings","Thirvu HR Settings" , "default_salary_component")
     doc.ot_hours=0
     ot_amount=0
     ot_details=get_ot_hours_details(doc)
