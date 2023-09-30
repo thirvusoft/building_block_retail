@@ -384,3 +384,15 @@ def delivery_note_whatsapp_customer(doc, action):
         if(not api_authentication):
             error += "\n API Authentication Not found."
         frappe.log_error(error,"Whatsapp error")
+
+def validate_branch(self, event=None):
+    if self.branch:
+        for row in self.items:
+            if row.against_sales_order:
+                if (branch := frappe.db.get_value('Sales Order', row.against_sales_order, 'branch')) and branch != self.branch:
+                    frappe.throw(f"""{self.doctype} {get_link_to_form(self.doctype, self.name)} branch {self.branch} is not same as Sales Order {get_link_to_form('Sales Order', row.against_sales_order)} branch {branch}""")
+            
+            if row.against_sales_invoice:
+                if (branch := frappe.db.get_value('Sales Invoice', row.against_sales_invoice, 'branch')) and branch != self.branch:
+                    frappe.throw(f"""{self.doctype} {get_link_to_form(self.doctype, self.name)} branch {self.branch} is not same as Sales Invoice {get_link_to_form('Sales Invoice', row.against_sales_invoice)} branch {branch}""")
+
