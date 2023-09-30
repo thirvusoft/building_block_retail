@@ -7,13 +7,11 @@ frappe.ui.form.on("Supplier",{
                 supplier:frm.doc.name
             },
             callback: function(r) { 
-                if(r.message[0]["balance"]){
-                    var bal=Math.round(r.message[0]["balance"])
+                    var bal=r.message && r.message[0]?Math.round(r.message[0]["balance"] || 0):0
                     let balance = `<p style="font-size:15px;font-weight:bold;">Balance Purchase Receipt Amount - ${fmt_money(bal)}</p>`;
-                    frm.set_df_property('balance_purchase_receipt', 'options', balance); 
-
-                }
-               
+                    frm.dashboard.add_indicator(__('Purchase Receipt Bal: {0}',
+					    [format_currency(bal)]),
+				        bal ? 'orange' : 'green');                
             }
         });
 

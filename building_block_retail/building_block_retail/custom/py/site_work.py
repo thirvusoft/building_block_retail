@@ -97,7 +97,7 @@ def create_status():
         "doc_type":"Project",
         "field_name":"status",
         "property":"options",
-        "value":"\nOpen\nLand Work Completed\nOn Process\nHold\nStock Pending at Site\nPending Qty Returned\nPart Measurement\nSite Measured\nCompleted\nCancelled"
+        "value":"\nOpen\nLand Work Completed\nOn Process\nHold\nStock Pending at Site\nPending Qty Returned\nPart Measurement\nSite Measured\nCompleted\nCancelled\nIn Quotation"
     })
     doc.save()
     frappe.db.commit()
