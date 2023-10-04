@@ -1,6 +1,8 @@
 import frappe
 import json
 
+from frappe.utils.data import get_link_to_form
+
 def remove_tax_percent_from_description(doc, event):
     for i in range(len(doc.taxes)):
         doc.taxes[i].description = doc.taxes[i].description.split("@")[0]
@@ -74,3 +76,14 @@ def make_vehicle_log(doc, data, vehicles):
         """)
     
     return docnames
+
+def validate_branch(self, event=None):
+    if self.branch:
+        for row in self.items:
+            if row.purchase_order:
+                if (branch := frappe.db.get_value('Purchase Order', row.purchase_order, 'branch')) and branch != self.branch:
+                    frappe.throw(f"""{self.doctype} {get_link_to_form(self.doctype, self.name)} branch {self.branch} is not same as Purchase Order {get_link_to_form('Purchase Order', row.purchase_order)} branch {branch}""")
+            
+            if row.purchase_receipt:
+                if (branch := frappe.db.get_value('Purchase Receipt', row.purchase_receipt, 'branch')) and branch != self.branch:
+                    frappe.throw(f"""{self.doctype} {get_link_to_form(self.doctype, self.name)} branch {self.branch} is not same as Purchase Receipt {get_link_to_form('Purchase Receipt', row.purchase_receipt)} branch {branch}""")

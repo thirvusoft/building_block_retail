@@ -154,8 +154,9 @@ doc_events = {
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_return_qty_sitework"
 					 ],
-		"validate":["building_block_retail.building_block_retail.custom.py.delivery_note.validate",
-					
+		"validate":[
+            "building_block_retail.building_block_retail.custom.py.delivery_note.validate",
+			"building_block_retail.building_block_retail.custom.py.delivery_note.validate_branch",
 					],
 		"on_change":["building_block_retail.building_block_retail.custom.py.delivery_note.odometer_validate"],
   		
@@ -163,7 +164,10 @@ doc_events = {
 	"Sales Invoice":{
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
                         'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
-        "validate":"building_block_retail.building_block_retail.custom.py.sales_invoice.validate",
+        "validate": [
+            "building_block_retail.building_block_retail.custom.py.sales_invoice.validate",
+            "building_block_retail.building_block_retail.custom.py.sales_invoice.validate_branch"
+            ],
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
@@ -200,6 +204,9 @@ doc_events = {
 	},
     'Purchase Invoice':{
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
+        "validate": [
+            "building_block_retail.building_block_retail.custom.py.purchase_invoice.validate_branch"
+		],
         'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher'
 	},
     'Landed Cost Voucher':{
@@ -209,6 +216,9 @@ doc_events = {
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
     'Purchase Receipt':{
+        'validate': [
+            'building_block_retail.building_block_retail.custom.py.purchase_receipt.validate_branch'
+		],
         'on_submit': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.create_landed_cost_voucher',
 		'before_validate': 'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'
 	},
@@ -254,6 +264,17 @@ doc_events = {
 		"on_cancel":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
 		"on_update":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
 		"on_change":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+	},
+    "Journal Entry": {
+        "validate": [
+            "building_block_retail.building_block_retail.custom.py.journal_entry.validate_branch",
+            "building_block_retail.building_block_retail.custom.py.journal_entry.remove_unacc_entries"
+		]
+	},
+    "Payment Entry": {
+        "validate": [
+            "building_block_retail.building_block_retail.custom.py.payment_entry.validate_branch"
+		]
 	}
 }
 after_migrate=["building_block_retail.building_block_retail.custom.py.site_work.create_status",
