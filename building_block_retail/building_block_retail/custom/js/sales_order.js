@@ -174,7 +174,7 @@ frappe.ui.form.on('Sales Order',{
         }
     },
     taxes_and_charges: function(frm) {
-        if(frm.doc.branch) {
+        if(frm.doc.branch && frm.doc.docstatus != 1) {
             frappe.db.get_value("Branch", frm.doc.branch, "is_accounting").then( value => {
                 if (!value.message.is_accounting) {
                     if(frm.doc.taxes_and_charges)
@@ -367,7 +367,34 @@ frappe.ui.form.on('Sales Order',{
             new_row.delivery_date=cur_frm.doc.delivery_date
             
         }
-       
+        let srv= frm.doc.service_item?frm.doc.service_item:[]
+        for(let row=0;row<srv.length;row++){
+            // if(!frm.doc.service_item[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
+            var message;
+            var new_row = frm.add_child("items");
+            new_row.is_service_item = 1
+            new_row.item_code=frm.doc.service_item[row].item
+            new_row.qty=1
+            new_row.uom='Nos'
+            new_row.rate=frm.doc.service_item[row].rate
+            new_row.amount=frm.doc.service_item[row].rate
+            await frappe.call({
+                method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
+                args:{
+                    'doctype':frm.doc.service_item[row].item,
+                },
+                callback: function(r){
+                    message=r.message;
+                    new_row.item_name=message['item_name']
+                    new_row.description=message['description']
+                }
+            })
+            new_row.conversion_factor=1
+            new_row.warehouse=frm.doc.set_warehouse
+            new_row.delivery_date=frm.doc.delivery_date
+            
+        }
+
         frm.doc.items.forEach(r => {
             if(item.includes(r.item_code)){
                 r.prevdoc_docname = qtn_item[r.item_code]
@@ -609,6 +636,15 @@ function fill_paver_compound_table_from_item(frm){
         }
         })
     }
+    }
+    if(!frm.doc.service_item){ 
+        frm.doc.items.forEach((row) =>{
+            if(row.is_service_item){
+                var child = frm.add_child('service_item')
+                child.item = row.item_code
+                child.rate = row.rate
+            }
+        })
     }
     frm.refresh_field("pavers")
     frm.refresh_field("compoun_walls")

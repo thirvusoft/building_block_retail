@@ -11,7 +11,7 @@ frappe.ui.form.on("Purchase Order", {
         frm.refresh()
     },
     taxes_and_charges: function(frm) {
-        if(frm.doc.branch) {
+        if(frm.doc.branch && frm.doc.docstatus != 1) {
             frappe.db.get_value("Branch", frm.doc.branch, "is_accounting").then( value => {
                 if (!value.message.is_accounting) {
                     if(frm.doc.taxes_and_charges)

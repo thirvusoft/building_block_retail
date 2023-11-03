@@ -107,7 +107,7 @@ def update_transport_cost(self, event):
         doc.save()
 
 def vehicle_log_creation(self, event):
-    if(self.own_vehicle_no and self.current_odometer_value):
+    if(self.own_vehicle_no and self.current_odometer_value and frappe.db.exists("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]})):
         last_odo_value=frappe.get_last_doc("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]},order_by="posting_date desc")
         distance=0
         if last_odo_value:

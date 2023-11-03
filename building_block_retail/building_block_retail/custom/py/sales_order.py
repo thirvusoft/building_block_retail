@@ -465,3 +465,21 @@ def branch_list(company):
    
     return branch_filter
 
+
+def before_update_after_submit(doc, event=None):
+    doc.flags.ignore_validate_update_after_submit = True
+
+def on_update_after_submit(doc, event=None):
+    dn = frappe.get_all("Delivery Note Item", filters={"against_sales_order":doc.name, "docstatus":["!=", 2]}, pluck="parent", group_by="parent")
+    for i in dn:
+        dn_doc=frappe.get_doc("Delivery Note", i)
+        already_used_item_row = []
+        for k in doc.items:
+            for j in dn_doc.items:
+                if j.item_code == k.item_code and k.name not in already_used_item_row:
+                    frappe.db.set_value(j.doctype, j.name, "so_detail", k.name, update_modified=False)
+                    already_used_item_row.append(k.name)
+        dn_doc.reload()
+        if(dn_doc.docstatus == 1):
+            dn_doc.update_prevdoc_status()
+            dn_doc.update_billing_status()

@@ -139,7 +139,8 @@ doc_events = {
      	"before_validate":'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description',
         "validate" : 'building_block_retail.building_block_retail.custom.py.sales_order.add_price_list',
 		"on_cancel":"building_block_retail.building_block_retail.custom.py.sales_order.remove_project_fields",
-		"on_submit":"building_block_retail.building_block_retail.custom.py.sales_order.check_opportunity"
+		"on_submit":"building_block_retail.building_block_retail.custom.py.sales_order.check_opportunity",
+        "on_update_after_submit":"building_block_retail.building_block_retail.custom.py.sales_order.on_update_after_submit"
 	},
 	"Delivery Note":{
 		"before_validate":["building_block_retail.building_block_retail.custom.py.delivery_note.update_customer",
@@ -165,12 +166,12 @@ doc_events = {
     	"before_validate":["building_block_retail.building_block_retail.custom.py.sales_invoice.update_customer", 
                         'building_block_retail.building_block_retail.custom.py.purchase_invoice.remove_tax_percent_from_description'],
         "validate": [
-            "building_block_retail.building_block_retail.custom.py.sales_invoice.validate",
-            "building_block_retail.building_block_retail.custom.py.sales_invoice.validate_branch"
+            "building_block_retail.building_block_retail.custom.py.sales_invoice.validate"
             ],
     	"on_submit":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_qty_sitework",
 					"building_block_retail.building_block_retail.custom.py.delivery_note.update_return_qty_sitework",
+            		"building_block_retail.building_block_retail.custom.py.sales_invoice.validate_branch"
 					],
 		"on_cancel":[
 					"building_block_retail.building_block_retail.custom.py.delivery_note.reduce_qty_sitework",
@@ -264,6 +265,7 @@ doc_events = {
 		"on_cancel":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
 		"on_update":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
 		"on_change":"building_block_retail.building_block_retail.custom.py.site_work.set_status",
+        "before_update_after_submit":"building_block_retail.building_block_retail.custom.py.sales_order.before_update_after_submit"
 	},
     "Journal Entry": {
         "validate": [
