@@ -135,7 +135,6 @@ def execute(filters=None):
 
 	else:
 		get_data_when_not_grouped_by_invoice(gross_profit_data, filters, group_wise_columns, data)
-
 	return columns, data
 
 
@@ -641,6 +640,8 @@ class GrossProfitGenerator(object):
 			conditions += " and posting_date >= %(from_date)s"
 		if self.filters.to_date:
 			conditions += " and posting_date <= %(to_date)s"
+		if self.filters.work:
+			conditions += " and work = %(work)s"
 
 		if self.filters.group_by == "Sales Person":
 			sales_person_cols = ", sales.sales_person, sales.allocated_amount, sales.incentives"

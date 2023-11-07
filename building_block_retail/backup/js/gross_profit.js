@@ -38,6 +38,13 @@ frappe.query_reports["Gross Profit"] = {
 			"options": "Invoice\nItem Code\nItem Group\nBrand\nWarehouse\nCustomer\nCustomer Group\nTerritory\nSales Person\nProject",
 			"default": "Invoice"
 		},
+		{
+			"fieldname":"work",
+			"label": __("Work"),
+			"fieldtype": "Select",
+			"options": "\nSupply Only\nSupply and Laying\nLaying Only",
+			"default": "Invoice"
+		},
 	],
 	"tree": true,
 	"name_field": "parent",
