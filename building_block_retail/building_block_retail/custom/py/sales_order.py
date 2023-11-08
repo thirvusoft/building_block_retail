@@ -1,6 +1,6 @@
 from copy import copy
 from dataclasses import field
-from building_block_retail import get_reserved_qty
+from building_block_retail import get_reserved_qty, uom_conversion
 import frappe
 import json
 from frappe.model.mapper import get_mapped_doc
@@ -9,7 +9,7 @@ from erpnext.stock.get_item_details import get_default_bom
 from frappe.utils.data import flt
 from erpnext.stock.stock_ledger import get_previous_sle
 from frappe.model.naming import parse_naming_series, make_autoname
-
+from building_block_retail.building_block_retail.custom.py.item import get_parent_item_group
 
 def autoname(doc, event=None):
     if(doc.branch == "SVPB"):
@@ -40,52 +40,61 @@ def get_item_value(doctype):
     
 @frappe.whitelist()
 def create_site(doc, on_update=0):
-    doc=json.loads(doc)
+    class MyDict(dict):
+        def __getitem__(self, key):
+            if key not in self:
+                self[key] = get_parent_item_group(key)
+            
+            return super(MyDict, self).__getitem__(key)
+
+    parent_item_group = MyDict()
+
+    from frappe.model.document import Document
+    if isinstance(doc, str):
+        doc=json.loads(doc)
+    if isinstance(doc, Document):
+        doc=doc.as_dict(convert_dates_to_str=True)
     create=False
-    if(doc['type']=='Pavers'):
-        for row in (doc['pavers'] or []):
-            if(row["work"]!="Supply Only"):
-                create=True
-    if(doc['type']=='Compound Wall'):
-        for row in (doc['compoun_walls'] or []):
-            if(row["work"]!="Supply Only"):
-                create=True
+    for row in (doc['items'] or []):
+        if(row["work"]!="Supply Only"):
+            create=True
+    
     if(doc['work']!="Supply Only" and create):
         supervisor=doc.get('supervisor_name') if('supervisor_name' in doc) else ''
         pavers=[]
         compoun_walls=[]
         if(doc['type']=='Pavers'):
             pavers=[{
-                    'item':row['item'],
-                    'required_area':row['required_area'],
-                    'area_per_bundle':row['area_per_bundle'],
-                    'number_of_bundle':row['number_of_bundle'],
-                    'allocated_paver_area':row['allocated_paver_area'],
+                    'item':row['item_code'],
+                    'required_area':row['qty'],
+                    'area_per_bundle':row['pieces_per_bundle'],
+                    'allocated_paver_area':row['qty'],
+                    'number_of_bundle': uom_conversion(item=row['item_code'], from_uom=row['uom'], from_qty=row['qty'], to_uom='bundle', throw_err=False),
                     'rate':row['rate'],
                     'amount':row['amount'],
                     'work': row['work'],
                     'sales_order':doc['name'],
                     'warehouse':row['warehouse'] if(row.get('warehouse')) else doc.get('set_warehouse')
-                    } for row in doc['pavers']]
+                    } for row in doc['items'] if parent_item_group[row.get('item_group')] == 'Products']
         if(doc['type']=='Compound Wall'):
             compoun_walls=[{
-                    'item':row['item'],
+                    'item':row['item_code'],
                     'compound_wall_type':row['compound_wall_type'],
-                    'allocated_ft':row['allocated_ft'],
+                    'allocated_ft':row['qty'],
                     'rate':row['rate'],
                     'amount':row['amount'],
                     'work': row['work'],
                     'sales_order':doc['name'],
                     'warehouse':row['warehouse'] if(row.get('warehouse')) else doc.get('set_warehouse')
-                    } for row in doc['compoun_walls']]
+                    } for row in doc['items'] if row.get('item_group') == 'Compound Walls']
         raw_material=[{
-                'item':row['item'],
+                'item':row['item_code'],
                 'qty':row['qty'],
                 'uom':row['uom'],
                 'rate':row['rate'],
                 'amount':row['amount'],
                 'sales_order':doc['name']
-                } for row in doc['raw_materials']]
+                } for row in doc['items'] if parent_item_group[row.get('item_group')] == 'Raw Material']
         site_work=frappe.get_doc('Project',doc['site_work'])
         if on_update:
             updated_item_details = []
@@ -103,15 +112,19 @@ def create_site(doc, on_update=0):
         
         for item in (site_work.get('item_details') or []):
             total_area+=item.required_area
+
         for item in pavers:
             total_area+=item['required_area']
+
         for item in (site_work.get('item_details_compound_wall') or []):
             total_area+=item.allocated_ft
+            
         for item in compoun_walls:
             total_area+=item['allocated_ft']
+
         for item in (site_work.get('job_worker') or []):
             completed_area+=item.sqft_allocated
-        
+            
         site_work.update({
             'customer': doc['customer'] or '',
             'supervisor': doc.get('supervisor') if('supervisor' in doc) else '',
@@ -137,7 +150,7 @@ def create_site(doc, on_update=0):
             'per_delivered':doc.get('per_delivered') or 0
         })
         site_work.save()
-        frappe.db.commit()
+        frappe.msgprint('Site Work Updated Successfully', alert=True, indicator='green')
         return 1
 
 
