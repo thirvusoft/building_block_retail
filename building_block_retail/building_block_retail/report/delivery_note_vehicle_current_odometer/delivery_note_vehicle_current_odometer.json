@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0,
+ "columns": [],
+ "creation": "2023-11-20 16:52:32.815377",
+ "disable_prepared_report": 0,
+ "disabled": 0,
+ "docstatus": 0,
+ "doctype": "Report",
+ "filters": [],
+ "idx": 0,
+ "is_standard": "Yes",
+ "json": "{\"filters\":[[\"Delivery Note\",\"own_vehicle_no\",\"=\",\"TN 99 8457\",false],[\"Delivery Note\",\"docstatus\",\"=\",\"1\",false],[\"Delivery Note\",\"company\",\"=\",\"Shri Velavaa Paver Bricks\"]],\"fields\":[[\"name\",\"Delivery Note\"],[\"docstatus\",\"Delivery Note\"],[\"customer_name\",\"Delivery Note\"],[\"transporter_name\",\"Delivery Note\"],[\"current_odometer_value\",\"Delivery Note\"],[\"own_vehicle_no\",\"Delivery Note\"],[\"posting_date\",\"Delivery Note\"]],\"order_by\":\"`tabDelivery Note`.`modified` desc\",\"add_totals_row\":0,\"page_length\":500,\"column_widths\":{\"name\":120,\"customer_name\":120,\"transporter_name\":120,\"current_odometer_value\":120,\"own_vehicle_no\":120,\"posting_date\":100},\"group_by\":null}",
+ "letter_head": "Shri Velavaa Paver Bricks",
+ "modified": "2023-11-20 16:54:40.618955",
+ "modified_by": "tally@gmail.com",
+ "module": "Building Block Retail",
+ "name": "Delivery Note Vehicle Current Odometer",
+ "owner": "priya@svb.com",
+ "prepared_report": 0,
+ "ref_doctype": "Delivery Note",
+ "report_name": "Delivery Note Vehicle Current Odometer",
+ "report_type": "Report Builder",
+ "roles": [
+  {
+   "role": "All"
+  }
+ ]
+}
