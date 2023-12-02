@@ -1,11 +1,9 @@
 
 __version__ = '0.0.1'
 
-import frappe
-from frappe.utils.data import flt
-
-
 def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None, ignored_sales_order=None):
+	import frappe
+	from frappe.utils.data import flt
 	if not posting_date:
 		posting_date = frappe.utils.nowdate()
 	if not posting_time:
@@ -69,6 +67,8 @@ def uom_conversion(item : str, from_uom='', from_qty=0.0, to_uom='', throw_err=T
 	''' 
 		For converting rate, pass from as to and to as from uoms
 	'''
+	import frappe
+	from frappe.utils.data import flt
 	if (not to_uom):
 		return from_qty
 	if(not from_uom):
