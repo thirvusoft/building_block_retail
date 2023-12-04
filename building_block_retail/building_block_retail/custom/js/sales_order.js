@@ -19,9 +19,46 @@ frappe.ui.form.on('Sales Order Item', {
     },
     items_add: function(frm, cdt, cdn) {
         frappe.model.set_value(cdt, cdn, 'work', frm.doc.work);
+    },
+    qty: function(frm, cdt, cdn){
+        let row = locals[cdt][cdn]
+        get_possible_delivery_date(frm, row)
     }
 })
-
+var get_possible_delivery_date = function(frm, row){
+    var child = frm.doc.possible_delivery_dates || []
+	var child_items = []
+	child.forEach((a)=>{
+		child_items.push(a.item)
+	})
+	
+        if(row.item_code && row.qty){
+            frappe.call({
+                method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
+                args:{
+                    filters:{'item_code':row.item_code, 'order_qty':row.qty*row.conversion_factor},
+                    call_from_report : 0
+                },
+                callback(r){
+					if(!child_items.includes(row.item_code)){
+						child_items.push(row.item_code)
+						var new_child = frm.add_child("possible_delivery_dates")
+						new_child.item = row.item_code
+						new_child.possible_delivery_date = r.message
+						frm.refresh_field('possible_delivery_dates')
+					}
+					else{
+						frm.doc.possible_delivery_dates.forEach((a)=>{
+							if(a.item == row.item_code){
+								frappe.model.set_value(a.doctype, a.name, "possible_delivery_date", r.message)
+								frm.refresh_field('possible_delivery_dates')
+							}
+						})
+					}
+                }
+            })
+        }
+}
 
 async function bundle_calc(frm, cdt, cdn) {
     let row = locals[cdt][cdn]
@@ -59,6 +96,43 @@ async function bundle_calc(frm, cdt, cdn) {
 
 var prop_name;
 frappe.ui.form.on('Sales Order',{
+    onload:async function(frm){
+        if(frm.is_new()  ){
+            for(let ind=0;ind<frm.doc.items.length;ind++){
+                let cdt=frm.doc.items[ind].doctype
+                let cdn=frm.doc.items[ind].name
+                let row=locals[cdt][cdn]
+                if(row.item_code){
+                    let pieces_per_sqft = (await vb.uom_conversion(row.item_code, 'Square Foot', 1, 'Nos', false)) || 0;
+                    let pieces_per_bdl = (await vb.uom_conversion(row.item_code, 'bundle', 1, 'Nos', false)) || 0;
+
+                    frappe.model.set_value(cdt, cdn, 'pieces_per_sqft', pieces_per_sqft);
+                    frappe.model.set_value(cdt, cdn, 'pieces_per_bundle', pieces_per_bdl);       
+                
+                if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
+                    let total_qty=row.qty
+                    let sqft_qty = Math.floor(row.qty)
+                    let pcs_in_sqft = total_qty - sqft_qty
+                    await frappe.model.set_value(cdt, cdn, 'required_sqft', sqft_qty)
+                    if(pieces_per_sqft && pcs_in_sqft){
+                        await frappe.model.set_value(cdt, cdn, 'pieces', pcs_in_sqft*pieces_per_sqft)
+                    }
+                }    
+                }
+            }
+            let items = frm.doc.items || [];
+            let len = items.length;
+            while (len--)
+            {
+                if(items[len].qty == 0)
+                {
+                    await cur_frm.get_field("items").grid.grid_rows[len].remove();
+                }
+            }
+            frm.refresh();
+            }
+
+    },
     refresh:function(frm){
 
         if(frm.is_new()){
