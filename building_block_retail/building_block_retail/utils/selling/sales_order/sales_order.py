@@ -1,6 +1,7 @@
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 import frappe
+import building_block_retail
 
 
 def sales_order_customization():
@@ -147,7 +148,7 @@ def item_details_pavers_customization():
 
 
 
-import building_block_retail
+
 import math
 
 def update_old_sales_orders():

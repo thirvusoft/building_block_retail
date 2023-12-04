@@ -478,3 +478,23 @@ def branch_list(company):
    
     return branch_filter
 
+
+@frappe.whitelist()
+def get_item_details_for_update_items(item):
+    pieces_per_sqft = uom_conversion(item=item, from_uom = "Square Foot", from_qty=1, to_uom="Nos", throw_err=False)
+    pieces_per_bdl = uom_conversion(item=item, from_uom = "bundle", from_qty=1, to_uom="Nos", throw_err=False)
+    item_doc=frappe.get_doc("Item", item)
+    sales_uom, stock_uom = None, item_doc.stock_uom
+    if item_doc.is_sales_item:
+        sales_uom = item_doc.sales_uom
+    else:
+        sales_uom = item_doc.stock_uom
+
+    conversion_factor = uom_conversion(item=item, from_uom = sales_uom, from_qty=1, to_uom=stock_uom, throw_err=False)
+    return {
+        "pieces_per_bundle": pieces_per_bdl,
+        "pieces_per_sqft": pieces_per_sqft,
+        "conversion_factor":conversion_factor,
+        "uom":sales_uom,
+        "stock_uom":stock_uom,
+    }
