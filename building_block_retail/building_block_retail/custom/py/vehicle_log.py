@@ -107,8 +107,8 @@ def update_transport_cost(self, event):
         doc.save()
 
 def vehicle_log_creation(self, event):
-    if(self.own_vehicle_no and self.current_odometer_value and frappe.db.exists("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]})):
-        last_odo_value=frappe.get_last_doc("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name]},order_by="posting_date desc")
+    if(self.own_vehicle_no and self.current_odometer_value and frappe.db.exists("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name], "posting_date":["<=", self.posting_date], "posting_time":["<=", self.posting_time]})):
+        last_odo_value=frappe.get_last_doc("Delivery Note",{"docstatus":1,"own_vehicle_no":self.own_vehicle_no,"name":["!=",self.name], "posting_date":["<=", self.posting_date], "posting_time":["<=", self.posting_time]},order_by="posting_date desc")
         distance=0
         if last_odo_value:
             
@@ -129,9 +129,31 @@ def vehicle_log_creation(self, event):
                 vehicle_log.flags.ignore_permissions=True
                 vehicle_log.save()
                 vehicle_log.submit()
+                return vehicle_log
   
 
 def vehicle_log_draft(self, event):
     vehicle_draft=frappe.get_all("Vehicle Log",filters={"docstatus":0,"license_plate":self.license_plate})
     for i in vehicle_draft:
         frappe.db.set_value("Vehicle Log",i.name,"last_odometer",self.odometer)
+
+def update_vehicle_log():
+    # vl=frappe.get_all("Vehicle Log", filters={"docstatus":1, "delivery_note":["is", "set"]}, pluck="delivery_note")
+    # dn=frappe.get_all("Delivery Note", filters={"docstatus":1, "name":["in", vl]}, fields=["name", "current_odometer_value"])
+    # for i in dn:
+    #     if i["current_odometer_value"] != frappe.db.get_value("Vehicle Log", {"delivery_note":i["name"], "docstatus":1}, "last_odometer"):
+    #         print(i["name"])
+    # vl=frappe.get_all("Vehicle Log", filters={"docstatus":1, "delivery_note":["is", "set"], "date":[">=", "2023-09-06"]}, pluck="delivery_note")
+    vehicles = frappe.get_all("Vehicle", pluck="name")
+    for i in vehicles:
+        dn=frappe.get_all("Delivery Note", filters={"own_vehicle_no":i, "docstatus":1, "posting_date":[">=", "2023-09-06"]}, pluck="name", order_by="posting_date asc, posting_time asc")
+        for j in dn:
+            if log:=frappe.db.exists("Vehicle Log", {"delivery_note":j, "docstatus":1}):
+                log=frappe.get_doc("Vehicle Log", log)
+                log.cancel()
+                log.delete()
+            dn_doc=frappe.get_doc("Delivery Note", j)
+            a=vehicle_log_creation(dn_doc, "on_submit")
+            print(i, j, log, a)
+
+    

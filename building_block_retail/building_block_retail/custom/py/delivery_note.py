@@ -328,6 +328,7 @@ def delivery_note_whatsapp_driver(doc, action):
             conn.request("POST", "/v1/public/message/", payload, headers)
             res = conn.getresponse()
             data = res.read()
+            frappe.log_error(data)
         except Exception as e:
             error = f"Doctype: {doc.doctype} " + str(e)
             api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')
@@ -375,6 +376,7 @@ def delivery_note_whatsapp_customer(doc, action):
         conn.request("POST", "/v1/public/message/", payload, headers)
         res = conn.getresponse()
         data = res.read()
+        frappe.log_error(data)
     except Exception as e:
         error = f"Doctype: {doc.doctype} " + str(e)
         api_endpoint = frappe.db.get_single_value('Whatsapp Setting', 'ts_api_endpoint')
