@@ -1,5 +1,6 @@
 {
     "building_block_retail.min.js": [
-        "public/js/customer_payment_details.js"
+        "public/js/customer_payment_details.js",
+        "public/js/uom_conversion.js"
     ]
 }

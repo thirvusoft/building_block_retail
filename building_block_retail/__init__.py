@@ -1,11 +1,9 @@
 
 __version__ = '0.0.1'
 
-import frappe
-from frappe.utils.data import flt
-
-
 def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None, ignored_sales_order=None):
+	import frappe
+	from frappe.utils.data import flt
 	if not posting_date:
 		posting_date = frappe.utils.nowdate()
 	if not posting_time:
@@ -64,3 +62,32 @@ def get_reserved_qty(item_code, warehouse, posting_date=None, posting_time=None,
     })
 
 	return flt(reserved_qty[0][0]) if reserved_qty else 0
+
+def uom_conversion(item : str, from_uom='', from_qty=0.0, to_uom='', throw_err=True) -> float:
+	''' 
+		For converting rate, pass from as to and to as from uoms
+	'''
+	import frappe
+	from frappe.utils.data import flt
+	if (not to_uom):
+		return from_qty
+	if(not from_uom):
+		from_uom = frappe.get_value('Item', item, 'stock_uom')
+
+	from_conv = frappe.db.get_value("UOM Conversion Detail", {'parent': item, 'parenttype': 'Item', 'uom': from_uom}, 'conversion_factor') or 0
+	to_conv = frappe.db.get_value("UOM Conversion Detail", {'parent': item, 'parenttype': 'Item', 'uom': to_uom}, 'conversion_factor') or 0
+
+	if(not from_conv):
+		if throw_err:
+			frappe.throw(f"Please enter value for {frappe.bold(from_uom)} conversion in {frappe.bold(item)}")
+		else:
+			return 0.0
+	
+	if(not to_conv):
+		if throw_err:
+			frappe.throw(f"Please enter value for {frappe.bold(to_uom)} conversion in {frappe.bold(item)}")
+		else:
+			return 0.0
+		
+	res = (float(from_qty) * from_conv) / to_conv
+	return res

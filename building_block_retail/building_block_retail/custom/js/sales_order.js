@@ -1,34 +1,152 @@
-function setquery(frm){
-   
-    
-    frm.set_query('item','pavers',function(frm){
-        return {
-            filters:{
-                'is_sales_item':1,
-                'parent_item_group':'Products',
-                'has_variants':0
+frappe.ui.form.on('Sales Order Item', {
+    conversion_factor: function (frm, cdt, cdn) {
+        bundle_calc(frm, cdt, cdn)
+    },
+    pieces: function (frm, cdt, cdn) {
+        bundle_calc(frm, cdt, cdn)
+    },
+    required_sqft: function (frm, cdt, cdn) {
+        bundle_calc(frm, cdt, cdn)
+    },
+    item_code: async function(frm, cdt, cdn) {
+        let data = locals[cdt][cdn];
+
+        let pieces_per_sqft = (await vb.uom_conversion(data.item_code, 'Square Foot', 1, 'Nos', false)) || 0;
+        let pieces_per_bdl = (await vb.uom_conversion(data.item_code, 'bundle', 1, 'Nos', false)) || 0;
+
+        frappe.model.set_value(cdt, cdn, 'pieces_per_sqft', pieces_per_sqft);
+        frappe.model.set_value(cdt, cdn, 'pieces_per_bundle', pieces_per_bdl);
+    },
+    items_add: function(frm, cdt, cdn) {
+        frappe.model.set_value(cdt, cdn, 'work', frm.doc.work);
+    },
+    qty: function(frm, cdt, cdn){
+        let row = locals[cdt][cdn]
+        get_possible_delivery_date(frm, row)
+    }
+})
+var get_possible_delivery_date = function(frm, row){
+    var child = frm.doc.possible_delivery_dates || []
+	var child_items = []
+	child.forEach((a)=>{
+		child_items.push(a.item)
+	})
+	
+        if(row.item_code && row.qty){
+            frappe.call({
+                method: 'building_block_retail.building_block_retail.report.get_possible_delivery_date_of_item.get_possible_delivery_date_of_item.get_data',
+                args:{
+                    filters:{'item_code':row.item_code, 'order_qty':row.qty*row.conversion_factor},
+                    call_from_report : 0
+                },
+                callback(r){
+					if(!child_items.includes(row.item_code)){
+						child_items.push(row.item_code)
+						var new_child = frm.add_child("possible_delivery_dates")
+						new_child.item = row.item_code
+						new_child.possible_delivery_date = r.message
+						frm.refresh_field('possible_delivery_dates')
+					}
+					else{
+						frm.doc.possible_delivery_dates.forEach((a)=>{
+							if(a.item == row.item_code){
+								frappe.model.set_value(a.doctype, a.name, "possible_delivery_date", r.message)
+								frm.refresh_field('possible_delivery_dates')
+							}
+						})
+					}
+                }
+            })
+        }
+}
+
+async function bundle_calc(frm, cdt, cdn) {
+    let row = locals[cdt][cdn]
+    let uom = row.uom
+    let conv1, conv2;
+
+    await frappe.db.get_doc('Item', row.item_code).then((doc) => {
+        let sqf_conv = 1
+        let other_conv = 1;
+        let nos_conv = 1
+        for (let doc_row = 0; doc_row < doc.uoms.length; doc_row++) {
+            if (doc.uoms[doc_row].uom == uom) {
+                other_conv = doc.uoms[doc_row].conversion_factor
+            }
+            if (doc.uoms[doc_row].uom == 'Square Foot') {
+                sqf_conv = doc.uoms[doc_row].conversion_factor
+            }
+            if (doc.uoms[doc_row].uom == 'Nos') {
+                nos_conv = doc.uoms[doc_row].conversion_factor
             }
         }
+        conv1 = (sqf_conv / other_conv) || 0
+        conv2 = (nos_conv / other_conv) || 0
     })
-    frm.set_query('item','compoun_walls',function(frm){
-        return {
-            filters:{
-                'is_sales_item':1,
-                'item_group':'Compound Walls',
-                'has_variants':0
-            }
-        }
-    })
+    if (row.uom == "SQF") {
+        frappe.model.set_value(cdt, cdn, 'qty', (row.required_sqft || 0) * conv1 + (row.pieces || 0) * conv2)
+    } else {
+        frappe.model.set_value(cdt, cdn, 'qty', (row.required_sqft || 0) * conv1 + (row.pieces || 0) * conv2)
+    }
+    let rate = row.rate
+    frappe.model.set_value(cdt, cdn, 'rate', 0)
+    frappe.model.set_value(cdt, cdn, 'rate', rate)
+
 }
 
 var prop_name;
 frappe.ui.form.on('Sales Order',{
-    refresh:function(frm){
+    onload:async function(frm){
+        if(frm.is_new()  ){
+            for(let ind=0;ind<frm.doc.items.length;ind++){
+                if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
+                    let cdt=frm.doc.items[ind].doctype
+                    let cdn=frm.doc.items[ind].name
+                    let row=locals[cdt][cdn]
+                    if(row.item_code){
+                        let pieces_per_sqft = (await vb.uom_conversion(row.item_code, 'Square Foot', 1, 'Nos', false)) || 0;
+                        let pieces_per_bdl = (await vb.uom_conversion(row.item_code, 'bundle', 1, 'Nos', false)) || 0;
 
+                        frappe.model.set_value(cdt, cdn, 'pieces_per_sqft', pieces_per_sqft);
+                        frappe.model.set_value(cdt, cdn, 'pieces_per_bundle', pieces_per_bdl);       
+                    
+                    
+                        let total_qty=row.qty
+                        let sqft_qty = Math.floor(row.qty)
+                        let pcs_in_sqft = total_qty - sqft_qty
+                        await frappe.model.set_value(cdt, cdn, 'required_sqft', sqft_qty)
+                        if(pieces_per_sqft && pcs_in_sqft){
+                            await frappe.model.set_value(cdt, cdn, 'pieces', Math.round(pcs_in_sqft*pieces_per_sqft))
+                        }
+                    }    
+                }
+            }
+            let items = frm.doc.items || [];
+            let len = items.length;
+            while (len--)
+            {
+                if(items[len].qty == 0)
+                {
+                    await cur_frm.get_field("items").grid.grid_rows[len].remove();
+                }
+            }
+            frm.refresh();
+            }
+
+    },
+    refresh:function(frm){
         if(frm.is_new()){
             frm.trigger("type")
         }
         else{
+            frm.add_custom_button(__('Update Items'), () => {
+				erpnext.utils.update_child_items({
+					frm: frm,
+					child_docname: "items",
+					child_doctype: "Sales Order Detail",
+					cannot_add_row: false,
+				})
+			});
             if (frm.doc.items){
                 let qtyTable = `<p style="font-size:15px;font-weight:bold;">Delivered Qty Details</p><table><thead><tr><th style="width: 06%">{%= __("Item") %}</th><th style="width: 3%">{%= __("Qty") %}</th>
                 <th style="width: 3%">{%= __("🚚Delivered Qty") %}</th><th style="width: 3%">{%= __("Pending Qty") %}</th></tr></thead><tbody>`;
@@ -101,9 +219,8 @@ frappe.ui.form.on('Sales Order',{
         else{
             cur_frm.set_df_property('customer','reqd',1);
         }
-        setquery(frm)
-        cur_frm.set_df_property('items','reqd',0);
-        cur_frm.set_df_property('items','hidden',1);
+        // cur_frm.set_df_property('items','reqd',0);
+        // cur_frm.set_df_property('items','hidden',1);
         frm.set_query('supervisor', function(frm){
             return {
                 filters:{
@@ -112,14 +229,7 @@ frappe.ui.form.on('Sales Order',{
                 }
             }
         });
-        frm.set_query('item','raw_materials',function(frm){
-            return {
-                filters:{
-                    'item_group':'Raw Material',
-                    'has_variants':0
-                }
-            }
-        })
+        
         frm.set_query('site_work',function(frm){
             return {
                 filters:{
@@ -160,19 +270,6 @@ frappe.ui.form.on('Sales Order',{
             frm.set_df_property('available_qty','hidden',1)
         }
     },
-
-    set_warehouse: function(frm){
-        if(frm.doc.set_warehouse){
-            let table=cur_frm.doc.pavers?cur_frm.doc.pavers:[]
-            for(let row=0; row<table.length; row++){
-                frappe.model.set_value(cur_frm.doc.pavers[row].doctype, cur_frm.doc.pavers[row].name, 'warehouse', frm.doc.set_warehouse)
-            }
-            table=cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
-            for(let row=0; row<table.length; row++){
-                frappe.model.set_value(cur_frm.doc.compoun_walls[row].doctype, cur_frm.doc.compoun_walls[row].name, 'warehouse', frm.doc.set_warehouse)
-            }
-        }
-    },
     taxes_and_charges: function(frm) {
         if(frm.doc.branch && frm.doc.docstatus != 1) {
             frappe.db.get_value("Branch", frm.doc.branch, "is_accounting").then( value => {
@@ -196,7 +293,7 @@ frappe.ui.form.on('Sales Order',{
     },
     validate: function(frm) {
         frm.trigger("taxes_and_charges")
-        frm.doc.pavers.forEach(d=>{
+        frm.doc.items.forEach(d=>{
             frappe.model.set_value(d.doctype, d.name, 'work', frm.doc.work)
         })
     },
@@ -248,10 +345,6 @@ frappe.ui.form.on('Sales Order',{
                 }
             }
         })}
-        setquery(frm)
-        if(cur_frm.is_new()==1){
-        fill_paver_compound_table_from_item(frm)
-        }
     },
     before_save:async function(frm){
         if(cur_frm.doc.is_multi_customer){
@@ -266,143 +359,7 @@ frappe.ui.form.on('Sales Order',{
         else{
             frm.clear_table("customers_name");
         }
-        var qtn_item = {}
-        var item = []
-        if(frm.doc.items){
-            frm.doc.items.forEach(r => {
-                if(r.prevdoc_docname){
-                    item.push(r.item_code)
-                    qtn_item[r.item_code] = r.prevdoc_docname
-                }
-            })
-        }
-        frm.clear_table("items");
-        if(cur_frm.doc.type=='Pavers'){
-            cur_frm.set_value("compoun_walls",[])
-            let rm= cur_frm.doc.pavers?cur_frm.doc.pavers:[]
-            for(let row=0;row<rm.length;row++){
-                if(!cur_frm.doc.pavers[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Pavers Table")}
-                var message;
-                var new_row = frm.add_child("items");
-                new_row.item_code=cur_frm.doc.pavers[row].item
-                new_row.qty=cur_frm.doc.pavers[row].allocated_paver_area
-                new_row.ts_qty=cur_frm.doc.pavers[row].number_of_bundle
-                new_row.area_per_bundle=cur_frm.doc.pavers[row].area_per_bundle
-                new_row.rate=cur_frm.doc.pavers[row].rate
-                new_row.amount=cur_frm.doc.pavers[row].amount
-                await frappe.call({
-                    method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
-                    args:{
-                        'doctype':cur_frm.doc.pavers[row].item,
-                    },
-                    callback: function(r){
-                        message=r.message;
-                        new_row.item_name=message['item_name']
-                        new_row.uom=message['uom']
-                        new_row.description=message['description']
-                        new_row.conversion_factor=message['uom_conversion']
-                    }
-                })
-                new_row.warehouse=cur_frm.doc.set_warehouse
-                new_row.delivery_date=cur_frm.doc.delivery_date
-                new_row.work=cur_frm.doc.pavers[row].work
-            }
-        }
 
-        
-        if(cur_frm.doc.type=='Compound Wall'){
-            let rmm= cur_frm.doc.compoun_walls?cur_frm.doc.compoun_walls:[]
-            for(let row=0;row<rmm.length;row++){
-                if(!cur_frm.doc.compoun_walls[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Compound Wall Table")}
-                var message;
-                var new_row = frm.add_child("items");
-                new_row.item_code=cur_frm.doc.compoun_walls[row].item
-                new_row.qty=cur_frm.doc.compoun_walls[row].allocated_ft
-                new_row.rate=cur_frm.doc.compoun_walls[row].rate
-                new_row.amount=cur_frm.doc.compoun_walls[row].amount
-                await frappe.call({
-                    method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
-                    args:{
-                        'doctype':cur_frm.doc.compoun_walls[row].item,
-                    },
-                    callback: function(r){
-                        message=r.message;
-                        new_row.item_name=message['item_name']
-                        new_row.uom=message['uom']
-                        new_row.description=message['description']
-                        new_row.conversion_factor=message['uom_conversion']
-                    }
-                })
-                new_row.warehouse=cur_frm.doc.set_warehouse
-                new_row.delivery_date=cur_frm.doc.delivery_date
-                new_row.work=cur_frm.doc.compoun_walls[row].work
-            }
-        }
-        
-       
-        let rm= cur_frm.doc.raw_materials?cur_frm.doc.raw_materials:[]
-        for(let row=0;row<rm.length;row++){
-            if(!cur_frm.doc.raw_materials[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
-            var message;
-            var new_row = frm.add_child("items");
-            new_row.is_raw_material = 1
-            new_row.item_code=cur_frm.doc.raw_materials[row].item
-            new_row.qty=cur_frm.doc.raw_materials[row].qty
-            new_row.uom=cur_frm.doc.raw_materials[row].uom
-            new_row.rate=cur_frm.doc.raw_materials[row].rate
-            new_row.amount=cur_frm.doc.raw_materials[row].amount
-            await frappe.call({
-                method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
-                args:{
-                    'doctype':cur_frm.doc.raw_materials[row].item,
-                },
-                callback: function(r){
-                    message=r.message;
-                    new_row.item_name=message['item_name']
-                    new_row.description=message['description']
-                }
-            })
-            new_row.conversion_factor=1
-            new_row.warehouse=cur_frm.doc.set_warehouse
-            new_row.delivery_date=cur_frm.doc.delivery_date
-            
-        }
-        let srv= frm.doc.service_item?frm.doc.service_item:[]
-        for(let row=0;row<srv.length;row++){
-            // if(!frm.doc.service_item[row].item){frappe.throw("Row #"+(row+1)+": Please Fill the Item name in Raw Material Table")}
-            var message;
-            var new_row = frm.add_child("items");
-            new_row.is_service_item = 1
-            new_row.item_code=frm.doc.service_item[row].item
-            new_row.qty=1
-            new_row.uom='Nos'
-            new_row.rate=frm.doc.service_item[row].rate
-            new_row.amount=frm.doc.service_item[row].rate
-            await frappe.call({
-                method:'building_block_retail.building_block_retail.custom.py.sales_order.get_item_value',
-                args:{
-                    'doctype':frm.doc.service_item[row].item,
-                },
-                callback: function(r){
-                    message=r.message;
-                    new_row.item_name=message['item_name']
-                    new_row.description=message['description']
-                }
-            })
-            new_row.conversion_factor=1
-            new_row.warehouse=frm.doc.set_warehouse
-            new_row.delivery_date=frm.doc.delivery_date
-            
-        }
-
-        frm.doc.items.forEach(r => {
-            if(item.includes(r.item_code)){
-                r.prevdoc_docname = qtn_item[r.item_code]
-            }
-        })
-           
-        refresh_field("items");
-        
         let tax=false;
         let taxes=cur_frm.doc.taxes?cur_frm.doc.taxes:[]
         for(let i=0;i<taxes.length;i++){
@@ -431,19 +388,6 @@ frappe.ui.form.on('Sales Order',{
                 }
             })
         }
-    },
-    on_submit:function(frm){
-        frappe.call({
-            method:"building_block_retail.building_block_retail.custom.py.sales_order.create_site",
-            args:{
-                doc: cur_frm.doc
-            },
-            callback: function(r){
-                if(r.message){ 
-                        frappe.show_alert({message: __("Site Work Updated Successfully"),indicator: 'green'});
-                      }
-                }
-        })
     },
     is_multi_customer: function(frm){
         cur_frm.set_value('site_work','')
@@ -477,178 +421,11 @@ frappe.ui.form.on('Sales Order',{
         if(frm.doc.work=="Supply Only"){
             frm.set_value('site_work','')
         }
-        for(let row=0; row<(frm.doc.pavers?frm.doc.pavers.length:0);row++){
-            frappe.model.set_value(frm.doc.pavers[row].doctype, frm.doc.pavers[row].name, 'work', frm.doc.work)
+        for(let row=0; row<(frm.doc.items?frm.doc.items.length:0);row++){
+            frappe.model.set_value(frm.doc.items[row].doctype, frm.doc.items[row].name, 'work', frm.doc.work)
         }
     }
-})
-
-frappe.ui.form.on('TS Raw Materials',{
-    item: function(frm,cdt,cdn){
-        let row=locals[cdt][cdn]
-        if(row.item){
-            frappe.db.get_doc('Item',row.item).then((item)=>{
-                frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
-                frappe.call({
-                    method: "building_block_retail.building_block_retail.custom.py.sales_order.get_item_rate",
-                    args:{
-                        item: row.item,
-                        uom: item.stock_uom
-                    },
-                    callback: async function(r){
-                       await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
-                    }
-                })
-                frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
-            })
-        }
-    },
-    rate: function(frm,cdt,cdn){
-        amount_rawmet(frm,cdt,cdn)
-    },
-    qty: function(frm,cdt,cdn){
-        amount_rawmet(frm,cdt,cdn)
-    },
-    uom: function(frm,cdt,cdn){
-        let row=locals[cdt][cdn]
-        if(row.item && row.uom){
-            frappe.db.get_list("Item Price",{filters:{'item_code': row.item,'uom' : row.uom,'price_list': frm.doc.selling_price_list}, fields:['price_list_rate']}).then((data)=>{
-                
-                if(!data.length){
-                    frappe.show_alert({
-                        message:'Price List Rate not found for <a href="/app/item-price/">'+row.item+'</a> with the UOM '+row.uom,
-                        indicator:'orange'
-                    })
-                }
-                else{
-                    frappe.model.set_value(cdt,cdn,'rate', data[0].price_list_rate);
-                }   
-            })
-        }
-    }
-
-})
-
-
-function amount_rawmet(frm,cdt,cdn){
-    let row=locals[cdt][cdn]
-    frappe.model.set_value(cdt,cdn,'amount', (row.rate?row.rate:0)*(row.qty?row.qty:0))
-}
- frappe.ui.form.on('Item Detail Pavers', {
-    pavers_add: function(frm, cdt, cdn){
-        frappe.model.set_value(cdt, cdn, 'work', frm.doc.work)
-        frappe.model.set_value(cdt, cdn, 'warehouse', frm.doc.set_warehouse)
-    }
- })
-
-
- frappe.ui.form.on('Item Detail Compound Wall',{
-    compoun_walls_add: function(frm, cdt, cdn){
-        let data = locals[cdt][cdn]
-        frappe.model.set_value(cdt, cdn, 'work', (data.idx>1)?cur_frm.doc.compoun_walls[data.idx -2].work:'')
-    },
-    allocated_ft:function(frm,cdt,cdn){
-       amt(frm, cdt, cdn)
-    },
-    rate:function(frm,cdt,cdn){
-      amt(frm, cdt, cdn)
-  
-    },
-    item:async function(frm,cdt,cdn){
-        let row=locals[cdt][cdn]
-        if(row.item){
-        frappe.db.get_doc('Item',row.item).then((item)=>{
-            frappe.call({
-                method: "building_block_retail.building_block_retail.custom.py.sales_order.get_item_rate",
-                args:{
-                    item: row.item
-                },
-                callback: async function(r){
-                    await frappe.model.set_value(cdt,cdn,'rate', r.message?r.message:0);
-                }
-            })
-            frappe.model.set_value(cdt,cdn,'uom', item.stock_uom);
-        })
-    }  
-    }
-  
-  })
-  
-function amt(frm, cdt, cdn){
-    let row=locals[cdt][cdn]
-    frappe.model.set_value(cdt,cdn,'amount',Math.round(row.allocated_ft*row.rate));
-}
-
-function fill_paver_compound_table_from_item(frm){
-    if(frm.doc.type=="Compound Wall"){
-        if(!frm.doc.compoun_walls || frm.doc.compoun_walls==0){
-        frm.doc.items.forEach((row) =>{
-            if(row.item_group != 'Raw Material'){
-            var child = frm.add_child('compoun_walls')
-            child.item = row.item_code
-            child.rate = row.rate
-            child.allocated_ft = row.qty
-            child.amount = row.amount
-        }
-        else{
-            var child = frm.add_child('raw_materials')
-            child.item = row.item_code
-            child.rate = row.rate
-            child.qty = row.qty
-            child.amount = row.amount
-            child.uom = row.uom
-        }
-        })
-    }
-    }
-    else if(frm.doc.type == "Pavers"){
-        if(!frm.doc.pavers || frm.doc.pavers==0){    
-        frm.doc.items.forEach((row) =>{
-            if(row.item_group != 'Raw Material'){
-            var child = frm.add_child('pavers')
-            child.item = row.item_code
-            child.required_area=row.qty
-            child.rate = row.rate
-            child.amount = row.amount
-            if(row.item_code){
-            frappe.call({
-				method:"building_block_retail.building_block_retail.custom.py.site_work.item_details_fetching_pavers",
-				args:{item_code: row.item_code},
-				callback(r)
-				{
-					child.area_per_bundle = r['message'][0]?parseFloat(r["message"][0]):0
-                    var bundle = child.area_per_bundle?child.required_area / child.area_per_bundle :0
-                    var no_of_bundle = Math.ceil(bundle)
-                    child.number_of_bundle = no_of_bundle?no_of_bundle:0
-                    var allocated_paver = child.number_of_bundle * child.area_per_bundle
-			        child.allocated_paver_area = allocated_paver?allocated_paver:0
-				}
-			})
-        }
-        }
-        else{
-            var child = frm.add_child('raw_materials')
-            child.item = row.item_code
-            child.rate = row.rate
-            child.qty = row.qty
-            child.amount = row.amount
-            child.uom = row.uom
-        }
-        })
-    }
-    }
-    if(!frm.doc.service_item){ 
-        frm.doc.items.forEach((row) =>{
-            if(row.is_service_item){
-                var child = frm.add_child('service_item')
-                child.item = row.item_code
-                child.rate = row.rate
-            }
-        })
-    }
-    frm.refresh_field("pavers")
-    frm.refresh_field("compoun_walls")
-}
+});
 
 function make_work_order(frm) {
     // var doc = frm.doc
@@ -791,4 +568,302 @@ function make_work_order(frm) {
         }
     })
     
+}
+
+
+erpnext.utils.update_child_items = function(opts) {
+	const frm = opts.frm;
+	const cannot_add_row = (typeof opts.cannot_add_row === 'undefined') ? true : opts.cannot_add_row;
+	const child_docname = (typeof opts.cannot_add_row === 'undefined') ? "items" : opts.child_docname;
+	const child_meta = frappe.get_meta(`${frm.doc.doctype} Item`);
+	const get_precision = (fieldname) => child_meta.fields.find(f => f.fieldname == fieldname).precision;
+
+    async function bundle_calc(frm, cdt, cdn) {
+        let row = locals[cdt][cdn]
+        let uom = row.uom
+        let conv1, conv2;
+    
+        await frappe.db.get_doc('Item', row.item_code).then((doc) => {
+            let sqf_conv = 1
+            let other_conv = 1;
+            let nos_conv = 1
+            for (let doc_row = 0; doc_row < doc.uoms.length; doc_row++) {
+                if (doc.uoms[doc_row].uom == uom) {
+                    other_conv = doc.uoms[doc_row].conversion_factor
+                }
+                if (doc.uoms[doc_row].uom == 'Square Foot') {
+                    sqf_conv = doc.uoms[doc_row].conversion_factor
+                }
+                if (doc.uoms[doc_row].uom == 'Nos') {
+                    nos_conv = doc.uoms[doc_row].conversion_factor
+                }
+            }
+            conv1 = (sqf_conv / other_conv) || 0
+            conv2 = (nos_conv / other_conv) || 0
+        })
+        if (row.uom == "SQF") {
+            frappe.model.set_value(cdt, cdn, 'qty', (row.required_sqft || 0) * conv1 + (row.pieces || 0) * conv2)
+        } else {
+            frappe.model.set_value(cdt, cdn, 'qty', (row.required_sqft || 0) * conv1 + (row.pieces || 0) * conv2)
+        }
+        let rate = row.rate
+        frappe.model.set_value(cdt, cdn, 'rate', 0)
+        frappe.model.set_value(cdt, cdn, 'rate', rate)
+    
+    }
+
+
+	this.data = frm.doc[opts.child_docname].map((d) => {
+		return {
+			"docname": d.name,
+			"name": d.name,
+			"item_code": d.item_code,
+			"delivery_date": d.delivery_date,
+			"schedule_date": d.schedule_date,
+			"conversion_factor": d.conversion_factor,
+			"qty": d.qty,
+			"rate": d.rate,
+			"uom": d.uom,
+            "pieces":d.pieces,
+            "required_sqft":d.required_sqft,
+            "pieces_per_sqft":d.pieces_per_sqft,
+            "pieces_per_bundle":d.pieces_per_bundle,
+            "stock_qty":d.stock_qty
+		}
+	});
+    function calculate_item_values(data){
+        if((data.pieces || data.required_sqft) && data.pieces_per_sqft){
+            data.qty = (data.required_sqft || 0) + ((data.pieces|| 0)/data.pieces_per_sqft)
+        }
+        else if(data.pieces || data.required_sqft){
+            data.qty = data.required_sqft || data.pieces
+        }
+        data.stock_qty = data.qty*data.conversion_factor || 0;
+        if(!data.delivery_date){
+            data.delivery_date = cur_frm.doc.delivery_date
+        }
+        cur_dialog.refresh()
+    }
+
+	let fields = [{
+		fieldtype:'Data',
+		fieldname:"docname",
+		read_only: 1,
+		hidden: 1,
+	}, {
+		fieldtype:'Link',
+		fieldname:"item_code",
+		options: 'Item',
+		in_list_view: 1,
+		read_only: 0,
+		disabled: 0,
+		label: __('Item Code'),
+        columns:2,
+		get_query: function() {
+			let filters;
+			if (frm.doc.doctype == 'Sales Order') {
+				filters = {"is_sales_item": 1};
+			} else if (frm.doc.doctype == 'Purchase Order') {
+				if (frm.doc.is_subcontracted == "Yes") {
+					filters = {"is_sub_contracted_item": 1};
+				} else {
+					filters = {"is_purchase_item": 1};
+				}
+			}
+			return {
+				query: "erpnext.controllers.queries.item_query",
+				filters: filters
+			};
+		},
+        onchange: async function(){
+            let row_idx = document.activeElement.closest(".grid-row").getAttribute("data-idx")-1;
+            let data = cur_dialog.fields_dict.trans_items.grid.data[row_idx];
+            frappe.call({
+                method:"building_block_retail.building_block_retail.custom.py.sales_order.get_item_details_for_update_items",
+                args: {
+                    item: data.item_code
+                },
+                callback(r){
+                    if(r.message){
+                        let keys=Object.keys(r.message)
+                        keys.forEach((a, i) => {
+                            data[a] = r.message[a]
+                            if(i==(keys.length-1)){
+                                calculate_item_values(data)
+                            }
+                        })
+                    }
+                }
+            })
+        }
+	}, 
+    {
+		fieldtype:'Link',
+		fieldname:'uom',
+		options: 'UOM',
+		read_only: 0,
+		label: __('UOM'),
+		reqd: 1,
+        // in_list_view: 1,
+		onchange: function () {
+			frappe.call({
+				method: "erpnext.stock.get_item_details.get_conversion_factor",
+				args: { item_code: this.doc.item_code, uom: this.value },
+				callback: r => {
+					if(!r.exc) {
+						if (this.doc.conversion_factor == r.message.conversion_factor) return;
+
+						const docname = this.doc.docname;
+						dialog.fields_dict.trans_items.df.data.some(doc => {
+							if (doc.docname == docname) {
+								doc.conversion_factor = r.message.conversion_factor;
+								dialog.fields_dict.trans_items.grid.refresh();
+								return true;
+							}
+						})
+					}
+				}
+			});
+		}
+	}, {
+		fieldtype:'Float',
+		fieldname:"qty",
+		default: 0,
+		read_only: 0,
+		// in_list_view: 1,
+		label: __('Qty'),
+		precision: get_precision("qty"),
+        columns:1,
+        onchange: function(e){
+            let row_idx = e.target.closest(".grid-row").getAttribute("data-idx")-1;
+            let data = cur_dialog.fields_dict.trans_items.grid.data[row_idx];
+            calculate_item_values(data)
+        }
+	}, 
+    {
+		fieldtype:'Currency',
+		fieldname:"rate",
+		options: "currency",
+		default: 0,
+		read_only: 0,
+		in_list_view: 1,
+		label: __('Rate'),
+		precision: get_precision("rate"),
+        columns:1
+	}];
+
+	if (frm.doc.doctype == 'Sales Order' || frm.doc.doctype == 'Purchase Order' ) {
+		fields.splice(2, 0, {
+			fieldtype: 'Date',
+			fieldname: frm.doc.doctype == 'Sales Order' ? "delivery_date" : "schedule_date",
+			// in_list_view: 1,
+			label: frm.doc.doctype == 'Sales Order' ? __("Delivery Date") : __("Reqd by date"),
+			reqd: 1
+		})
+		fields.splice(3, 0, {
+			fieldtype: 'Float',
+			fieldname: "conversion_factor",
+			label: __("Conversion Factor"),
+			precision: get_precision('conversion_factor')
+		})
+	}
+    if (frm.doc.doctype == 'Sales Order'){
+        let so_fields = [
+            {
+                fieldtype:'Float',
+                fieldname:"pieces_per_sqft",
+                default: 0,
+                read_only: 1,
+                in_list_view: 1,
+                label: __('Pieces/Sqft'),
+                columns:1
+            },
+            {
+                fieldtype:'Float',
+                fieldname:"pieces_per_bundle",
+                default: 0,
+                read_only: 1,
+                in_list_view: 1,
+                label: __('Pieces/Bundle'),
+                columns:1
+            },
+            {
+                fieldtype:'Float',
+                fieldname:"required_sqft",
+                default: 0,
+                read_only: 0,
+                in_list_view: 1,
+                label: __('Required Sqft'),
+                columns:1,
+                onchange: function(e){
+                    let row_idx = e.target.closest(".grid-row").getAttribute("data-idx")-1;
+                    let data = cur_dialog.fields_dict.trans_items.grid.data[row_idx];
+                    calculate_item_values(data)
+                }
+            },
+            {
+                fieldtype:'Int',
+                fieldname:"pieces",
+                default: 0,
+                read_only: 0,
+                in_list_view: 1,
+                label: __('Pieces'),
+                columns:1,
+                onchange: function(e){
+                    let row_idx = e.target.closest(".grid-row").getAttribute("data-idx")-1;
+                    let data = cur_dialog.fields_dict.trans_items.grid.data[row_idx];
+                    calculate_item_values(data)
+                }
+            },
+            {
+                fieldtype:'Float',
+                fieldname:"stock_qty",
+                default: 0,
+                read_only: 1,
+                in_list_view: 1,
+                label: __('Qty in Stock UOM'),
+                columns:1
+            }
+        ]
+        fields = [...fields, ...so_fields]
+    }
+
+	new frappe.ui.Dialog({
+		title: __("Update Items"),
+		size: "extra-large",
+		fields: [
+			{
+				fieldname: "trans_items",
+				fieldtype: "Table",
+				label: "Items",
+				cannot_add_rows: cannot_add_row,
+				in_place_edit: false,
+				reqd: 1,
+				data: this.data,
+				get_data: () => {
+					return this.data;
+				},
+				fields: fields
+			},
+		],
+		primary_action: function() {
+			const trans_items = this.get_values()["trans_items"].filter((item) => !!item.item_code);
+			frappe.call({
+				method: 'erpnext.controllers.accounts_controller.update_child_qty_rate',
+				freeze: true,
+				args: {
+					'parent_doctype': frm.doc.doctype,
+					'trans_items': trans_items,
+					'parent_doctype_name': frm.doc.name,
+					'child_docname': child_docname
+				},
+				callback: function() {
+					frm.reload_doc();
+				}
+			});
+			this.hide();
+			refresh_field("items");
+		},
+		primary_action_label: __('Update')
+	}).show();
 }
