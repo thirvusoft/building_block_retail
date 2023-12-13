@@ -99,10 +99,10 @@ frappe.ui.form.on('Sales Order',{
     onload:async function(frm){
         if(frm.is_new()  ){
             for(let ind=0;ind<frm.doc.items.length;ind++){
-                if(row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0){
-                    let cdt=frm.doc.items[ind].doctype
-                    let cdn=frm.doc.items[ind].name
-                    let row=locals[cdt][cdn]
+                let cdt=frm.doc.items[ind].doctype
+                let cdn=frm.doc.items[ind].name
+                let row=locals[cdt][cdn]
+                if(row && (row.item_group.indexOf('Paver')>=0 || row.item_group.indexOf('paver')>=0)){
                     if(row.item_code){
                         let pieces_per_sqft = (await vb.uom_conversion(row.item_code, 'Square Foot', 1, 'Nos', false)) || 0;
                         let pieces_per_bdl = (await vb.uom_conversion(row.item_code, 'bundle', 1, 'Nos', false)) || 0;
