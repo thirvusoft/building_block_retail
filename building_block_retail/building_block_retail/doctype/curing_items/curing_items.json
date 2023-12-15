@@ -1,0 +1,82 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-12-13 11:42:15.076113",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "production_date",
+  "produced_qty",
+  "pending_qty",
+  "bundled_qty",
+  "from_stock_entry",
+  "from_job_card",
+  "excess_qty"
+ ],
+ "fields": [
+  {
+   "fieldname": "produced_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Produced Qty",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "pending_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Pending Qty to Bundle",
+   "read_only": 1
+  },
+  {
+   "fieldname": "from_stock_entry",
+   "fieldtype": "Link",
+   "label": "From Stock Entry",
+   "options": "Stock Entry",
+   "read_only": 1
+  },
+  {
+   "fieldname": "from_job_card",
+   "fieldtype": "Link",
+   "label": "From Job Card",
+   "options": "Job Card",
+   "read_only": 1
+  },
+  {
+   "fieldname": "excess_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Excess Qty from P.O",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bundled_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Bundled Qty",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "production_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Production Date",
+   "read_only": 1,
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-12-13 13:03:07.987044",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Curing Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

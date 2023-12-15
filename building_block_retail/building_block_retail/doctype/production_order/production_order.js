@@ -53,7 +53,11 @@ frappe.ui.form.on('Production Order', {
                             from_time:frm.doc.today_produced_items[i].from_time,
                             employee:frm.doc.today_produced_items[i].employee,
                             workstation:frm.doc.today_produced_items[i].workstation,
-                            to_time:frm.doc.today_produced_items[i].to_time
+                            to_time:frm.doc.today_produced_items[i].to_time,
+                            employee:frm.doc.employee,
+                            workstation:frm.doc.workstation,
+                            source_warehouse:frm.doc.source_warehouse,
+                            target_warehouse:frm.doc.target_warehouse
                         })
                     }
                     var table_fields = [
@@ -195,6 +199,7 @@ frappe.ui.form.on('Production Order', {
                             frm.call({
                                 doc:frm.doc,
                                 method: 'make_job_card',
+                                freeze:true,
                                 callback(r){
                                     frm.reload_doc()
                                     d.hide()
@@ -232,6 +237,7 @@ frappe.ui.form.on('Production Order', {
                 frm.call({
                     doc:frm.doc,
                     method:"update_work_order",
+                    freeze:true,
                     callback(r){
                         frappe.show_alert("Work Orders Updated.")
                     }

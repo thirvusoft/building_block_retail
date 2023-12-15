@@ -25,7 +25,9 @@ def validate(doc,action):
         doc.distribute_additional_costs()
         doc.update_valuation_rate()
         
-
+def on_submit(doc, action=None):
+    update_production_order(doc, action)
+    update_material_shift_for_curing(doc)
 
 def update_production_order(doc, event=None):
     if(doc.production_order and doc.bom_no):
@@ -41,3 +43,24 @@ def update_production_order(doc, event=None):
                 elif(i.get("low_priority")):
                     i.low_priority -= doc.fg_completed_qty
         pro_doc.save()
+
+def update_material_shift_for_curing(doc, event=None):
+    material_shift = frappe.db.exists("Material Shifting", {"item_code":doc.production_item, "docstatus":["!=", 2]})
+    ms_doc=None
+    if material_shift:
+        ms_doc = frappe.get_doc("Material Shifting", material_shift)
+    else:
+        ms_doc = frappe.new_doc("Material Shifting")
+        ms_doc.update({
+            "item_code":doc.production_item
+        })
+    
+    ms_doc.append("curing_in_process", {
+        "production_date":doc.posting_date,
+        "produced_qty":doc.fg_completed_qty,
+        "from_stock_entry":doc.name,
+        "from_job_card":doc.ts_job_card,
+        "pending_qty":doc.fg_completed_qty,
+    })
+    ms_doc.flags.ignore_mandatory=True
+    ms_doc.save(ignore_permissions=True)

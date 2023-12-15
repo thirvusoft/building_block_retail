@@ -200,7 +200,7 @@ doc_events = {
     "Stock Entry":{
         "validate":["building_block_retail.building_block_retail.custom.py.stock_entry.validate",
 					"building_block_retail.building_block_retail.custom.py.stock_entry.update_production_order"],
-		"on_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.update_production_order",
+		"on_submit":"building_block_retail.building_block_retail.custom.py.stock_entry.on_submit",
     },
     'Salary Slip':{
 		'validate': 'building_block_retail.building_block_retail.custom.py.salary_slip.salary_slip_add_gross_pay',

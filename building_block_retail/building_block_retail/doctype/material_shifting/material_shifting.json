@@ -9,10 +9,14 @@
  "field_order": [
   "naming_series",
   "company",
+  "item_code",
   "warehouse",
   "column_break_4",
   "posting_date",
   "posting_time",
+  "curing_section",
+  "curing_in_process",
+  "bundled_items",
   "item_info_section",
   "items",
   "column_break_9",
@@ -124,19 +128,45 @@
    "fieldname": "items",
    "fieldtype": "Table",
    "label": "Item",
-   "options": "Material Shifting Item",
-   "reqd": 1
+   "options": "Material Shifting Item"
   },
   {
    "fieldname": "calculate_again",
    "fieldtype": "Button",
    "label": "Calculate Again"
+  },
+  {
+   "fieldname": "curing_section",
+   "fieldtype": "Section Break",
+   "label": "Curing"
+  },
+  {
+   "fieldname": "curing_in_process",
+   "fieldtype": "Table",
+   "label": "Curing in Process",
+   "options": "Curing Items"
+  },
+  {
+   "fieldname": "bundled_items",
+   "fieldtype": "Table",
+   "label": "Bundled Items",
+   "options": "Bundled Items"
+  },
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1,
+   "set_only_once": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2023-01-11 17:59:10.297961",
+ "modified": "2023-12-13 18:58:46.174221",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Material Shifting",

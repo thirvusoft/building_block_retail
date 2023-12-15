@@ -128,6 +128,7 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 		'set_posting_time':1,
 		'ts_job_card': job_card.name,
 		'production_order': job_card.production_order,
+		'to_curing':job_card.to_curing or 0,
 		'purpose': purpose,
 		'company': erpnext.get_default_company(),
 		'from_bom' : 1,

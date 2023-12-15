@@ -184,6 +184,7 @@ class ProductionOrder(Document):
 			final_qty = items[i]["qty"] - exc_shrt[i]['excess_qty'] + exc_shrt[i]['shortage_qty']
 			job_card.update({	
 				'production_order':self.name,
+				'to_curing':1,
 				'bom_no': default_bom,
 				'company': company,
 				'posting_date': items[i]["posting_date"],
