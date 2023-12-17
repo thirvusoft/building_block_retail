@@ -194,21 +194,31 @@ def salary_slip_add_gross_pay(doc, event):
     
 
 def get_employe_expense_report(doc):
-    job_cards = frappe.db.get_all("Job Card", filters={'docstatus':1, "posting_date":['between', (doc.start_date, doc.end_date)], "company":doc.company}, fields=["name", "production_item", "workstation", "posting_date"])
+    job_cards = frappe.db.get_all("Job Card", filters=[['docstatus', "=", 1], ["posting_date", 'between', (doc.start_date, doc.end_date)], ["company", "=", doc.company], ["curing_percent", ">=", 100], ["Job Card Time Log", "employee", "=", doc.employee]], fields=["name", "production_item", "workstation", "posting_date", "curing_completed_qty as final_qty"])
     item_production_cost = {i['production_item']:frappe.db.get_value("Item", i["production_item"], "employee_rate") for i in job_cards}
     jc_wise_item = {i['name']:{"production_item":i['production_item'], "workstation":i['workstation'], "date":i['posting_date']} for i in job_cards}
-    job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "final_qty"])
+    # job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "final_qty"])
+    job_cards_name = [i["name"] for i in job_cards]
+    stock_entry = frappe.get_all("Stock Entry", filters=[["docstatus", "=", 1], ["purpose", "=", "Material Transfer"], ["bundling_employee", "=", doc.employee], ["Stock Entry Detail", "from_job_card", "in", job_cards_name]], fields=["`tabStock Entry Detail`.bundling_cost", "`tabStock Entry Detail`.from_job_card"])
+    jc_wise_bundling_cost = {}
+    for i in stock_entry:
+        jc_wise_bundling_cost.setdefault(i["from_job_card"], 0)
+        jc_wise_bundling_cost[i["from_job_card"]] += i["bundling_cost"]
     final_data=[]
     for i in job_cards:
         prod_cost = item_production_cost[jc_wise_item[i['name']]['production_item']]
         if(not prod_cost):
             frappe.throw(f"""Please Enter Production Cost/Item in {get_link_to_form("Item", jc_wise_item[i['name']]['production_item'])}""")
+        production_cost = item_production_cost[jc_wise_item[i['name']]['production_item']] * i["final_qty"]
+        bundling_cost = jc_wise_bundling_cost[i["name"]]
         final_data.append({
             "workstation": jc_wise_item[i['name']]['workstation'],
             "date": jc_wise_item[i['name']]['date'],
             "qty_produced": i["final_qty"],
             "production_item": jc_wise_item[i['name']]['production_item'],
-            "expense": item_production_cost[jc_wise_item[i['name']]['production_item']] * i["final_qty"]
+            "production_cost": production_cost,
+            "bundling_cost": bundling_cost,
+            "expense": production_cost+bundling_cost
         })
     return final_data
 

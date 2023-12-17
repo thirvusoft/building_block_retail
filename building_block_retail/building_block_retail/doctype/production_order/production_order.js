@@ -202,6 +202,9 @@ frappe.ui.form.on('Production Order', {
                                 freeze:true,
                                 callback(r){
                                     frm.reload_doc()
+                                    setTimeout(()=>{
+                                        frm.reload_doc()
+                                    }, 1500)
                                     d.hide()
                                     if(r.message[0]){
                                         frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message[0]}</p>`)

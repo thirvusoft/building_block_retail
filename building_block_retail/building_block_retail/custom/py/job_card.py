@@ -116,7 +116,33 @@ def update_operation_completed_qty(work_order, opr, workstation, qty=0):
 	frappe.db.commit()
 
 def before_submit(doc, event):
-	make_stock_entry(doc.name, doc.total_completed_qty, "Manufacture")
+	make_stock_entry(doc.name, sum([i.completed_qty for i in doc.time_logs]), "Manufacture")
+	update_excess_qty_in_material_shift(doc)
+
+def update_excess_qty_in_material_shift(doc):
+	for i in doc.time_logs:
+		if i.mistaken_from:
+			material_shift = frappe.get_value("Curing Items", {"from_job_card":i.mistaken_from}, "parent")
+			if not material_shift:
+				frappe.throw(f"""Unable to update Excess qty in Material Shifting. As there are no pending qty to bundle for job card {i.mistaken_from}""")
+			material_shift = frappe.get_doc("Material Shifting", material_shift)
+			row_to_remove = []
+			for j in material_shift.curing_in_process:
+				if j.from_job_card == i.mistaken_from:
+					if j.pending_qty == i.excess_qty:
+						row_to_remove.append(j)
+					elif j.pending_qty > i.excess_qty:
+						j.update({
+							"excess_qty": i.excess_qty,
+							"pending_qty": j.pending_qty - i.excess_qty
+						})
+					elif j.pending_qty < i.excess_qty:
+						frappe.throw(f"Excess qty is greater than Pending qty to Bundle for Item(<b>{doc.production_item}</b>).(Excess Qty:{i.excess_qty}, Pending Qty to Bundle:{j.pending_qty})")
+			for k in row_to_remove:
+				material_shift.remove(k)
+				material_shift.set_idx("curing_in_process")
+			material_shift.save()
+
 
 # def update_production_order
 @frappe.whitelist()
