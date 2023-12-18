@@ -110,7 +110,7 @@ def salary_slip_add_gross_pay(doc, event):
     ot_amount=ot_details[0]["ot_amount"] or 0
     if frappe.db.exists("Salary Component","Over Time"):
         com = [i.salary_component for i in doc.earnings]
-        if "Over Time" not in com:
+        if "Over Time" not in com and ot_amount:
                 doc.append('earnings',{'salary_component':'Over Time', 'amount':ot_amount})
     else:
         salary_component=frappe.new_doc("Salary Component")
@@ -122,7 +122,7 @@ def salary_slip_add_gross_pay(doc, event):
         })
         salary_component.save(ignore_permissions=True)
         com = [i.salary_component for i in doc.earnings]
-        if "Over Time" not in com:
+        if "Over Time" not in com and ot_amount:
                 doc.append('earnings',{'salary_component':'Over Time', 'amount':ot_amount})
     doc.gross_pay+=ot_amount
     if(doc.is_new() and doc.get('payroll_entry')):
