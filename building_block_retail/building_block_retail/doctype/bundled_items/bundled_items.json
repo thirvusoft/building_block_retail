@@ -1,0 +1,85 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2023-12-13 12:31:17.248163",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "bundled_date",
+  "pcs_per_bundle",
+  "no_of_pcs",
+  "no_of_bundle",
+  "bundled_qty",
+  "bundled_stock_entry",
+  "job_card_data",
+  "bundled_warehouse"
+ ],
+ "fields": [
+  {
+   "fieldname": "bundled_qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Bundled Qty(Stock UOM)",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "no_of_bundle",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "No of Bundle"
+  },
+  {
+   "fieldname": "no_of_pcs",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "No of Pcs"
+  },
+  {
+   "fieldname": "pcs_per_bundle",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Pcs Per Bundle"
+  },
+  {
+   "default": "{}",
+   "fieldname": "bundled_stock_entry",
+   "fieldtype": "Small Text",
+   "label": "Bundled Stock Entry",
+   "read_only": 1
+  },
+  {
+   "default": "Today",
+   "fieldname": "bundled_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "label": "Bundled Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "job_card_data",
+   "fieldtype": "Small Text",
+   "label": "Job Card Data",
+   "read_only": 1
+  },
+  {
+   "fieldname": "bundled_warehouse",
+   "fieldtype": "Link",
+   "label": "Bundled Warehouse",
+   "options": "Warehouse",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2023-12-17 13:19:56.997927",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Bundled Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
