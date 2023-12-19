@@ -56,7 +56,7 @@ def create_site(doc, on_update=0):
         doc=doc.as_dict(convert_dates_to_str=True)
     create=False
     for row in (doc['items'] or []):
-        if(row["work"]!="Supply Only"):
+        if(doc["work"]!="Supply Only"):
             create=True
     
     if(doc['work']!="Supply Only" and create):
@@ -72,7 +72,7 @@ def create_site(doc, on_update=0):
                     'number_of_bundle': uom_conversion(item=row['item_code'], from_uom=row['uom'], from_qty=row['qty'], to_uom='bundle', throw_err=False),
                     'rate':row['rate'],
                     'amount':row['amount'],
-                    'work': row['work'],
+                    'work': doc['work'],
                     'sales_order':doc['name'],
                     'warehouse':row['warehouse'] if(row.get('warehouse')) else doc.get('set_warehouse')
                     } for row in doc['items'] if parent_item_group[row.get('item_group')] == 'Products']
@@ -83,7 +83,7 @@ def create_site(doc, on_update=0):
                     'allocated_ft':row['qty'],
                     'rate':row['rate'],
                     'amount':row['amount'],
-                    'work': row['work'],
+                    'work': doc['work'],
                     'sales_order':doc['name'],
                     'warehouse':row['warehouse'] if(row.get('warehouse')) else doc.get('set_warehouse')
                     } for row in doc['items'] if row.get('item_group') == 'Compound Walls']
@@ -264,7 +264,8 @@ def get_stock_availability(items, sales_order):
         if(frappe.get_value('Item', i.get('item_code'),'item_group') != "Raw Material"):
             conv=1
             reserved_stock = get_reserved_qty(i.get('item_code'), i.get('warehouse'), date, time, sales_order) or 0
-            res_qty, act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')},['reserved_qty','actual_qty'])
+            res_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')}, 'reserved_qty') or 0
+            act_qty = frappe.db.get_value("Bin",{'warehouse':i.get('warehouse'), 'item_code':i.get('item_code'), 'stock_uom':i.get('stock_uom')}, 'actual_qty') or 0
             res_qty = reserved_stock
             qty, planned_production_qty = 0, 0
             planned_production_qty = sum(frappe.get_all("Work Order", filters={'docstatus':1, 'production_item':i.get('item_code'),'sales_order':i.get("parent")},pluck='qty'))
