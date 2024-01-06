@@ -1,0 +1,117 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-04 12:48:47.858129",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item",
+  "before_remaining_qty",
+  "production_qty",
+  "to_bundle_qty",
+  "today_remaining_qty",
+  "damaged_qty",
+  "employee",
+  "finished_warehouse",
+  "scrap_warehouse",
+  "split_item",
+  "not_bundled"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item",
+   "options": "Item",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "columns": 1,
+   "fieldname": "finished_warehouse",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Finished Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "columns": 1,
+   "fieldname": "before_remaining_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Before Date Remaining Qty",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "production_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Production Qty",
+   "read_only": 1
+  },
+  {
+   "columns": 1,
+   "fieldname": "today_remaining_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Today Remaining Qty"
+  },
+  {
+   "columns": 1,
+   "fieldname": "split_item",
+   "fieldtype": "Button",
+   "in_list_view": 1,
+   "label": "Split Item"
+  },
+  {
+   "columns": 1,
+   "fieldname": "to_bundle_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "To Bundle Qty"
+  },
+  {
+   "fieldname": "damaged_qty",
+   "fieldtype": "Float",
+   "label": "Damaged Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "scrap_warehouse",
+   "fieldtype": "Link",
+   "label": "Scrap Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "columns": 1,
+   "default": "0",
+   "fieldname": "not_bundled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Not Bundled"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-01-06 13:27:46.062765",
+ "modified_by": "Administrator",
+ "module": "Building Block Retail",
+ "name": "Curing Chamber Items",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}

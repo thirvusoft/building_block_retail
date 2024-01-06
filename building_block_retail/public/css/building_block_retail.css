@@ -1,34 +1,48 @@
 .main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-  }
-  .spinner {
-    position: relative;
-    width: 45px;
-    height: 45px;
-  
-    animation: loading 2s linear infinite;
-  }
-  
-  .bubble-1,
-  .bubble-2 {
-    position: absolute;
-    top: 0;
-    width: 25px;
-    height: 25px;
-    border-radius: 100%;
-    background-color: #4b9cdb;
-  }
-  
-  .bubble-2 {
-    top: auto;
-    bottom: -50px;
-    background-color: red;
-  }
-  @keyframes loading {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 200px;
+}
+
+.spinner {
+	position: relative;
+	width: 45px;
+	height: 45px;
+
+	animation: loading 2s linear infinite;
+}
+
+.bubble-1,
+.bubble-2 {
+	position: absolute;
+	top: 0;
+	width: 25px;
+	height: 25px;
+	border-radius: 100%;
+	background-color: #4b9cdb;
+}
+
+.bubble-2 {
+	top: auto;
+	bottom: -50px;
+	background-color: red;
+}
+
+@keyframes loading {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] .grid-buttons .grid-add-row {
+	display: none !important;
+}
+
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] span.row-actions button.grid-insert-row-below,
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] span.row-actions button.grid-insert-row,
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] span.row-actions button.grid-duplicate-row,
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] span.row-actions button.grid-move-row,
+body[data-route^="Form/Curing Chamber/"] div[data-fieldname="items"][data-fieldtype="Table"] div.grid-footer-toolbar {
+	display: none !important;
+}

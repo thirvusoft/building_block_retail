@@ -195,11 +195,27 @@ def salary_slip_add_gross_pay(doc, event):
 
 def get_employe_expense_report(doc):
     job_cards = frappe.db.get_all("Job Card", filters=[['docstatus', "=", 1], ["posting_date", 'between', (doc.start_date, doc.end_date)], ["company", "=", doc.company], ["curing_percent", ">=", 100], ["Job Card Time Log", "employee", "=", doc.employee]], fields=["name", "production_item", "workstation", "posting_date", "curing_completed_qty as final_qty"])
+    if not job_cards:
+        return []
+    
     item_production_cost = {i['production_item']:frappe.db.get_value("Item", i["production_item"], "employee_rate") for i in job_cards}
     jc_wise_item = {i['name']:{"production_item":i['production_item'], "workstation":i['workstation'], "date":i['posting_date']} for i in job_cards}
     # job_cards = frappe.db.get_all("Job Card Time Log", filters={"parentfield":"time_logs", "parent":["in", [i['name'] for i in job_cards]], "employee":doc.employee}, fields=["parent as name", "final_qty"])
     job_cards_name = [i["name"] for i in job_cards]
-    stock_entry = frappe.get_all("Stock Entry", filters=[["docstatus", "=", 1], ["purpose", "=", "Material Transfer"], ["bundling_employee", "=", doc.employee], ["Stock Entry Detail", "from_job_card", "in", job_cards_name]], fields=["`tabStock Entry Detail`.bundling_cost", "`tabStock Entry Detail`.from_job_card"])
+    # stock_entry = frappe.get_all("Stock Entry", filters=[["docstatus", "=", 1], ["purpose", "=", "Material Transfer"], ["Stock Entry Detail", "bundling_employee", "=", doc.employee], ["Stock Entry Detail", "from_job_card", "in", job_cards_name]], fields=["`tabStock Entry Detail`.bundling_cost", "`tabStock Entry Detail`.from_job_card"])
+    stock_entry = frappe.db.sql(f"""
+        select 
+            `tabStock Entry Detail`.bundling_cost, 
+            `tabStock Entry Detail`.from_job_card
+		from `tabStock Entry`
+        left join `tabStock Entry Detail` on (`tabStock Entry Detail`.parent = `tabStock Entry`.name)
+		where 
+            `tabStock Entry`.`docstatus` = 1.0 and 
+            `tabStock Entry`.`purpose` = 'Material Transfer' and 
+            (`tabStock Entry Detail`.`bundling_employee` = '{doc.employee}' or `tabStock Entry`.`bundling_employee` = '{doc.employee}') and 
+            `tabStock Entry Detail`.`from_job_card` in {tuple(job_cards) if len(job_cards) > 1 else f"('{job_cards[0]}')"}
+		order by `tabStock Entry`.docstatus asc, `tabStock Entry`.`modified` DESC
+    """)
     jc_wise_bundling_cost = {}
     for i in stock_entry:
         jc_wise_bundling_cost.setdefault(i["from_job_card"], 0)
