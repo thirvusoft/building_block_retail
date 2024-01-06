@@ -171,17 +171,14 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "is_submittable": 1,
  "links": [],
- "modified": "2023-12-17 16:24:25.424731",
+ "modified": "2023-12-19 11:56:40.652520",
  "modified_by": "Administrator",
  "module": "Building Block Retail",
  "name": "Material Shifting",
  "owner": "Administrator",
  "permissions": [
   {
-   "amend": 1,
-   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -191,7 +188,6 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
@@ -203,7 +199,6 @@
    "report": 1,
    "role": "TS Accounts Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   },
   {
@@ -215,7 +210,6 @@
    "report": 1,
    "role": "TS Production Manager",
    "share": 1,
-   "submit": 1,
    "write": 1
   }
  ],

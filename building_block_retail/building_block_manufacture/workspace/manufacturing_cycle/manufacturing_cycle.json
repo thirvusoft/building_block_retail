@@ -14,8 +14,8 @@
  "is_standard": 1,
  "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2023-06-07 15:43:36.111614",
- "modified_by": "Administrator",
+ "modified": "2023-12-19 10:37:36.059445",
+ "modified_by": "tally@gmail.com",
  "module": "Building Block Manufacture",
  "name": "Manufacturing Cycle",
  "owner": "Administrator",
@@ -56,6 +56,12 @@
    "doc_view": "List",
    "label": "Job Card",
    "link_to": "Job Card",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Material Shifting",
+   "link_to": "Material Shifting",
    "type": "DocType"
   },
   {

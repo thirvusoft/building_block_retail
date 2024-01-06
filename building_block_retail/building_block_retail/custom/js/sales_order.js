@@ -136,6 +136,7 @@ frappe.ui.form.on('Sales Order',{
     },
     refresh:function(frm){
         if(frm.is_new()){
+            frm.toggle_display('delivered_qty_details', 0)
             frm.trigger("type")
         }
         else{
@@ -172,7 +173,9 @@ frappe.ui.form.on('Sales Order',{
                 qtyTable += '</tbody></table>';
 
                 // if (hasPendingQty) {
-                    frm.set_df_property('delivered_qty_details', 'options', qtyTable);
+                    frm.toggle_display('delivered_qty_details', 1)
+                    $(frm.fields_dict.delivered_qty_details.wrapper).html(frappe.render(qtyTable, {}))
+                    // frm.set_df_property('delivered_qty_details', 'options', qtyTable);
                 // } else {
                 //     frm.set_df_property('delivered_qty_details', 'hidden', 1); 
                 // }

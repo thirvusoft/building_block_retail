@@ -227,11 +227,11 @@ frappe.ui.form.on('Production Order', {
                         }
                     })
                     
-                    d.$wrapper.find(".modal-header")[0].id = "mydivheader"
-                    d.$wrapper.find(".modal-content")[0].id = "mydiv"
-                    d.$wrapper.find(".modal-content")[0].style.resize = "both"
-                    // d.$wrapper.find(".modal-content")[0].style.overflow = "auto"
-                    dragElement(d)
+                    // d.$wrapper.find(".modal-header")[0].id = "mydivheader"
+                    // d.$wrapper.find(".modal-content")[0].id = "mydiv"
+                    // d.$wrapper.find(".modal-content")[0].style.resize = "both"
+                    // // d.$wrapper.find(".modal-content")[0].style.overflow = "auto"
+                    // dragElement(d)
                     d.show()
                 }
             })
