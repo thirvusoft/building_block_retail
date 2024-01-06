@@ -635,7 +635,7 @@
    "insert_after": "bundling_salary_details",
    "label": "Bundling Employee",
    "length": 0,
-   "mandatory_depends_on": "eval:doc.curing_completed==1 && !doc.items.filter(r => {\n    if (r.bundling_employee) return true\n}).length",
+   "mandatory_depends_on": "eval:doc.curing_completed==1 && !doc.items.filter(r => {\n    if (r.bundling_employee || r.not_bundled) return true\n}).length",
    "modified": "2023-12-17 17:31:58.823121",
    "modified_by": "Administrator",
    "name": "Stock Entry-bundling_employee",

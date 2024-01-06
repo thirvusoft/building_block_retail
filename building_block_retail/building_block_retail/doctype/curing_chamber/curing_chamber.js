@@ -174,6 +174,10 @@ frappe.ui.form.on('Curing Chamber', {
 						if (!r.exc) {
 							frm.refresh_fields();
 							frm.refresh()
+
+							if (r["stock-entry"]) {
+								frappe.set_route("Form", "Stock Entry", r["stock-entry"])
+							}
 						}
 					}
 				});

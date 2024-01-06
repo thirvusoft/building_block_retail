@@ -110,6 +110,7 @@ class CuringChamber(Document):
 						"conversion_factor": 1,
 						"from_job_card": job_card.name,
 						"bundling_employee": row.employee if not row.not_bundled else '',
+						"not_bundled": row.not_bundled,
 						"pcs_per_bundle": uom_conversion(item=row.item, from_uom='bundle', from_qty=1, to_uom='Nos'),
 						"no_of_bundle": row.to_bundle_qty / uom_conversion(item=row.item, from_uom='bundle', from_qty=1, to_uom='Nos'),
 						"bundling_cost": bundle_salary_per_piece * row.to_bundle_qty
@@ -144,8 +145,6 @@ class CuringChamber(Document):
 				if job_card.qty == 0:
 					jc_idx += 1
 				
-				frappe.errprint(f"{row.item}  {jc_idx}  {len(se_items)}  {qty}   {job_card.qty}  {job_card.name}")
-
 			if (remaining_qty + damaged_qty) > 0:
 				frappe.throw(f"Insufficient Job Cards for Item <b>{row.item}</b>.<br>Expected Qty: {row.to_bundle_qty + row.damaged_qty}.<br>Shortage Qty: {remaining_qty + damaged_qty}")
 		
@@ -169,6 +168,7 @@ class CuringChamber(Document):
 		self.status = 'Completed'
 		self.save()
 		frappe.msgprint(f"Stock Entry Created Successfully <a href='/app/stock-entry/{stock_entry.name}'>{stock_entry.name}</a>")
+		frappe.local.response['stock-entry'] = stock_entry.name
 
 	@frappe.whitelist()
 	def fetch_items(self):

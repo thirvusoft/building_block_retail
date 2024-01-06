@@ -14,8 +14,8 @@
  "is_standard": 1,
  "label": "Manufacturing Cycle",
  "links": [],
- "modified": "2023-12-19 10:37:36.059445",
- "modified_by": "tally@gmail.com",
+ "modified": "2024-01-06 17:29:18.035066",
+ "modified_by": "Administrator",
  "module": "Building Block Manufacture",
  "name": "Manufacturing Cycle",
  "owner": "Administrator",
@@ -50,6 +50,12 @@
    "doc_view": "List",
    "label": "Production Order",
    "link_to": "Production Order",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Curing Chamber",
+   "link_to": "Curing Chamber",
    "type": "DocType"
   },
   {
