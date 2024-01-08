@@ -54,6 +54,7 @@ class CuringChamber(Document):
 					['to_curing', '=', 1],
 					['curing_percent', '<', 100],
 					['production_item', '=', row.item],
+					['Job Card Time Log', 'employee', '=', row.employee],
 					['Job Card Time Log', 'from_time', '<', f"{self.date} 00:00:00"]
 				], ['name', 'for_quantity', 'curing_completed_qty', 'target_warehouse'])
 
@@ -62,6 +63,7 @@ class CuringChamber(Document):
 					['to_curing', '=', 1],
 					['curing_percent', '<', 100],
 					['production_item', '=', row.item],
+					['Job Card Time Log', 'employee', '=', row.employee],
 					['Job Card Time Log', 'from_time', 'between', [f"{self.date} 00:00:00", f"{self.date} 23:59:59"]]
 				], ['name', 'for_quantity', 'curing_completed_qty', 'target_warehouse'])
 
@@ -146,7 +148,8 @@ class CuringChamber(Document):
 					jc_idx += 1
 				
 			if (remaining_qty + damaged_qty) > 0:
-				frappe.throw(f"Insufficient Job Cards for Item <b>{row.item}</b>.<br>Expected Qty: {row.to_bundle_qty + row.damaged_qty}.<br>Shortage Qty: {remaining_qty + damaged_qty}")
+				emp_name = frappe.get_value("Employee", row.employee, "employee_name")
+				frappe.throw(f"Insufficient Job Cards for Item <b>{row.item}</b> Employee <b>{row.employee} {emp_name}</b>.<br>Expected Qty: {row.to_bundle_qty + row.damaged_qty}.<br>Shortage Qty: {remaining_qty + damaged_qty}")
 		
 		stock_entry.update({
 			'posting_date': self.posting_date,
@@ -186,38 +189,42 @@ class CuringChamber(Document):
 			['to_curing', '=', 1],
 			['curing_percent', '<', 100],
 			['Job Card Time Log', 'from_time', '<', f"{self.date} 00:00:00"]
-		], ['name', 'production_item', 'for_quantity', 'curing_completed_qty', 'target_warehouse'])
+		], ['name', 'production_item', 'for_quantity', 'curing_completed_qty', 'target_warehouse', '`tabJob Card Time Log`.employee'])
 
 		on_date_items = frappe.db.get_all("Job Card", [
 			['docstatus', '=', 1],
 			['to_curing', '=', 1],
 			['curing_percent', '<', 100],
 			['Job Card Time Log', 'from_time', 'between', [f"{self.date} 00:00:00", f"{self.date} 23:59:59"]]
-		], ['name', 'production_item', 'for_quantity', 'curing_completed_qty', 'target_warehouse'])
-
+		], ['name', 'production_item', 'for_quantity', 'curing_completed_qty', 'target_warehouse', '`tabJob Card Time Log`.employee'])
+		
 		items = {}
 		for item in before_date_items:
+			__key = f"{item.production_item}----{item.employee}"
 			if not frappe.db.get_all("Stock Entry", {"ts_job_card": item.name, "docstatus": 1}):
 				continue
 			
-			if item.production_item not in items:
-				items[item.production_item] = {
+			if __key not in items:
+				items[__key] = {
 						"item": item.production_item,
 						"before_remaining_qty": 0,
+						"employee": item.employee
 					}
 			
-			items[item.production_item]["before_remaining_qty"] = (items[item.production_item].get("before_remaining_qty") or 0) + ((item.get("for_quantity") or 0) - (item.get("curing_completed_qty") or 0))
+			items[__key]["before_remaining_qty"] = (items[__key].get("before_remaining_qty") or 0) + ((item.get("for_quantity") or 0) - (item.get("curing_completed_qty") or 0))
 		
 		for item in on_date_items:
+			__key = f"{item.production_item}----{item.employee}"
 			if not frappe.db.get_all("Stock Entry", {"ts_job_card": item.name, "docstatus": 1}):
 				continue
 
-			if item.production_item not in items:
-				items[item.production_item] = {
+			if __key not in items:
+				items[__key] = {
 						"item": item.production_item,
 						"production_qty": 0,
+						"employee": item.employee
 					}
-			items[item.production_item]["production_qty"] = (items[item.production_item].get("production_qty") or 0) + ((item.get("for_quantity") or 0) - (item.get("curing_completed_qty") or 0))
+			items[__key]["production_qty"] = (items[__key].get("production_qty") or 0) + ((item.get("for_quantity") or 0) - (item.get("curing_completed_qty") or 0))
 		
 		self.update({
 			"items": list(items.values())
