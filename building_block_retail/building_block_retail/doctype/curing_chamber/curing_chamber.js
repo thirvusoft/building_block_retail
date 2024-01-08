@@ -25,41 +25,6 @@ frappe.ui.form.on('Curing Chamber', {
 			};
 		});
 
-
-		frm.fields_dict.items.grid.add_custom_button("Update Employee", async function onclick() {
-			let selected = frm.fields_dict.items.grid.get_selected_children();
-			if (!selected || !selected.length) {
-				frappe.show_alert({ "message": "Please select the rows", indicator: "red" })
-				return
-			}
-			let dialog = new frappe.ui.Dialog({
-				title: "Update Employee",
-				fields: [{
-					fieldname: "employee",
-					label: __("Employee"),
-					fieldtype: "Link",
-					options: "Employee",
-					reqd: 1,
-					get_query: function() {
-						return {
-							filters: {
-								status: "Active"
-							}
-						};
-					}
-				}],
-				primary_action_label: __('Update'),
-				primary_action: (data) => {
-					selected.forEach(r => {
-						frappe.model.set_value(r.doctype, r.name, 'employee', data.employee)
-					});
-					frappe.show_alert({message: 'Updated', indicator: 'green'});
-					dialog.hide()
-				}
-			});
-			dialog.show();
-		}).removeClass('btn-default btn-custom').addClass('btn-secondary');
-
 		frm.fields_dict.items.grid.add_custom_button("Update Finished Warehouse", async function onclick() {
 			let selected = frm.fields_dict.items.grid.get_selected_children();
 			if (!selected || !selected.length) {

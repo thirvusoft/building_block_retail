@@ -117,6 +117,9 @@ class CuringChamber(Document):
 						"no_of_bundle": row.to_bundle_qty / uom_conversion(item=row.item, from_uom='bundle', from_qty=1, to_uom='Nos'),
 						"bundling_cost": bundle_salary_per_piece * row.to_bundle_qty
 					})
+				if job_card.qty == 0:
+					jc_idx += 1
+					continue
 
 				if not remaining_qty and damaged_qty:
 					qty = job_card.qty
