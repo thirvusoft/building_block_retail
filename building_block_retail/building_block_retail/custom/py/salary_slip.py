@@ -213,9 +213,9 @@ def get_employe_expense_report(doc):
             `tabStock Entry`.`docstatus` = 1.0 and 
             `tabStock Entry`.`purpose` = 'Material Transfer' and 
             (`tabStock Entry Detail`.`bundling_employee` = '{doc.employee}' or `tabStock Entry`.`bundling_employee` = '{doc.employee}') and 
-            `tabStock Entry Detail`.`from_job_card` in {tuple(job_cards) if len(job_cards) > 1 else f"('{job_cards[0]}')"}
+            `tabStock Entry Detail`.`from_job_card` in {tuple(job_cards_name) if len(job_cards_name) > 1 else f"('{job_cards_name[0]}')"}
 		order by `tabStock Entry`.docstatus asc, `tabStock Entry`.`modified` DESC
-    """)
+    """, as_dict=True)
     jc_wise_bundling_cost = {}
     for i in stock_entry:
         jc_wise_bundling_cost.setdefault(i["from_job_card"], 0)
