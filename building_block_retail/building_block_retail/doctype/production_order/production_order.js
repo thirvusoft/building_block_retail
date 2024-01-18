@@ -156,9 +156,18 @@ frappe.ui.form.on('Production Order', {
                                 in_place_edit: true,
                                 cannot_add_rows:false,
                                 data:data,
+                            },
+                            {
+                                label: "Submit Stock Entry",
+                                fieldname:"submit_stock_entry",
+                                fieldtype: "Check",
+                                default:1,
+                                data:data
+                    
                             }
                         ],
                         primary_action (data){
+                            
                             function validate_mandatory(dialog, data){
                                 if(!data.jobcard_data){
                                     return
@@ -198,7 +207,11 @@ frappe.ui.form.on('Production Order', {
                             frm.refresh_field("today_produced_items")
                             frm.call({
                                 doc:frm.doc,
+                                
                                 method: 'make_job_card',
+                                args:{
+                                    "submit_stock_entry":data.submit_stock_entry
+                                },
                                 freeze:true,
                                 callback(r){
                                     frm.reload_doc()
@@ -207,11 +220,13 @@ frappe.ui.form.on('Production Order', {
                                     }, 1500)
                                     d.hide()
                                     if(r.message[0]){
+
                                         frappe.show_alert(`<p>Job Card(s) are Created.</p><p>${r.message[0]}</p>`)
                                     }
                                     if(r.message[1])
                                     {
                                         if(r.message[1].length==1){
+                                            // if()
                                             frappe.set_route("Form", "Stock Entry", r.message[1][0])
                                         }
                                         else{

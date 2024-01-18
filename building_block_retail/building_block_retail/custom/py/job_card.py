@@ -176,6 +176,16 @@ def make_stock_entry(job_card, qty=None, purpose="Manufacture"):
 	stock_entry.get_items()
 	stock_entry.set_serial_no_batch_for_finished_good()
 	stock_entry.save()
+	if(frappe.flags.submit_stock_entry == True):
+		default_branch=frappe.get_value("Branch",{"is_default":1},"name")
+		if default_branch:
+			stock_entry.update({
+			'branch' : default_branch
+			})
+			stock_entry.submit()
+		else:
+			frappe.throw("Please Set the Default Branch")
+	
 	if(job_card.production_order):
 		po = frappe.get_doc("Production Order", job_card.production_order)
 		po.save()
