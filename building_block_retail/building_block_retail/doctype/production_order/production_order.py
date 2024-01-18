@@ -110,7 +110,7 @@ class ProductionOrder(Document):
 			
 		
 	@frappe.whitelist()
-	def make_job_card(self):
+	def make_job_card(self,submit_stock_entry):
 		self.save()
 		self.reload_doc()
 		if not self.today_produced_items:
@@ -208,6 +208,8 @@ class ProductionOrder(Document):
 				'target_warehouse':items[i]["target_warehouse"]
 			})
 			job_card.save()
+			if submit_stock_entry==1:
+				frappe.flags.submit_stock_entry = True
 			job_card.submit()
 			for i in job_card.time_logs:
 				if(i.mistaken_from):
@@ -219,8 +221,12 @@ class ProductionOrder(Document):
 		self.reload()
 		self.today_produced_items = []
 		self.save()
-		se_created = frappe.get_all("Stock Entry", filters={"ts_job_card":["in", jc_name]}, pluck="name")
-		return ", ".join(jc_links), se_created
+		se_created = frappe.get_all("Stock Entry", filters={"ts_job_card":["in", jc_name],"docstatus":0}, pluck="name")
+		if se_created:
+			return ", ".join(jc_links), se_created
+		else:
+			return jc_links
+
 	
 	def validate_excess_and_shortage_qty(self, exc_shrt, prod_items):
 		for i in exc_shrt:
